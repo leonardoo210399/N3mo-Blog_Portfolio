@@ -8,7 +8,6 @@ tags:
 - Algorithms
 - Data Structures
 ---
-# LeetCode Problem 1: Two Sum - A Comprehensive Guide
 
 **Summary:** Explore various approaches to solving the 'Two Sum' problem on LeetCode, including brute force and hash table methods.
 

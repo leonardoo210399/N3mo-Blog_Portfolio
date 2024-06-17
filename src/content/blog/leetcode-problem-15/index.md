@@ -7,8 +7,6 @@ tags: [LeetCode, Algorithms, Data Structures, Hash Table, Two-Pointer]
 
 ---
 
-# LeetCode Problem 15: 3Sum - A Comprehensive Guide
-
 LeetCode's Problem 15, "3Sum," is a classic problem frequently encountered in technical interviews. It challenges your ability to find all unique triplets in an array whose sum is equal to a given target value. Let's explore the problem, various solutions, and key insights to excel in coding interviews.
 
 ## Problem Statement
