@@ -1,0 +1,304 @@
+---
+import { getCollection } from "astro:content"
+import PageLayout from "@layouts/PageLayout.astro"
+import ArrowCard from "@components/ArrowCard"
+import StackCard from "@components/StackCard.astro"
+import { SITE, SOCIALS } from "@consts"
+import TwinklingStars from "@components/TwinklingStars.astro"
+import MeteorShower from "@components/MeteorShower.astro"
+
+const posts = (await getCollection("blog"))
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0,3)
+
+const projects = (await getCollection("projects"))
+  .filter(project => !project.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0,3)
+
+const stack = [
+  { 
+    text: "Astro", 
+    icon: "astro", 
+    href: "https://astro.build" 
+  },
+  { 
+    text: "Javascript", 
+    icon: "javascript", 
+    href: "https://www.javascript.com" 
+  },
+  { 
+    text: "Typescript", 
+    icon: "typescript", 
+    href: "https://www.typescriptlang.org" 
+  },
+  { 
+    text: "Tailwind", 
+    icon: "tailwind", 
+    href: "https://tailwindcss.com" 
+  },
+]
+---
+
+<PageLayout title="Home" description={SITE.DESCRIPTION}>
+
+  <!-- Light Mode: Particles -->
+  <div class='absolute inset-0 block dark:hidden'>
+    <div id='particles1' class='fixed inset-0'></div>
+    <div id='particles2' class='fixed inset-0'></div>
+    <div id='particles3' class='fixed inset-0'></div>
+  </div>
+
+  <!-- Dark Theme: Stars -->
+  <div class='absolute inset-0 bg-black hidden dark:block'>
+    <div id='stars1' class='fixed inset-0'></div>
+    <div id='stars2' class='fixed inset-0'></div>
+    <div id='stars3' class='fixed inset-0'></div>
+  </div>
+
+  <!-- Dark Theme: Twinkling Stars / Metors -->
+  <div id="galaxy" class="fixed inset-0">
+    <div class="hidden dark:block">
+      <TwinklingStars/>
+      <MeteorShower/>
+    </div>
+  </div>
+
+  <script is:inline src="/js/bg.js"></script>
+  
+  <!-- HERO -->
+  <section class="relative h-screen w-full">
+    <div id="planetcont" class='animate absolute inset-0 top-1/4 overflow-hidden'>
+      <div id="crescent" class='absolute top-0 left-1/2 -translate-x-1/2 w-[250vw] min-h-[100vh] aspect-square rounded-full p-[1px] bg-gradient-to-b from-black/25 dark:from-white/75 from-0% to-transparent to-5%'>
+        <div id="planet" class='w-full h-full bg-white dark:bg-black rounded-full p-[1px] overflow-hidden flex justify-center'>
+          <div id="blur" class='w-full h-20 rounded-full bg-neutral-900/25 dark:bg-white/25 blur-3xl'/>
+        </div>
+      </div>
+    </div>
+    <div class="animate absolute h-full w-full flex items-center justify-center">
+      <div class='relative w-full h-full flex items-center justify-center'>
+        <div class='p-5 text-center'>
+          <p class='animated text-lg md:text-xl lg:text-2xl font-semibold opacity-75'>
+            Hello, I am Aditya Fulzele
+          </p>
+          <p class='animated text-2xl md:text-3xl lg:text-4xl font-bold uppercase text-black dark:text-white'>
+            Software Engineer
+          </p>
+          <p class='animated text-sm md:text-base lg:text-lg opacity-75'>
+            Currently designing products for humans.
+          </p>
+          <div id="ctaButtons" class='animated flex flex-wrap gap-4 justify-center mt-5'>
+            <a href='/blog' class='py-2 px-4 rounded truncate text-xs md:text-sm lg:text-base bg-black dark:bg-white text-white dark:text-black hover:opacity-75 blend'>
+              Read my blog
+            </a>
+            <a href='/work' class='py-2 px-4 truncate rounded text-xs md:text-sm lg:text-base border border-black/25 dark:border-white/25 hover:bg-black/5 hover:dark:bg-white/15 blend'>
+              View my work
+            </a>
+            <a href='/projects' class='py-2 px-4 rounded truncate text-xs md:text-sm lg:text-base bg-black dark:bg-white text-white dark:text-black hover:opacity-75 blend'>
+              Read my Project
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <a href="#aboutMe" class="arrow-container">
+      <div class="arrow"></div>
+      <div class="arrow"></div>
+      <div class="arrow"></div>  
+    </a>
+  </section>
+
+  <div id="aboutMe" class="relative bg-white dark:bg-black" style="padding-top: 3ww0px;">
+    <div class="mx-auto max-w-screen-sm p-5 space-y-24 pb-16">
+
+      <!-- About Section -->
+      <section class="animate">
+        <article>
+            <p>I am a <b><i>Full Stack Developer</i></b> based in <b><i>Pune, Maharashtra</i></b>. With over a year of hands-on experience, I specialize in utilizing the <b><i>MEAN</i></b> and <b><i>MERN</i></b> stacks to build robust <b><i>web applications</i></b>. At <b><i>Accenture</i></b>, I've played a key role in developing and maintaining applications, ensuring seamless <b><i>user experiences</i></b> and efficient <b><i>data handling</i></b>. My expertise extends to collaborating with <b><i>cross-functional teams</i></b>, analyzing <b><i>project requirements</i></b>, and designing <b><i>architectures</i></b> to meet objectives effectively.</p>
+            <p>In previous roles, such as a <b><i>Java Programmer</i></b> at <b><i>Satyam Technologies</i></b>, I've demonstrated versatility by working on <b><i>Java-based web applications</i></b> and using <b><i>Selenium</i></b> for <b><i>automation testing</i></b>. Additionally, as an <b><i>Internshala Student Partner</i></b>, I've contributed to the upskilling of college students through <b><i>Internshala Trainings</i></b>.</p>
+            <p>I hold a <b><i>Bachelor's degree</i></b> in <b><i>Computer Engineering</i></b> from <b><i>Mumbai University</i></b>, providing a solid academic foundation for my practical expertise. My skill set includes <b><i>HTML</i></b>, <b><i>SCSS</i></b>, <b><i>CSS</i></b>, <b><i>JavaScript</i></b>, <b><i>jQuery</i></b>, <b><i>Bootstrap</i></b>, <b><i>Material UI</i></b>, <b><i>Angular</i></b>, <b><i>Version Control (Git)</i></b>, and <b><i>System Design</i></b>, among others.</p>
+            <p>Overall, I'm a dedicated professional passionate about developing innovative solutions and enhancing user experiences through technology.</p>
+        </article>
+    </section>
+    
+      <!-- Blog Preview Section -->
+      <section class="animate">
+        <div class="space-y-4">
+          <div class="flex justify-between">
+            <p class="font-semibold text-black dark:text-white">
+              Recent posts
+            </p>
+            <a href="/blog" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+              <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
+                All posts
+              </span>
+            </a>
+          </div>
+          <ul class="space-y-4">
+            {posts.map((post) => (
+              <li>
+                <ArrowCard entry={post} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- Tech Stack Section -->
+      <section class="animate">
+        <div class="space-y-4">
+          <p class="font-semibold text-black dark:text-white">
+            Website build with
+          </p>
+          <div class="flex flex-wrap items-center gap-2 mt-5">
+            {stack.map(item => (
+              <StackCard 
+                text={item.text}
+                icon={item.icon}
+                href={item.href}
+              />
+            ))}
+          </div>
+          <div>
+            Performing reactivity and statefulness, special guest
+            <a href="https://www.solidjs.com/" target="_blank" class="w-fit group underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+              <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
+                SolidJS
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Project Preview Section -->
+      <section class="animate">
+        <div class="space-y-4">
+          <div class="flex justify-between">
+            <p class="font-semibold text-black dark:text-white">
+              Recent projects
+            </p>
+            <a href="/projects" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+              <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
+                All projects
+              </span>
+            </a>
+          </div>
+          <ul class="space-y-4">
+            {projects.map((project) => (
+              <li>
+                <ArrowCard entry={project} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <!-- Contact Section -->
+      <section class="animate">
+        <div>
+          <p class="font-semibold text-black dark:text-white">
+            Let's Connect
+          </p>
+          <p>
+            Reach out to me via email or on social media.
+          </p>
+          <div class="grid grid-cols-4 gap-y-2 mt-4 auto-cols-min">
+            {SOCIALS.map(social => (
+              <div class="col-span-1 flex items-center gap-1">
+                <span class="whitespace-nowrap truncate">
+                  {social.NAME}
+                </span>
+              </div>
+              <div class="col-span-3 truncate">
+                <a href={social.HREF} target="_blank" class="w-fit col-span-3 group flex gap-1 items-center underline decoration-[.5px] decoration-black/25 dark:decoration-white/50 hover:decoration-black dark:hover:decoration-white text-black dark:text-white underline-offset-2 blend">
+                  <span class="text-black/75 dark:text-white/75 group-hover:text-black group-hover:dark:text-white blend">
+                    {social.TEXT}
+                  </span>
+                </a>
+              </div>
+            ))}
+        </div>
+      </section>
+    </div>
+  </div>
+</PageLayout>
+
+<style>
+  body {
+    background: #000;
+    position: relative;
+    height: 100%;
+    scroll-behavior: smooth; /* Smooth scroll behavior for all anchor links */
+
+  }
+
+  html {
+    scroll-behavior: smooth; /* Smooth scroll behavior for all anchor links */
+  }
+
+  .arrow-container {
+    display: block;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    bottom: 5%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotateZ(0deg);
+  }
+
+  .arrow-container:hover {
+    cursor: pointer;
+  }
+
+  .arrow-container:hover .arrow {
+    bottom: 5%;
+  }
+
+  .arrow-container:hover .arrow:before {
+    transform: translate(-50%, -50%) rotateZ(-30deg);
+  }
+
+  .arrow-container:hover .arrow:after {
+    transform: translate(-50%, -50%) rotateZ(30deg);
+  }
+
+  .arrow {
+    position: absolute;
+    left: 50%;
+    transition: all 0.4s ease;
+  }
+
+  .arrow:before, .arrow:after {
+    transition: all 0.4s ease;
+    content: "";
+    display: block;
+    position: absolute;
+    transform-origin: bottom right;
+    background: #fff;
+    width: 4px;
+    height: 30px;
+    border-radius: 10px;
+    transform: translate(-50%, -50%) rotateZ(-45deg);
+  }
+
+  .arrow:after {
+    transform-origin: bottom left;
+    transform: translate(-50%, -50%) rotateZ(45deg);
+  }
+
+  .arrow:nth-child(1) {
+    opacity: 0.3;
+    top: 35%;
+  }
+
+  .arrow:nth-child(2) {
+    opacity: 0.6;
+    top: 55%;
+  }
+
+  .arrow:nth-child(3) {
+    opacity: 0.9;
+    top: 75%;
+  }
+</style>
