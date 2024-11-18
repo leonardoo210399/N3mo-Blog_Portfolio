@@ -56,8 +56,8 @@ export const SOCIALS: Socials = [
   { 
     NAME: "Email",
     ICON: "email", 
-    TEXT: "markhorn.dev@gmail.com",
-    HREF: "mailto:markhorn.dev@gmail.com",
+    TEXT: "adityafulzele1122@gmail.com",
+    HREF: "mailto:adityafulzele1122@gmail.com",
   },
   { 
     NAME: "Github",
@@ -69,13 +69,7 @@ export const SOCIALS: Socials = [
     NAME: "LinkedIn",
     ICON: "linkedin",
     TEXT: "Aditya Fulzele",
-    HREF: "https://www.linkedin.com/in/aditya-fulzele-518929252/",
-  },
-  { 
-    NAME: "Twitter",
-    ICON: "twitter-x",
-    TEXT: "markhorn_dev",
-    HREF: "Aditya FUlzele",
+    HREF: "https://www.linkedin.com/in/aditya-fulzele",
   },
   { 
     NAME: "Instagram",
