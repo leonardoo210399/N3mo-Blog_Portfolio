@@ -6,8 +6,6 @@ dateEnd: "03/31/2022"
 ---
 
 
-- Designed and implemented robust web applications leveraging Java technologies.
-- Collaborated with team members to troubleshoot and resolve technical issues.
-- Conducted comprehensive testing to ensure the reliability and functionality of web applications.
-- Contributed to code reviews and provided constructive feedback for continuous improvement.
-- Documented project progress, technical specifications, and troubleshooting procedures.
+- Automated web workflows with Selenium, optimizing data extraction processes, exporting results to CSV files, and reducing manual effort by 40%.
+- Enhanced testing processes, reducing system errors by 25%, improving reliability, and ensuring a smooth transition between development and testing phases.
+- Provided actionable insights that enabled the team to exceed project targets ahead of schedule, increasing efficiency by 10% and shortening delivery timelines by 15%.  ted key insights that helped the team achieve project targets ahead of schedule, improving efficiency by 10% and reducing delivery timelines by 15%.
