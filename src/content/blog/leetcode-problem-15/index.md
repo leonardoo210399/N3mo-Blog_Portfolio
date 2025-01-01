@@ -1,13 +1,13 @@
 ---
-title: "LeetCode Problem 15: 3Sum - A Comprehensive Guide"
-summary: "Explore various approaches to solving the '3Sum' problem on LeetCode, including two-pointer technique and hash table methods."
+title: "LeetCode Problem 15: 3 Sum - A Comprehensive Guide"
+summary: "Explore various approaches to solving the '3 Sum' problem on LeetCode, including two-pointer technique and hash table methods."
 date: "2024-06-17"
 draft: false
 tags: [LeetCode, Algorithms, Data Structures, Hash Table, Two-Pointer]
 
 ---
 
-LeetCode's Problem 15, "3Sum," is a classic problem frequently encountered in technical interviews. It challenges your ability to find all unique triplets in an array whose sum is equal to a given target value. Let's explore the problem, various solutions, and key insights to excel in coding interviews.
+LeetCode's Problem 15, "3 Sum," is a classic problem frequently encountered in technical interviews. It challenges your ability to find all unique triplets in an array whose sum is equal to a given target value. Let's explore the problem, various solutions, and key insights to excel in coding interviews.
 
 ## Problem Statement
 
@@ -29,7 +29,7 @@ To solve this problem, we need to find all unique triplets that sum up to zero i
 
 ### 1. Two-Pointer Technique
 
-The two-pointer technique is an efficient approach to solve the 3Sum problem. It involves sorting the array first and then using two pointers to iterate through the array while maintaining a left and right boundary.
+The two-pointer technique is an efficient approach to solve the 3 Sum problem. It involves sorting the array first and then using two pointers to iterate through the array while maintaining a left and right boundary.
 
 **Algorithm:**
 1. Sort the array.
@@ -121,7 +121,7 @@ This approach efficiently finds all unique triplets that sum up to zero by utili
 
 ### 2. Hash Table Approach
 
-Another approach to solving the 3Sum problem involves using a hash table to store complement values. This method is useful when the array elements have a wider range.
+Another approach to solving the 3 Sum problem involves using a hash table to store complement values. This method is useful when the array elements have a wider range.
 
 **Algorithm:**
 1. Initialize an empty hash table.
@@ -201,7 +201,7 @@ This approach utilizes a hash table to efficiently find all unique triplets that
 
 ## Conclusion
 
-The "3Sum" problem is a common coding interview question that challenges your understanding of array manipulation and algorithmic techniques. By exploring various approaches like the two-pointer technique and hash table methods, you can effectively solve this problem and improve your problem-solving skills.
+The "3 Sum" problem is a common coding interview question that challenges your understanding of array manipulation and algorithmic techniques. By exploring various approaches like the two-pointer technique and hash table methods, you can effectively solve this problem and improve your problem-solving skills.
 
 Understanding these solutions not only helps in solving this specific problem but also builds a foundation for tackling more complex problems involving arrays and data structures. Practice and analyze different approaches to become proficient in solving similar problems efficiently.
 
