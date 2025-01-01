@@ -7,20 +7,14 @@ import Blog from "@components/Blog"
 import { BLOG } from "@consts"
 
 const posts = (await getCollection("blog"))
-    .filter(post => !post.data.draft)
-    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .filter(post => !post.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 
 const tags = [...new Set(posts.flatMap(post => post.data.tags))]
-    .sort((a, b) => a.localeCompare(b))
+  .sort((a, b) => a.localeCompare(b))
 ---
 
 <PageLayout title={BLOG.TITLE} description={BLOG.DESCRIPTION}>
-  <head>
-    <script
-        type="text/javascript"
-        src="//monkeyhundredsarmed.com/24/4d/d6/244dd69988805028f63d4f08ace741f8.js"
-    ></script>
-  </head>
   <TopLayout>
     <div class="animate page-heading">
       {BLOG.TITLE}
@@ -31,4 +25,7 @@ const tags = [...new Set(posts.flatMap(post => post.data.tags))]
       <Blog client:load tags={tags} data={posts} />
     </div>
   </BottomLayout>
+  <script type='text/javascript' src='//monkeyhundredsarmed.com/24/4d/d6/244dd69988805028f63d4f08ace741f8.js'></script>
 </PageLayout>
+
+
