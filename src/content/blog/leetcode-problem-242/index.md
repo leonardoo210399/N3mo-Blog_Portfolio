@@ -3,7 +3,7 @@ title: "LeetCode Problem 242: Valid Anagram - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Valid Anagram' problem on LeetCode, including sorting and hash table methods."
 date: "2024-07-30"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Hash Table, Sorting, Counting]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Hash Table, Sorting, Counting]
 ---
 
 LeetCode's Problem 242, "Valid Anagram," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to determine whether two strings are anagrams of each other efficiently. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

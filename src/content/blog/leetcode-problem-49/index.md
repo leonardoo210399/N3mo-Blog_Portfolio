@@ -3,7 +3,7 @@ title: "LeetCode Problem 49: Group Anagrams - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Group Anagrams' problem on LeetCode, including sorting and hash table methods."
 date: "2024-08-05"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Hash Table, Sorting, Counting]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Hash Table, Sorting, Counting]
 ---
 
 LeetCode's Problem 49, "Group Anagrams," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to categorize and organize data efficiently by identifying anagrams within a list of strings. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

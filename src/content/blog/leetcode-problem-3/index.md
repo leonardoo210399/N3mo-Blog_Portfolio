@@ -3,7 +3,7 @@ title: "LeetCode Problem 3: Longest Substring Without Repeating Characters - A C
 summary: "Explore various approaches to solving the 'Longest Substring Without Repeating Characters' problem on LeetCode, including brute-force, sliding window, and optimized sliding window methods."
 date: "2024-09-05"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Two Pointers, Sliding Window, Hash Set]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Two Pointers, Sliding Window, Hash Set]
 ---
 
 LeetCode's Problem 3, "Longest Substring Without Repeating Characters," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to efficiently analyze and manipulate strings to identify optimal solutions based on specific constraints. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

@@ -3,7 +3,7 @@ title: "LeetCode Problem 11: Container With Most Water - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Container With Most Water' problem on LeetCode, including the two-pointer and brute-force methods."
 date: "2024-08-30"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Two Pointers, Array]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Two Pointers, Array]
 ---
 
 LeetCode's Problem 11, "Container With Most Water," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to efficiently analyze and manipulate arrays to identify optimal solutions based on specific constraints. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

@@ -3,7 +3,7 @@ title: "LeetCode Problem 121: Best Time to Buy and Sell Stock - A Comprehensive 
 summary: "Explore various approaches to solving the 'Best Time to Buy and Sell Stock' problem on LeetCode, including brute-force and dynamic programming methods."
 date: "2024-09-10"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Dynamic Programming, Greedy, Array]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Dynamic Programming, Greedy, Array]
 ---
 
 LeetCode's Problem 121, "Best Time to Buy and Sell Stock," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to efficiently analyze and manipulate arrays to identify optimal solutions based on specific constraints. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

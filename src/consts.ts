@@ -19,6 +19,12 @@ export const BLOG: Page = {
   DESCRIPTION: "Writing on topics I am passionate about.",
 }
 
+// Blind 75 Page
+export const BLIND75: Page = {
+  TITLE: "Blind 75",
+  DESCRIPTION: "Blind 75 LeetCode problem set.",
+}
+
 // Projects Page 
 export const PROJECTS: Page = {
   TITLE: "Projects",
@@ -45,9 +51,13 @@ export const LINKS: Links = [
     TEXT: "Blog", 
     HREF: "/blog", 
   },
-  { 
-    TEXT: "Projects", 
-    HREF: "/projects", 
+  {
+    TEXT: "Projects",
+    HREF: "/projects",
+  },
+  {
+    TEXT: "Blind 75",
+    HREF: "/blind75",
   },
 ]
 

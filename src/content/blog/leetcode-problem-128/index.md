@@ -3,7 +3,7 @@ title: "LeetCode Problem 128: Longest Consecutive Sequence - A Comprehensive Gui
 summary: "Explore various approaches to solving the 'Longest Consecutive Sequence' problem on LeetCode, including sorting and hash set methods."
 date: "2024-08-25"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Hash Set, Sorting, Array]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Hash Set, Sorting, Array]
 ---
 
 LeetCode's Problem 128, "Longest Consecutive Sequence," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to efficiently analyze and manipulate arrays to identify sequences based on specific criteria. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.
