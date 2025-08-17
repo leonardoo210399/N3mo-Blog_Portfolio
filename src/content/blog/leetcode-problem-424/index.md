@@ -3,7 +3,7 @@ title: "LeetCode Problem 424: Longest Repeating Character Replacement - A Compre
 summary: "Explore various approaches to solving the 'Longest Repeating Character Replacement' problem on LeetCode, including sliding window and frequency counting methods."
 date: "2024-09-15"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Sliding Window, Hash Map, Frequency Counting]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Sliding Window, Hash Map, Frequency Counting]
 ---
 
 LeetCode's Problem 424, "Longest Repeating Character Replacement," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to efficiently analyze and manipulate strings to identify optimal solutions based on specific constraints. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

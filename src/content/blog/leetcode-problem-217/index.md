@@ -3,7 +3,7 @@ title: "LeetCode Problem 217: Contains Duplicate - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Contains Duplicate' problem on LeetCode, including brute-force and hash table methods."
 date: "2024-07-25"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Hash Table, Sorting]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Hash Table, Sorting]
 ---
 
 LeetCode's Problem 217, "Contains Duplicate," is a fundamental problem frequently encountered in technical interviews. It tests your ability to determine whether an array contains any duplicate elements efficiently. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

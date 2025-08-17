@@ -3,7 +3,7 @@ title: "LeetCode Problem 76: Minimum Window Substring - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Minimum Window Substring' problem on LeetCode, including sliding window and frequency counting methods."
 date: "2024-09-20"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Sliding Window, Hash Map, String Manipulation]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Sliding Window, Hash Map, String Manipulation]
 ---
 
 LeetCode's Problem 76, "Minimum Window Substring," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to efficiently analyze and manipulate strings to identify optimal solutions based on specific constraints. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

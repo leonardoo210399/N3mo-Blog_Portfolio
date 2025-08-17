@@ -3,7 +3,7 @@ title: "LeetCode Problem 347: Top K Frequent Elements - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Top K Frequent Elements' problem on LeetCode, including heap and bucket sort methods."
 date: "2024-08-10"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Heap, Hash Table, Sorting]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Heap, Hash Table, Sorting]
 ---
 
 LeetCode's Problem 347, "Top K Frequent Elements," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to identify and group elements based on their frequency efficiently. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

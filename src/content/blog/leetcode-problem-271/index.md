@@ -3,7 +3,7 @@ title: "LeetCode Problem 271: Encode and Decode Strings - A Comprehensive Guide"
 summary: "Explore various approaches to solving the 'Encode and Decode Strings' problem on LeetCode, including delimiter-based and length-prefix-based methods."
 date: "2024-08-15"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, String Manipulation, Encoding, Decoding]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, String Manipulation, Encoding, Decoding]
 ---
 
 LeetCode's Problem 271, "Encode and Decode Strings," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to design efficient algorithms for encoding and decoding a list of strings. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.

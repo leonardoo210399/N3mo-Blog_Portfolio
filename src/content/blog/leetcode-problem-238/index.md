@@ -3,7 +3,7 @@ title: "LeetCode Problem 238: Product of Array Except Self - A Comprehensive Gui
 summary: "Explore various approaches to solving the 'Product of Array Except Self' problem on LeetCode, including prefix-suffix product and optimized space methods."
 date: "2024-08-20"
 draft: false
-tags: [LeetCode, Algorithms, Data Structures, Array, Prefix-Suffix, Optimization]
+tags: [Blind 75, LeetCode, Algorithms, Data Structures, Array, Prefix-Suffix, Optimization]
 ---
 
 LeetCode's Problem 238, "Product of Array Except Self," is a fundamental problem frequently encountered in technical interviews. It assesses your ability to manipulate arrays efficiently to compute products while adhering to specific constraints. Let's delve into the problem, explore multiple solutions, and uncover key insights to excel in coding interviews.
