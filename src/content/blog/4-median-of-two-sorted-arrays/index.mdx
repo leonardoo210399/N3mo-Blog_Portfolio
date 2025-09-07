@@ -1,0 +1,769 @@
+---
+title: "Median of Two Sorted Arrays"
+summary: "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log (m+n))."
+date: "Sep 07, 2025"
+tags:
+  - Array
+  - Binary Search
+  - Divide and Conquer
+draft: false
+difficulty: "Hard"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Hard | **Acceptance:** 44.53% | **Paid:** No
+
+> **Topics:** Array, Binary Search, Divide and Conquer
+
+- Examples
+- Constraints
+- [Brute Force - Merge and Sort](#brute-force-merge-and-sort)
+- [Optimal - Binary Search](#optimal-binary-search)
+- [Alternative - Linear Time with Pointers](#alternative-linear-time-with-pointers)
+
+## Examples
+
+**Input**
+
+```text
+nums1 = [1,3], nums2 = [2]
+```
+
+**Output**
+
+```text
+2.00000
+```
+
+**Explanation**
+
+merged array = [1,2,3] and median is 2.
+
+**Input**
+
+```text
+nums1 = [1,2], nums2 = [3,4]
+```
+
+**Output**
+
+```text
+2.50000
+```
+
+**Explanation**
+
+merged array = [1,2,3,4] and median is (2 + 3) / 2 = 2.5.
+
+## Constraints
+
+```text
+- nums1.length == m
+- nums2.length == n
+- 0 <= m <= 1000
+- 0 <= n <= 1000
+- 1 <= m + n <= 2000
+- 0 <= nums1[i], nums2[i] <= 10^6
+```
+---
+
+## Brute Force - Merge and Sort
+
+**Intuition**
+
+The most straightforward approach is to merge both sorted arrays into a single array and then compute the median. This approach is easy to understand and implement but is not optimal in terms of time and space complexity.
+
+**Steps**
+
+- Combine the two arrays into one.
+- Sort the combined array.
+- Calculate the median based on the length of the merged array.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def findMedianSortedArrays(nums1, nums2):
+    merged = sorted(nums1 + nums2)
+    n = len(merged)
+    if n % 2 == 1:
+        return float(merged[n // 2])
+    else:
+        return (merged[n // 2 - 1] + merged[n // 2]) / 2.0` },
+{ name: "Java", lang: "java", code: `import java.util.Arrays;
+
+class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int[] merged = new int[nums1.length + nums2.length];
+        int i = 0;
+        for (int num : nums1) merged[i++] = num;
+        for (int num : nums2) merged[i++] = num;
+        Arrays.sort(merged);
+        int n = merged.length;
+        if (n % 2 == 1) return (double) merged[n / 2];
+        return ((double) (merged[n / 2 - 1] + merged[n / 2])) / 2.0;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var findMedianSortedArrays = function(nums1, nums2) {
+    let merged = [...nums1, ...nums2].sort((a, b) => a - b);
+    let n = merged.length;
+    if (n % 2 === 1) {
+        return merged[Math.floor(n / 2)];
+    } else {
+        return (merged[n / 2 - 1] + merged[n / 2]) / 2;
+    }
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        vector<int> merged(nums1);
+        merged.insert(merged.end(), nums2.begin(), nums2.end());
+        sort(merged.begin(), merged.end());
+        int n = merged.size();
+        if (n % 2 == 1) return (double) merged[n / 2];
+        return ((double) (merged[n / 2 - 1] + merged[n / 2])) / 2.0;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        merged = sorted(nums1 + nums2)
+        n = len(merged)
+        if n % 2 == 1:
+            return float(merged[n // 2])
+        else:
+            return (merged[n // 2 - 1] + merged[n // 2]) / 2.0` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+    int totalSize = nums1Size + nums2Size;
+    int* merged = (int*)malloc(totalSize * sizeof(int));
+    int i, j;
+    for (i = 0; i < nums1Size; i++) merged[i] = nums1[i];
+    for (j = 0; j < nums2Size; j++) merged[i + j] = nums2[j];
+    qsort(merged, totalSize, sizeof(int), compare);
+    double median;
+    if (totalSize % 2 == 1)
+        median = (double) merged[totalSize / 2];
+    else
+        median = ((double)(merged[totalSize / 2 - 1] + merged[totalSize / 2])) / 2.0;
+    free(merged);
+    return median;
+}` },
+{ name: "C#", lang: "csharp", code: `using System;
+using System.Linq;
+
+class Solution {
+    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {
+        int[] merged = nums1.Concat(nums2).ToArray();
+        Array.Sort(merged);
+        int n = merged.Length;
+        if (n % 2 == 1) return (double) merged[n / 2];
+        return ((double) (merged[n / 2 - 1] + merged[n / 2])) / 2.0;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
+    const merged = [...nums1, ...nums2].sort((a, b) => a - b);
+    const n = merged.length;
+    if (n % 2 === 1) {
+        return merged[Math.floor(n / 2)];
+    } else {
+        return (merged[n / 2 - 1] + merged[n / 2]) / 2;
+    }
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func findMedianSortedArrays(_ nums1: [Int], _ nums2: [Int]) -> Double {
+        let merged = (nums1 + nums2).sorted()
+        let n = merged.count
+        if n % 2 == 1 {
+            return Double(merged[n / 2])
+        } else {
+            return Double(merged[n / 2 - 1] + merged[n / 2]) / 2.0
+        }
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O((m + n) log(m + n)) - Sorting the merged array takes this time.
+- Space: O(m + n) - Extra space used for storing the merged array.
+
+---
+
+## Optimal - Binary Search
+
+**Intuition**
+
+To achieve the optimal O(log(min(m, n))) complexity, we use a binary search approach. The key insight is to partition both arrays such that the left half contains the smaller elements and the right half the larger ones, maintaining the length property of a median.
+
+**Steps**
+
+- Use binary search to find the correct partition in the smaller array.
+- Calculate the corresponding partition in the second array.
+- Ensure that all elements to the left of the partitions are less than or equal to elements on the right.
+- Compute and return the median based on the partition.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def findMedianSortedArrays(nums1, nums2):
+    if len(nums1) > len(nums2):
+        nums1, nums2 = nums2, nums1
+
+    x, y = len(nums1), len(nums2)
+    low, high = 0, x
+    
+    while low <= high:
+        partitionX = (low + high) // 2
+        partitionY = (x + y + 1) // 2 - partitionX
+        
+        maxX = float('-inf') if partitionX == 0 else nums1[partitionX - 1]
+        minX = float('inf') if partitionX == x else nums1[partitionX]
+        
+        maxY = float('-inf') if partitionY == 0 else nums2[partitionY - 1]
+        minY = float('inf') if partitionY == y else nums2[partitionY]
+        
+        if maxX <= minY and maxY <= minX:
+            if (x + y) % 2 == 0:
+                return (max(maxX, maxY) + min(minX, minY)) / 2
+            else:
+                return max(maxX, maxY)
+        elif maxX > minY:
+            high = partitionX - 1
+        else:
+            low = partitionX + 1` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1.length > nums2.length) {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        
+        int x = nums1.length;
+        int y = nums2.length;
+        int low = 0;
+        int high = x;
+        
+        while (low <= high) {
+            int partitionX = (low + high)/2;
+            int partitionY = (x + y + 1)/2 - partitionX;
+            
+            int maxX = (partitionX == 0) ? Integer.MIN_VALUE : nums1[partitionX - 1];
+            int minX = (partitionX == x) ? Integer.MAX_VALUE : nums1[partitionX];
+            
+            int maxY = (partitionY == 0) ? Integer.MIN_VALUE : nums2[partitionY - 1];
+            int minY = (partitionY == y) ? Integer.MAX_VALUE : nums2[partitionY];
+            
+            if (maxX <= minY && maxY <= minX) {
+                if ((x + y) % 2 == 0) {
+                    return ((double)Math.max(maxX, maxY) + Math.min(minX, minY))/2;
+                } else {
+                    return (double)Math.max(maxX, maxY);
+                }
+            } else if (maxX > minY) {
+                high = partitionX - 1;
+            } else {
+                low = partitionX + 1;
+            }
+        }
+        
+        throw new IllegalArgumentException();
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var findMedianSortedArrays = function(nums1, nums2) {
+    if (nums1.length > nums2.length) {
+        [nums1, nums2] = [nums2, nums1];
+    }
+    
+    let x = nums1.length;
+    let y = nums2.length;
+    let low = 0;
+    let high = x;
+    
+    while (low <= high) {
+        let partitionX = Math.floor((low + high) / 2);
+        let partitionY = Math.floor((x + y + 1) / 2) - partitionX;
+        
+        let maxX = (partitionX === 0) ? Number.NEGATIVE_INFINITY : nums1[partitionX - 1];
+        let minX = (partitionX === x) ? Number.POSITIVE_INFINITY : nums1[partitionX];
+        
+        let maxY = (partitionY === 0) ? Number.NEGATIVE_INFINITY : nums2[partitionY - 1];
+        let minY = (partitionY === y) ? Number.POSITIVE_INFINITY : nums2[partitionY];
+        
+        if (maxX <= minY && maxY <= minX) {
+            if ((x + y) % 2 === 0) {
+                return (Math.max(maxX, maxY) + Math.min(minX, minY)) / 2;
+            } else {
+                return Math.max(maxX, maxY);
+            }
+        } else if (maxX > minY) {
+            high = partitionX - 1;
+        } else {
+            low = partitionX + 1;
+        }
+    }
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <climits>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        if (nums1.size() > nums2.size()) {
+            return findMedianSortedArrays(nums2, nums1);
+        }
+        
+        int x = nums1.size();
+        int y = nums2.size();
+        int low = 0;
+        int high = x;
+        
+        while (low <= high) {
+            int partitionX = (low + high)/2;
+            int partitionY = (x + y + 1)/2 - partitionX;
+            
+            int maxX = (partitionX == 0) ? INT_MIN : nums1[partitionX - 1];
+            int minX = (partitionX == x) ? INT_MAX : nums1[partitionX];
+            
+            int maxY = (partitionY == 0) ? INT_MIN : nums2[partitionY - 1];
+            int minY = (partitionY == y) ? INT_MAX : nums2[partitionY];
+            
+            if (maxX <= minY && maxY <= minX) {
+                if ((x + y) % 2 == 0) {
+                    return ((double)max(maxX, maxY) + min(minX, minY))/2;
+                } else {
+                    return (double)max(maxX, maxY);
+                }
+            } else if (maxX > minY) {
+                high = partitionX - 1;
+            } else {
+                low = partitionX + 1;
+            }
+        }
+        
+        throw invalid_argument("Input arrays are not sorted");
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        if len(nums1) > len(nums2):
+            nums1, nums2 = nums2, nums1
+
+        x, y = len(nums1), len(nums2)
+        low, high = 0, x
+        
+        while low <= high:
+            partitionX = (low + high) // 2
+            partitionY = (x + y + 1) // 2 - partitionX
+            
+            maxX = float('-inf') if partitionX == 0 else nums1[partitionX - 1]
+            minX = float('inf') if partitionX == x else nums1[partitionX]
+            
+            maxY = float('-inf') if partitionY == 0 else nums2[partitionY - 1]
+            minY = float('inf') if partitionY == y else nums2[partitionY]
+            
+            if maxX <= minY and maxY <= minX:
+                if (x + y) % 2 == 0:
+                    return (max(maxX, maxY) + min(minX, minY)) / 2
+                else:
+                    return max(maxX, maxY)
+            elif maxX > minY:
+                high = partitionX - 1
+            else:
+                low = partitionX + 1` },
+{ name: "C", lang: "c", code: `#include <limits.h>
+
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+    if (nums1Size > nums2Size) {
+        return findMedianSortedArrays(nums2, nums2Size, nums1, nums1Size);
+    }
+    
+    int x = nums1Size;
+    int y = nums2Size;
+    int low = 0;
+    int high = x;
+    
+    while (low <= high) {
+        int partitionX = (low + high)/2;
+        int partitionY = (x + y + 1)/2 - partitionX;
+        
+        int maxX = (partitionX == 0) ? INT_MIN : nums1[partitionX - 1];
+        int minX = (partitionX == x) ? INT_MAX : nums1[partitionX];
+        
+        int maxY = (partitionY == 0) ? INT_MIN : nums2[partitionY - 1];
+        int minY = (partitionY == y) ? INT_MAX : nums2[partitionY];
+        
+        if (maxX <= minY && maxY <= minX) {
+            if ((x + y) % 2 == 0) {
+                return ((double)max(maxX, maxY) + min(minX, minY))/2;
+            } else {
+                return (double)max(maxX, maxY);
+            }
+        } else if (maxX > minY) {
+            high = partitionX - 1;
+        } else {
+            low = partitionX + 1;
+        }
+    }
+    return -1; 
+}` },
+{ name: "C#", lang: "csharp", code: `using System;
+
+class Solution {
+    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {
+        if (nums1.Length > nums2.Length) {
+            return FindMedianSortedArrays(nums2, nums1);
+        }
+        
+        int x = nums1.Length;
+        int y = nums2.Length;
+        int low = 0;
+        int high = x;
+        
+        while (low <= high) {
+            int partitionX = (low + high)/2;
+            int partitionY = (x + y + 1)/2 - partitionX;
+            
+            int maxX = (partitionX == 0) ? Int32.MinValue : nums1[partitionX - 1];
+            int minX = (partitionX == x) ? Int32.MaxValue : nums1[partitionX];
+            
+            int maxY = (partitionY == 0) ? Int32.MinValue : nums2[partitionY - 1];
+            int minY = (partitionY == y) ? Int32.MaxValue : nums2[partitionY];
+            
+            if (maxX <= minY && maxY <= minX) {
+                if ((x + y) % 2 == 0) {
+                    return ((double)Math.Max(maxX, maxY) + Math.Min(minX, minY))/2;
+                } else {
+                    return (double)Math.Max(maxX, maxY);
+                }
+            } else if (maxX > minY) {
+                high = partitionX - 1;
+            } else {
+                low = partitionX + 1;
+            }
+        }
+        
+        throw new ArgumentException();
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
+    if (nums1.length > nums2.length) {
+        [nums1, nums2] = [nums2, nums1];
+    }
+    
+    let x = nums1.length;
+    let y = nums2.length;
+    let low = 0;
+    let high = x;
+    
+    while (low <= high) {
+        let partitionX = Math.floor((low + high) / 2);
+        let partitionY = Math.floor((x + y + 1) / 2) - partitionX;
+        
+        let maxX = (partitionX === 0) ? Number.NEGATIVE_INFINITY : nums1[partitionX - 1];
+        let minX = (partitionX === x) ? Number.POSITIVE_INFINITY : nums1[partitionX];
+        
+        let maxY = (partitionY === 0) ? Number.NEGATIVE_INFINITY : nums2[partitionY - 1];
+        let minY = (partitionY === y) ? Number.POSITIVE_INFINITY : nums2[partitionY];
+        
+        if (maxX <= minY && maxY <= minX) {
+            if ((x + y) % 2 === 0) {
+                return (Math.max(maxX, maxY) + Math.min(minX, minY)) / 2;
+            } else {
+                return Math.max(maxX, maxY);
+            }
+        } else if (maxX > minY) {
+            high = partitionX - 1;
+        } else {
+            low = partitionX + 1;
+        }
+    }
+    
+    throw new Error("Input arrays are not sorted");
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func findMedianSortedArrays(_ nums1: [Int], _ nums2: [Int]) -> Double {
+        if nums1.count > nums2.count {
+            return findMedianSortedArrays(nums2, nums1)
+        }
+        
+        let x = nums1.count
+        let y = nums2.count
+        var low = 0
+        var high = x
+        
+        while low <= high {
+            let partitionX = (low + high) / 2
+            let partitionY = (x + y + 1) / 2 - partitionX
+            
+            let maxX = partitionX == 0 ? Int.min : nums1[partitionX - 1]
+            let minX = partitionX == x ? Int.max : nums1[partitionX]
+            
+            let maxY = partitionY == 0 ? Int.min : nums2[partitionY - 1]
+            let minY = partitionY == y ? Int.max : nums2[partitionY]
+            
+            if maxX <= minY && maxY <= minX {
+                if (x + y) % 2 == 0 {
+                    return Double(max(maxX, maxY) + min(minX, minY)) / 2
+                } else {
+                    return Double(max(maxX, maxY))
+                }
+            } else if maxX > minY {
+                high = partitionX - 1
+            } else {
+                low = partitionX + 1
+            }
+        }
+        
+        return -1
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log(min(m, n))) - Binary search is performed on the smaller of the two arrays.
+- Space: O(1) - Only a constant amount of additional space is used.
+
+---
+
+## Alternative - Linear Time with Pointers
+
+**Intuition**
+
+If we traverse both arrays simultaneously with two pointers, we can find the median by reaching the middle elements without creating a new merged array. This approach uses O(1) space but has a longer time complexity compared to the binary search method.
+
+**Steps**
+
+- Initialize two pointers, one for each array.
+- Traverse both arrays up to the index of the median.
+- Keep track of the elements as we move through the arrays.
+- Once we reach the median index (or indices), compute and return the median value.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def findMedianSortedArrays(nums1, nums2):
+    m, n = len(nums1), len(nums2)
+    total = m + n
+    i = j = 0
+    current = prev = 0
+    
+    for _ in range(total // 2 + 1):
+        prev = current
+        if i < m and (j >= n or nums1[i] < nums2[j]):
+            current = nums1[i]
+            i += 1
+        else:
+            current = nums2[j]
+            j += 1
+    
+    if total % 2 == 1:
+        return float(current)
+    else:
+        return (prev + current) / 2.0` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public double findMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.length, n = nums2.length;
+        int total = m + n;
+        int i = 0, j = 0;
+        int current = 0, prev = 0;
+        
+        for (int k = 0; k <= total / 2; k++) {
+            prev = current;
+            if (i < m && (j >= n || nums1[i] < nums2[j])) {
+                current = nums1[i++];
+            } else {
+                current = nums2[j++];
+            }
+        }
+        
+        if (total % 2 == 1) {
+            return (double) current;
+        } else {
+            return ((double)(prev + current)) / 2.0;
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var findMedianSortedArrays = function(nums1, nums2) {
+    let m = nums1.length, n = nums2.length;
+    let total = m + n;
+    let i = 0, j = 0;
+    let current = 0, prev = 0;
+    
+    for (let k = 0; k <= Math.floor(total / 2); k++) {
+        prev = current;
+        if (i < m && (j >= n || nums1[i] < nums2[j])) {
+            current = nums1[i++];
+        } else {
+            current = nums2[j++];
+        }
+    }
+    
+    if (total % 2 === 1) {
+        return current;
+    } else {
+        return (prev + current) / 2;
+    }
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int m = nums1.size(), n = nums2.size();
+        int total = m + n;
+        int i = 0, j = 0;
+        int current = 0, prev = 0;
+        
+        for (int k = 0; k <= total / 2; k++) {
+            prev = current;
+            if (i < m && (j >= n || nums1[i] < nums2[j])) {
+                current = nums1[i++];
+            } else {
+                current = nums2[j++];
+            }
+        }
+        
+        if (total % 2 == 1) {
+            return (double) current;
+        } else {
+            return ((double)(prev + current)) / 2.0;
+        }
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
+        m, n = len(nums1), len(nums2)
+        total = m + n
+        i = j = 0
+        current = prev = 0
+        
+        for _ in range(total // 2 + 1):
+            prev = current
+            if i < m and (j >= n or nums1[i] < nums2[j]):
+                current = nums1[i]
+                i += 1
+            else:
+                current = nums2[j]
+                j += 1
+        
+        if total % 2 == 1:
+            return float(current)
+        else:
+            return (prev + current) / 2.0` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+
+double findMedianSortedArrays(int* nums1, int nums1Size, int* nums2, int nums2Size) {
+    int m = nums1Size, n = nums2Size;
+    int total = m + n;
+    int i = 0, j = 0;
+    int current = 0, prev = 0;
+    
+    for (int k = 0; k <= total / 2; k++) {
+        prev = current;
+        if (i < m && (j >= n || nums1[i] < nums2[j])) {
+            current = nums1[i++];
+        } else {
+            current = nums2[j++];
+        }
+    }
+    
+    if (total % 2 == 1) {
+        return (double) current;
+    } else {
+        return ((double)(prev + current)) / 2.0;
+    }
+}` },
+{ name: "C#", lang: "csharp", code: `using System;
+
+class Solution {
+    public double FindMedianSortedArrays(int[] nums1, int[] nums2) {
+        int m = nums1.Length, n = nums2.Length;
+        int total = m + n;
+        int i = 0, j = 0;
+        int current = 0, prev = 0;
+        
+        for (int k = 0; k <= total / 2; k++) {
+            prev = current;
+            if (i < m && (j >= n || nums1[i] < nums2[j])) {
+                current = nums1[i++];
+            } else {
+                current = nums2[j++];
+            }
+        }
+        
+        if (total % 2 == 1) {
+            return (double) current;
+        } else {
+            return ((double)(prev + current)) / 2.0;
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function findMedianSortedArrays(nums1: number[], nums2: number[]): number {
+    const m = nums1.length, n = nums2.length;
+    const total = m + n;
+    let i = 0, j = 0;
+    let current = 0, prev = 0;
+    
+    for (let k = 0; k <= Math.floor(total / 2); k++) {
+        prev = current;
+        if (i < m && (j >= n || nums1[i] < nums2[j])) {
+            current = nums1[i++];
+        } else {
+            current = nums2[j++];
+        }
+    }
+    
+    if (total % 2 === 1) {
+        return current;
+    } else {
+        return (prev + current) / 2;
+    }
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func findMedianSortedArrays(_ nums1: [Int], _ nums2: [Int]) -> Double {
+        let m = nums1.count, n = nums2.count
+        let total = m + n
+        var i = 0, j = 0
+        var current = 0, prev = 0
+        
+        for _ in 0...(total / 2) {
+            prev = current
+            if i < m && (j >= n || nums1[i] < nums2[j]) {
+                current = nums1[i]
+                i += 1
+            } else {
+                current = nums2[j]
+                j += 1
+            }
+        }
+        
+        if total % 2 == 1 {
+            return Double(current)
+        } else {
+            return Double(prev + current) / 2.0
+        }
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(m + n) - In the worst case, we might need to traverse almost all elements of both arrays.
+- Space: O(1) - No extra space is used beyond variables for tracking indices and values.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Median of Two Sorted Arrays Solutions","datePublished":"2025-09-07T12:35:46.451Z","description":"Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O...","keywords":"LeetCode, Median of Two Sorted Arrays, Hard, Array, Binary Search, Divide and Conquer, Two Pointers, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force - Merge and Sort complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O((m + n) log(m + n)) - Sorting the merged array takes this time.; Space: O(m + n) - Extra space used for storing the merged array.. "}},{"@type":"Question","name":"Optimal - Binary Search complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log(min(m, n))) - Binary search is performed on the smaller of the two arrays.; Space: O(1) - Only a constant amount of additional space is used.. "}},{"@type":"Question","name":"Alternative - Linear Time with Pointers complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(m + n) - In the worst case, we might need to traverse almost all elements of both arrays.; Space: O(1) - No extra space is used beyond variables for tracking indices and values.. "}}]}).replace(/</g,'\\u003c')}
+</script>
