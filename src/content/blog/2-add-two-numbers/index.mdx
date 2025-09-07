@@ -1,0 +1,1026 @@
+---
+title: "Add Two Numbers"
+summary: "You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list. You may assume the two numbers do not contain any leading zero, except the number 0 itself."
+date: "Sep 07, 2025"
+tags:
+  - Linked List
+  - Math
+  - Recursion
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 46.79% | **Paid:** No
+
+> **Topics:** Linked List, Math, Recursion
+
+- Examples
+- Constraints
+- [Brute Force Approach](#brute-force-approach)
+- [Optimal Approach](#optimal-approach)
+- [Recursive Approach](#recursive-approach)
+
+## Examples
+
+**Input**
+
+```text
+l1 = [2,4,3], l2 = [5,6,4]
+```
+
+**Output**
+
+```text
+[7,0,8]
+```
+
+**Explanation**
+
+342 + 465 = 807
+
+**Input**
+
+```text
+l1 = [0], l2 = [0]
+```
+
+**Output**
+
+```text
+[0]
+```
+
+**Input**
+
+```text
+l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
+```
+
+**Output**
+
+```text
+[8,9,9,9,0,0,0,1]
+```
+
+## Constraints
+
+```text
+- The number of nodes in each linked list is in the range [1, 100]. 
+- 0 <= Node.val <= 9 
+- It is guaranteed that the list represents a number that does not have leading zeros. 
+```
+---
+
+## Brute Force Approach
+
+**Intuition**
+
+Simulate the addition process exactly as we do manually, starting from the least significant digit (head of the lists). Handle carries properly and build the result list node by node.
+
+**Steps**
+
+- Traverse both linked lists simultaneously.
+- At each step, sum the corresponding digits and the carry from the previous step.
+- Create a new node with the digit value of the sum (sum % 10) and update the carry (sum // 10).
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def addTwoNumbers(l1, l2):
+    dummy_head = ListNode(0)
+    current = dummy_head
+    carry = 0
+    
+    while l1 or l2 or carry:
+        val1 = l1.val if l1 else 0
+        val2 = l2.val if l2 else 0
+        
+        total = val1 + val2 + carry
+        carry = total // 10
+        digit = total % 10
+        
+        current.next = ListNode(digit)
+        current = current.next
+        
+        l1 = l1.next if l1 else None
+        l2 = l2.next if l2 else None
+    
+    return dummy_head.next` },
+{ name: "Java", lang: "java", code: `public class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+        int carry = 0;
+        
+        while (l1 != null || l2 != null || carry != 0) {
+            int val1 = (l1 != null) ? l1.val : 0;
+            int val2 = (l2 != null) ? l2.val : 0;
+            
+            int total = val1 + val2 + carry;
+            carry = total / 10;
+            int digit = total % 10;
+            
+            current.next = new ListNode(digit);
+            current = current.next;
+            
+            if (l1 != null) l1 = l1.next;
+            if (l2 != null) l2 = l2.next;
+        }
+        
+        return dummyHead.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val);
+    this.next = (next===undefined ? null : next);
+}
+
+var addTwoNumbers = function(l1, l2) {
+    let dummyHead = new ListNode(0);
+    let current = dummyHead;
+    let carry = 0;
+    
+    while (l1 || l2 || carry) {
+        let val1 = l1 ? l1.val : 0;
+        let val2 = l2 ? l2.val : 0;
+        
+        let total = val1 + val2 + carry;
+        carry = Math.floor(total / 10);
+        let digit = total % 10;
+        
+        current.next = new ListNode(digit);
+        current = current.next;
+        
+        l1 = l1 ? l1.next : null;
+        l2 = l2 ? l2.next : null;
+    }
+    
+    return dummyHead.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* dummyHead = new ListNode(0);
+        ListNode* current = dummyHead;
+        int carry = 0;
+        
+        while (l1 || l2 || carry) {
+            int val1 = l1 ? l1->val : 0;
+            int val2 = l2 ? l2->val : 0;
+            
+            int total = val1 + val2 + carry;
+            carry = total / 10;
+            int digit = total % 10;
+            
+            current->next = new ListNode(digit);
+            current = current->next;
+            
+            l1 = l1 ? l1->next : nullptr;
+            l2 = l2 ? l2->next : nullptr;
+        }
+        
+        return dummyHead->next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        dummy_head = ListNode(0)
+        current = dummy_head
+        carry = 0
+        
+        while l1 or l2 or carry:
+            val1 = l1.val if l1 else 0
+            val2 = l2.val if l2 else 0
+            
+            total = val1 + val2 + carry
+            carry = total // 10
+            digit = total % 10
+            
+            current.next = ListNode(digit)
+            current = current.next
+            
+            l1 = l1.next if l1 else None
+            l2 = l2.next if l2 else None
+        
+        return dummy_head.next` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    struct ListNode* dummyHead = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummyHead->val = 0;
+    struct ListNode* current = dummyHead;
+    int carry = 0;
+    
+    while (l1 || l2 || carry) {
+        int val1 = l1 ? l1->val : 0;
+        int val2 = l2 ? l2->val : 0;
+        
+        int total = val1 + val2 + carry;
+        carry = total / 10;
+        int digit = total % 10;
+        
+        current->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+        current->next->val = digit;
+        current->next->next = NULL;
+        current = current->next;
+        
+        l1 = l1 ? l1->next : NULL;
+        l2 = l2 ? l2->next : NULL;
+    }
+    
+    struct ListNode* result = dummyHead->next;
+    free(dummyHead);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+class Solution {
+    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+        int carry = 0;
+        
+        while (l1 != null || l2 != null || carry != 0) {
+            int val1 = (l1 != null) ? l1.val : 0;
+            int val2 = (l2 != null) ? l2.val : 0;
+            
+            int total = val1 + val2 + carry;
+            carry = total / 10;
+            int digit = total % 10;
+            
+            current.next = new ListNode(digit);
+            current = current.next;
+            
+            l1 = l1?.next;
+            l2 = l2?.next;
+        }
+        
+        return dummyHead.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val===undefined ? 0 : val);
+        this.next = (next===undefined ? null : next);
+    }
+}
+
+function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+    const dummyHead = new ListNode(0);
+    let current = dummyHead;
+    let carry = 0;
+    
+    while (l1 || l2 || carry) {
+        const val1 = l1 ? l1.val : 0;
+        const val2 = l2 ? l2.val : 0;
+        
+        const total = val1 + val2 + carry;
+        carry = Math.floor(total / 10);
+        const digit = total % 10;
+        
+        current.next = new ListNode(digit);
+        current = current.next;
+        
+        l1 = l1?.next ?? null;
+        l2 = l2?.next ?? null;
+    }
+    
+    return dummyHead.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        let dummyHead = ListNode(0)
+        var current: ListNode? = dummyHead
+        var carry = 0
+        var p1 = l1
+        var p2 = l2
+        
+        while p1 != nil || p2 != nil || carry != 0 {
+            let val1 = p1?.val ?? 0
+            let val2 = p2?.val ?? 0
+            
+            let total = val1 + val2 + carry
+            carry = total / 10
+            let digit = total % 10
+            
+            current?.next = ListNode(digit)
+            current = current?.next
+            
+            p1 = p1?.next
+            p2 = p2?.next
+        }
+        
+        return dummyHead.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(max(m, n)) where m and n are the lengths of the two lists
+- Space: O(max(m, n)) for the result list
+- Notes: The algorithm traverses each list at most once. The space is for the output list which can be at most max(m,n)+1 in length.
+
+---
+
+## Optimal Approach
+
+**Intuition**
+
+The brute force approach is already optimal in terms of time complexity. We can make minor optimizations to reduce constant factors such as avoiding conditional checks inside the loop when possible.
+
+**Steps**
+
+- Same as brute force but optimize implementation details.
+- Reuse one of the existing lists to avoid allocation of new nodes where possible.
+- Minimize conditional checks inside the loop body.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def addTwoNumbers(l1, l2):
+    dummy_head = ListNode(0)
+    current = dummy_head
+    carry = 0
+    
+    while l1 or l2:
+        val1 = l1.val if l1 else 0
+        val2 = l2.val if l2 else 0
+        
+        total = val1 + val2 + carry
+        carry, digit = divmod(total, 10)
+        
+        current.next = ListNode(digit)
+        current = current.next
+        
+        if l1: l1 = l1.next
+        if l2: l2 = l2.next
+    
+    if carry:
+        current.next = ListNode(carry)
+    
+    return dummy_head.next` },
+{ name: "Java", lang: "java", code: `public class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+        int carry = 0;
+        
+        while (l1 != null || l2 != null) {
+            int val1 = (l1 != null) ? l1.val : 0;
+            int val2 = (l2 != null) ? l2.val : 0;
+            
+            int total = val1 + val2 + carry;
+            carry = total / 10;
+            int digit = total % 10;
+            
+            current.next = new ListNode(digit);
+            current = current.next;
+            
+            if (l1 != null) l1 = l1.next;
+            if (l2 != null) l2 = l2.next;
+        }
+        
+        if (carry > 0) {
+            current.next = new ListNode(carry);
+        }
+        
+        return dummyHead.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val);
+    this.next = (next===undefined ? null : next);
+}
+
+var addTwoNumbers = function(l1, l2) {
+    let dummyHead = new ListNode(0);
+    let current = dummyHead;
+    let carry = 0;
+    
+    while (l1 || l2) {
+        let val1 = l1 ? l1.val : 0;
+        let val2 = l2 ? l2.val : 0;
+        
+        let total = val1 + val2 + carry;
+        carry = Math.floor(total / 10);
+        let digit = total % 10;
+        
+        current.next = new ListNode(digit);
+        current = current.next;
+        
+        if (l1) l1 = l1.next;
+        if (l2) l2 = l2.next;
+    }
+    
+    if (carry) {
+        current.next = new ListNode(carry);
+    }
+    
+    return dummyHead.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* dummyHead = new ListNode(0);
+        ListNode* current = dummyHead;
+        int carry = 0;
+        
+        while (l1 || l2) {
+            int val1 = l1 ? l1->val : 0;
+            int val2 = l2 ? l2->val : 0;
+            
+            int total = val1 + val2 + carry;
+            carry = total / 10;
+            int digit = total % 10;
+            
+            current->next = new ListNode(digit);
+            current = current->next;
+            
+            if (l1) l1 = l1->next;
+            if (l2) l2 = l2->next;
+        }
+        
+        if (carry) {
+            current->next = new ListNode(carry);
+        }
+        
+        return dummyHead->next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        dummy_head = ListNode(0)
+        current = dummy_head
+        carry = 0
+        
+        while l1 or l2:
+            val1 = l1.val if l1 else 0
+            val2 = l2.val if l2 else 0
+            
+            total = val1 + val2 + carry
+            carry, digit = divmod(total, 10)
+            
+            current.next = ListNode(digit)
+            current = current.next
+            
+            if l1: l1 = l1.next
+            if l2: l2 = l2.next
+        
+        if carry:
+            current.next = ListNode(carry)
+        
+        return dummy_head.next` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    struct ListNode* dummyHead = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummyHead->val = 0;
+    struct ListNode* current = dummyHead;
+    int carry = 0;
+    
+    while (l1 || l2) {
+        int val1 = l1 ? l1->val : 0;
+        int val2 = l2 ? l2->val : 0;
+        
+        int total = val1 + val2 + carry;
+        carry = total / 10;
+        int digit = total % 10;
+        
+        current->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+        current->next->val = digit;
+        current->next->next = NULL;
+        current = current->next;
+        
+        if (l1) l1 = l1->next;
+        if (l2) l2 = l2->next;
+    }
+    
+    if (carry) {
+        current->next = (struct ListNode*)malloc(sizeof(struct ListNode));
+        current->next->val = carry;
+        current->next->next = NULL;
+    }
+    
+    struct ListNode* result = dummyHead->next;
+    free(dummyHead);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+class Solution {
+    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {
+        ListNode dummyHead = new ListNode(0);
+        ListNode current = dummyHead;
+        int carry = 0;
+        
+        while (l1 != null || l2 != null) {
+            int val1 = (l1 != null) ? l1.val : 0;
+            int val2 = (l2 != null) ? l2.val : 0;
+            
+            int total = val1 + val2 + carry;
+            carry = total / 10;
+            int digit = total % 10;
+            
+            current.next = new ListNode(digit);
+            current = current.next;
+            
+            l1 = l1?.next;
+            l2 = l2?.next;
+        }
+        
+        if (carry > 0) {
+            current.next = new ListNode(carry);
+        }
+        
+        return dummyHead.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val===undefined ? 0 : val);
+        this.next = (next===undefined ? null : next);
+    }
+}
+
+function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+    const dummyHead = new ListNode(0);
+    let current = dummyHead;
+    let carry = 0;
+    
+    while (l1 || l2) {
+        const val1 = l1 ? l1.val : 0;
+        const val2 = l2 ? l2.val : 0;
+        
+        const total = val1 + val2 + carry;
+        carry = Math.floor(total / 10);
+        const digit = total % 10;
+        
+        current.next = new ListNode(digit);
+        current = current.next;
+        
+        if (l1) l1 = l1.next;
+        if (l2) l2 = l2.next;
+    }
+    
+    if (carry) {
+        current.next = new ListNode(carry);
+    }
+    
+    return dummyHead.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        let dummyHead = ListNode(0)
+        var current: ListNode? = dummyHead
+        var carry = 0
+        var p1 = l1
+        var p2 = l2
+        
+        while p1 != nil || p2 != nil {
+            let val1 = p1?.val ?? 0
+            let val2 = p2?.val ?? 0
+            
+            let total = val1 + val2 + carry
+            carry = total / 10
+            let digit = total % 10
+            
+            current?.next = ListNode(digit)
+            current = current?.next
+            
+            p1 = p1?.next
+            p2 = p2?.next
+        }
+        
+        if carry != 0 {
+            current?.next = ListNode(carry)
+        }
+        
+        return dummyHead.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(max(m, n))
+- Space: O(max(m, n))
+- Notes: This approach is already asymptotically optimal. The optimization is in implementation details, not in algorithmic complexity.
+
+---
+
+## Recursive Approach
+
+**Intuition**
+
+The problem can be solved recursively by handling one digit at a time and passing the carry to the next recursive call. This naturally follows the structure of the linked lists.
+
+**Steps**
+
+- Create a recursive helper function that takes the current nodes and carry.
+- Base case: when both nodes are null and carry is 0.
+- Recursive case: compute sum, create node for current digit, and recurse on next nodes with new carry.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def addTwoNumbers(l1, l2):
+    def addHelper(n1, n2, carry):
+        if not n1 and not n2 and carry == 0:
+            return None
+        
+        val1 = n1.val if n1 else 0
+        val2 = n2.val if n2 else 0
+        
+        total = val1 + val2 + carry
+        new_carry, digit = divmod(total, 10)
+        
+        node = ListNode(digit)
+        node.next = addHelper(
+            n1.next if n1 else None,
+            n2.next if n2 else None,
+            new_carry
+        )
+        
+        return node
+    
+    return addHelper(l1, l2, 0)` },
+{ name: "Java", lang: "java", code: `public class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        return addHelper(l1, l2, 0);
+    }
+    
+    private ListNode addHelper(ListNode n1, ListNode n2, int carry) {
+        if (n1 == null && n2 == null && carry == 0) {
+            return null;
+        }
+        
+        int val1 = (n1 != null) ? n1.val : 0;
+        int val2 = (n2 != null) ? n2.val : 0;
+        
+        int total = val1 + val2 + carry;
+        int newCarry = total / 10;
+        int digit = total % 10;
+        
+        ListNode node = new ListNode(digit);
+        node.next = addHelper(
+            (n1 != null) ? n1.next : null,
+            (n2 != null) ? n2.next : null,
+            newCarry
+        );
+        
+        return node;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val);
+    this.next = (next===undefined ? null : next);
+}
+
+var addTwoNumbers = function(l1, l2) {
+    function addHelper(n1, n2, carry) {
+        if (!n1 && !n2 && carry === 0) {
+            return null;
+        }
+        
+        const val1 = n1 ? n1.val : 0;
+        const val2 = n2 ? n2.val : 0;
+        
+        const total = val1 + val2 + carry;
+        const newCarry = Math.floor(total / 10);
+        const digit = total % 10;
+        
+        const node = new ListNode(digit);
+        node.next = addHelper(
+            n1 ? n1.next : null,
+            n2 ? n2.next : null,
+            newCarry
+        );
+        
+        return node;
+    }
+    
+    return addHelper(l1, l2, 0);
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        return addHelper(l1, l2, 0);
+    }
+    
+private:
+    ListNode* addHelper(ListNode* n1, ListNode* n2, int carry) {
+        if (!n1 && !n2 && carry == 0) {
+            return nullptr;
+        }
+        
+        int val1 = n1 ? n1->val : 0;
+        int val2 = n2 ? n2->val : 0;
+        
+        int total = val1 + val2 + carry;
+        int newCarry = total / 10;
+        int digit = total % 10;
+        
+        ListNode* node = new ListNode(digit);
+        node->next = addHelper(
+            n1 ? n1->next : nullptr,
+            n2 ? n2->next : nullptr,
+            newCarry
+        );
+        
+        return node;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        def addHelper(n1, n2, carry):
+            if not n1 and not n2 and carry == 0:
+                return None
+            
+            val1 = n1.val if n1 else 0
+            val2 = n2.val if n2 else 0
+            
+            total = val1 + val2 + carry
+            new_carry, digit = divmod(total, 10)
+            
+            node = ListNode(digit)
+            node.next = addHelper(
+                n1.next if n1 else None,
+                n2.next if n2 else None,
+                new_carry
+            )
+            
+            return node
+        
+        return addHelper(l1, l2, 0)` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* addHelper(struct ListNode* n1, struct ListNode* n2, int carry) {
+    if (!n1 && !n2 && carry == 0) {
+        return NULL;
+    }
+    
+    int val1 = n1 ? n1->val : 0;
+    int val2 = n2 ? n2->val : 0;
+    
+    int total = val1 + val2 + carry;
+    int newCarry = total / 10;
+    int digit = total % 10;
+    
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->val = digit;
+    node->next = addHelper(
+        n1 ? n1->next : NULL,
+        n2 ? n2->next : NULL,
+        newCarry
+    );
+    
+    return node;
+}
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    return addHelper(l1, l2, 0);
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+class Solution {
+    public ListNode AddTwoNumbers(ListNode l1, ListNode l2) {
+        return AddHelper(l1, l2, 0);
+    }
+    
+    private ListNode AddHelper(ListNode n1, ListNode n2, int carry) {
+        if (n1 == null && n2 == null && carry == 0) {
+            return null;
+        }
+        
+        int val1 = (n1 != null) ? n1.val : 0;
+        int val2 = (n2 != null) ? n2.val : 0;
+        
+        int total = val1 + val2 + carry;
+        int newCarry = total / 10;
+        int digit = total % 10;
+        
+        ListNode node = new ListNode(digit);
+        node.next = AddHelper(
+            n1?.next,
+            n2?.next,
+            newCarry
+        );
+        
+        return node;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val===undefined ? 0 : val);
+        this.next = (next===undefined ? null : next);
+    }
+}
+
+function addTwoNumbers(l1: ListNode | null, l2: ListNode | null): ListNode | null {
+    function addHelper(n1: ListNode | null, n2: ListNode | null, carry: number): ListNode | null {
+        if (!n1 && !n2 && carry === 0) {
+            return null;
+        }
+        
+        const val1 = n1 ? n1.val : 0;
+        const val2 = n2 ? n2.val : 0;
+        
+        const total = val1 + val2 + carry;
+        const newCarry = Math.floor(total / 10);
+        const digit = total % 10;
+        
+        const node = new ListNode(digit);
+        node.next = addHelper(
+            n1?.next ?? null,
+            n2?.next ?? null,
+            newCarry
+        );
+        
+        return node;
+    }
+    
+    return addHelper(l1, l2, 0);
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func addTwoNumbers(_ l1: ListNode?, _ l2: ListNode?) -> ListNode? {
+        func addHelper(_ n1: ListNode?, _ n2: ListNode?, _ carry: Int) -> ListNode? {
+            if n1 == nil && n2 == nil && carry == 0 {
+                return nil
+            }
+            
+            let val1 = n1?.val ?? 0
+            let val2 = n2?.val ?? 0
+            
+            let total = val1 + val2 + carry
+            let newCarry = total / 10
+            let digit = total % 10
+            
+            let node = ListNode(digit)
+            node.next = addHelper(n1?.next, n2?.next, newCarry)
+            
+            return node
+        }
+        
+        return addHelper(l1, l2, 0)
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(max(m, n))
+- Space: O(max(m, n)) due to recursion stack
+- Notes: The recursive approach has the same time complexity but uses additional space for the call stack. It's elegant but may cause stack overflow for very long lists.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Add Two Numbers Solutions","datePublished":"2025-09-07T11:27:13.555Z","description":"You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a s...","keywords":"LeetCode, Add Two Numbers, Medium, Linked List, Math, Recursion, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(max(m, n)) where m and n are the lengths of the two lists; Space: O(max(m, n)) for the result list. The algorithm traverses each list at most once. The space is for the output list which can be at most max(m,n)+1 in length."}},{"@type":"Question","name":"Optimal Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(max(m, n)); Space: O(max(m, n)). This approach is already asymptotically optimal. The optimization is in implementation details, not in algorithmic complexity."}},{"@type":"Question","name":"Recursive Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(max(m, n)); Space: O(max(m, n)) due to recursion stack. The recursive approach has the same time complexity but uses additional space for the call stack. It's elegant but may cause stack overflow for very long lists."}}]}).replace(/</g,'\\u003c')}
+</script>
