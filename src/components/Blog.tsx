@@ -13,6 +13,7 @@ export default function Blog({ data, tags, difficulties = [] }: Props) {
   const [filter, setFilter] = createSignal(new Set<string>())
   const [difficultyFilter, setDifficultyFilter] = createSignal(new Set<string>())
   const [posts, setPosts] = createSignal<CollectionEntry<"blog">[]>([])
+  const [filtersOpen, setFiltersOpen] = createSignal(false)
 
   createEffect(() => {
     const selectedTags = filter()
@@ -56,10 +57,35 @@ export default function Blog({ data, tags, difficulties = [] }: Props) {
     )
   }
 
+  function toggleFilters() {
+    setFiltersOpen((prev) => !prev)
+  }
+
   return (
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="col-span-3 sm:col-span-1">
-        <div class="sticky top-24">
+        {/* Mobile: Toggle button to show/hide filters */}
+        <div class="sm:hidden mb-2">
+          <button
+            onClick={toggleFilters}
+            class={cn(
+              "w-full px-3 py-2 rounded border",
+              "border-black/15 dark:border-white/20",
+              "bg-black/5 dark:bg-white/10",
+              "hover:bg-black/10 hover:dark:bg-white/15",
+              "transition-colors duration-300 ease-in-out"
+            )}
+            aria-expanded={filtersOpen()}
+          >
+            {filtersOpen() ? "Hide Filters" : "Show Filters"}
+          </button>
+        </div>
+
+        <div class={cn(
+          "sticky top-24 flex flex-col min-h-0 max-h-[calc(100vh-6rem)]",
+          !filtersOpen() && "hidden",
+          "sm:flex"
+        )}>        
           <div class="text-sm font-semibold uppercase mb-2 text-black dark:text-white">Filter</div>
           {difficulties.length > 0 && (
             <div class="mb-4">
@@ -68,7 +94,15 @@ export default function Blog({ data, tags, difficulties = [] }: Props) {
                 <For each={difficulties}>
                   {(d) => (
                     <li>
-                      <button onClick={() => toggleDifficulty(d)} class={cn("w-full px-2 py-1 rounded", "whitespace-nowrap overflow-hidden overflow-ellipsis", "flex gap-2 items-center", "bg-black/5 dark:bg-white/10", "hover:bg-black/10 hover:dark:bg-white/15", "transition-colors duration-300 ease-in-out", difficultyFilter().has(d) && "text-black dark:text-white") }>
+                      <button onClick={() => toggleDifficulty(d)} class={cn(
+                        "w-full max-w-xs px-2 py-1 rounded",
+                        "text-left whitespace-normal break-words",
+                        "flex gap-2 items-center",
+                        "bg-black/5 dark:bg-white/10",
+                        "hover:bg-black/10 hover:dark:bg-white/15",
+                        "transition-colors duration-300 ease-in-out",
+                        difficultyFilter().has(d) && "text-black dark:text-white"
+                      ) }>
                         <svg class={cn("size-5 fill-black/50 dark:fill-white/50", "transition-colors duration-300 ease-in-out", difficultyFilter().has(d) && "fill-black dark:fill-white")}>
                           <use href={`/ui.svg#square`} class={cn(!difficultyFilter().has(d) ? "block" : "hidden")} />
                           <use href={`/ui.svg#square-check`} class={cn(difficultyFilter().has(d) ? "block" : "hidden")} />
@@ -82,11 +116,19 @@ export default function Blog({ data, tags, difficulties = [] }: Props) {
             </div>
           )}
           <div class="text-xs uppercase mb-1 opacity-70">Tags</div>
-          <ul class="flex flex-wrap sm:flex-col gap-1.5">
+          <ul class="flex flex-col gap-1.5 flex-1 min-h-0 overflow-y-auto overflow-x-hidden pr-1 mb-2 scrollbar-modern">
             <For each={tags}>
               {(tag) => (
                 <li>
-                  <button onClick={() => toggleTag(tag)} class={cn("w-full px-2 py-1 rounded", "whitespace-nowrap overflow-hidden overflow-ellipsis", "flex gap-2 items-center", "bg-black/5 dark:bg-white/10", "hover:bg-black/10 hover:dark:bg-white/15", "transition-colors duration-300 ease-in-out", filter().has(tag) && "text-black dark:text-white")}>
+                  <button onClick={() => toggleTag(tag)} class={cn(
+                    "w-full max-w-xs px-2 py-1 rounded",
+                    "text-left whitespace-normal break-words",
+                    "flex gap-2 items-center",
+                    "bg-black/5 dark:bg-white/10",
+                    "hover:bg-black/10 hover:dark:bg-white/15",
+                    "transition-colors duration-300 ease-in-out",
+                    filter().has(tag) && "text-black dark:text-white"
+                  )}>
                     <svg class={cn("size-5 fill-black/50 dark:fill-white/50", "transition-colors duration-300 ease-in-out", filter().has(tag) && "fill-black dark:fill-white")}>
                       <use href={`/ui.svg#square`} class={cn(!filter().has(tag) ? "block" : "hidden")} />
                       <use href={`/ui.svg#square-check`} class={cn(filter().has(tag) ? "block" : "hidden")} />
