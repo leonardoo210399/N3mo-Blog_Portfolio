@@ -1,0 +1,678 @@
+---
+title: "Longest Substring Without Repeating Characters"
+summary: "Given a string s, find the length of the longest substring without repeating characters."
+date: "Sep 07, 2025"
+tags:
+  - Hash Table
+  - String
+  - Sliding Window
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 37.43% | **Paid:** No
+
+> **Topics:** Hash Table, String, Sliding Window
+
+- Examples
+- Constraints
+- [Brute Force with Nested Loops](#brute-force-with-nested-loops)
+- [Sliding Window with HashSet](#sliding-window-with-hashset)
+- [Optimized Sliding Window with HashMap](#optimized-sliding-window-with-hashmap)
+
+## Examples
+
+**Input**
+
+```text
+s = "abcabcbb"
+```
+
+**Output**
+
+```text
+3
+```
+
+**Explanation**
+
+The answer is "abc", with the length of 3.
+
+**Input**
+
+```text
+s = "bbbbb"
+```
+
+**Output**
+
+```text
+1
+```
+
+**Explanation**
+
+The answer is "b", with the length of 1.
+
+**Input**
+
+```text
+s = "pwwkew"
+```
+
+**Output**
+
+```text
+3
+```
+
+**Explanation**
+
+The answer is "wke", with the length of 3. Notice that the answer must be a substring, "pwke" is a subsequence and not a substring.
+
+## Constraints
+
+```text
+- 0 <= s.length <= 5 * 10^4
+- s consists of English letters, digits, symbols and spaces.
+```
+---
+
+## Brute Force with Nested Loops
+
+**Intuition**
+
+The most straightforward approach is to examine each possible substring and check if it has all unique characters. We can iterate through all substrings using nested loops and keep track of the maximum length found.
+
+**Steps**
+
+- Use two nested loops: the outer loop marks the start of a substring, and the inner loop extends the substring.
+- For each substring, keep a set of characters to check for duplicates. If a duplicate is found, break and move to the next starting position.
+- Track the maximum length of substrings without repeating characters encountered.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def lengthOfLongestSubstring(s: str) -> int:
+    n = len(s)
+    max_length = 0
+    
+    for i in range(n):
+        char_set = set()
+        for j in range(i, n):
+            if s[j] in char_set:
+                break
+            char_set.add(s[j])
+            max_length = max(max_length, j - i + 1)
+    
+    return max_length` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int n = s.length();
+        int maxLength = 0;
+        
+        for (int i = 0; i < n; i++) {
+            Set<Character> charSet = new HashSet<>();
+            for (int j = i; j < n; j++) {
+                if (charSet.contains(s.charAt(j))) {
+                    break;
+                }
+                charSet.add(s.charAt(j));
+                maxLength = Math.max(maxLength, j - i + 1);
+            }
+        }
+        
+        return maxLength;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+    let n = s.length;
+    let maxLength = 0;
+    
+    for (let i = 0; i < n; i++) {
+        let charSet = new Set();
+        for (let j = i; j < n; j++) {
+            if (charSet.has(s[j])) {
+                break;
+            }
+            charSet.add(s[j]);
+            maxLength = Math.max(maxLength, j - i + 1);
+        }
+    }
+    
+    return maxLength;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <unordered_set>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = s.length();
+        int maxLength = 0;
+        
+        for (int i = 0; i < n; i++) {
+            unordered_set<char> charSet;
+            for (int j = i; j < n; j++) {
+                if (charSet.find(s[j]) != charSet.end()) {
+                    break;
+                }
+                charSet.insert(s[j]);
+                maxLength = max(maxLength, j - i + 1);
+            }
+        }
+        
+        return maxLength;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        n = len(s)
+        max_length = 0
+        
+        for i in range(n):
+            char_set = set()
+            for j in range(i, n):
+                if s[j] in char_set:
+                    break
+                char_set.add(s[j])
+                max_length = max(max_length, j - i + 1)
+        
+        return max_length` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <string.h>
+
+int lengthOfLongestSubstring(char* s) {
+    int n = strlen(s);
+    int maxLength = 0;
+    
+    for (int i = 0; i < n; i++) {
+        int charSet[128] = {0}; // Assuming ASCII characters
+        for (int j = i; j < n; j++) {
+            if (charSet[s[j]]) {
+                break;
+            }
+            charSet[s[j]] = 1;
+            int currentLength = j - i + 1;
+            if (currentLength > maxLength) {
+                maxLength = currentLength;
+            }
+        }
+    }
+    
+    return maxLength;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+
+class Solution {
+    public int LengthOfLongestSubstring(string s) {
+        int n = s.Length;
+        int maxLength = 0;
+        
+        for (int i = 0; i < n; i++) {
+            HashSet<char> charSet = new HashSet<char>();
+            for (int j = i; j < n; j++) {
+                if (charSet.Contains(s[j])) {
+                    break;
+                }
+                charSet.Add(s[j]);
+                maxLength = Math.Max(maxLength, j - i + 1);
+            }
+        }
+        
+        return maxLength;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function lengthOfLongestSubstring(s: string): number {
+    const n = s.length;
+    let maxLength = 0;
+    
+    for (let i = 0; i < n; i++) {
+        const charSet = new Set<string>();
+        for (let j = i; j < n; j++) {
+            if (charSet.has(s[j])) {
+                break;
+            }
+            charSet.add(s[j]);
+            maxLength = Math.max(maxLength, j - i + 1);
+        }
+    }
+    
+    return maxLength;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func lengthOfLongestSubstring(_ s: String) -> Int {
+        let n = s.count
+        let sArray = Array(s)
+        var maxLength = 0
+        
+        for i in 0..<n {
+            var charSet = Set<Character>()
+            for j in i..<n {
+                if charSet.contains(sArray[j]) {
+                    break
+                }
+                charSet.insert(sArray[j])
+                maxLength = max(maxLength, j - i + 1)
+            }
+        }
+        
+        return maxLength
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n^3), where n is the length of the string. The nested loops contribute O(n^2), and for each substring, checking for duplicates takes O(n).
+- Space: O(min(m,n)), where m is the size of the character set. In the worst case, the set stores all unique characters of the string.
+- Notes: This brute-force approach is inefficient due to the repeated work of checking substrings. It's useful for understanding the problem but not suitable for large inputs.
+
+---
+
+## Sliding Window with HashSet
+
+**Intuition**
+
+To optimize, we can use a sliding window technique. We maintain a window that represents the current substring without repeating characters. As we expand the window to the right, if we encounter a duplicate, we shrink it from the left until the duplicate is removed.
+
+**Steps**
+
+- Initialize two pointers, left and right, to represent the window boundaries. Start with both at index 0.
+- Use a HashSet to keep track of characters in the current window. As we move the right pointer, add characters to the set.
+- If the character at the right pointer is already in the set, move the left pointer and remove characters from the set until the duplicate is gone.
+- Keep track of the maximum window size encountered during this process.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def lengthOfLongestSubstring(s: str) -> int:
+    n = len(s)
+    char_set = set()
+    left = 0
+    max_length = 0
+    
+    for right in range(n):
+        while s[right] in char_set:
+            char_set.remove(s[left])
+            left += 1
+        char_set.add(s[right])
+        max_length = max(max_length, right - left + 1)
+    
+    return max_length` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int n = s.length();
+        Set<Character> charSet = new HashSet<>();
+        int left = 0;
+        int maxLength = 0;
+        
+        for (int right = 0; right < n; right++) {
+            while (charSet.contains(s.charAt(right))) {
+                charSet.remove(s.charAt(left));
+                left++;
+            }
+            charSet.add(s.charAt(right));
+            maxLength = Math.max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+    let n = s.length;
+    let charSet = new Set();
+    let left = 0;
+    let maxLength = 0;
+    
+    for (let right = 0; right < n; right++) {
+        while (charSet.has(s[right])) {
+            charSet.delete(s[left]);
+            left++;
+        }
+        charSet.add(s[right]);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    
+    return maxLength;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <unordered_set>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = s.length();
+        unordered_set<char> charSet;
+        int left = 0;
+        int maxLength = 0;
+        
+        for (int right = 0; right < n; right++) {
+            while (charSet.find(s[right]) != charSet.end()) {
+                charSet.erase(s[left]);
+                left++;
+            }
+            charSet.insert(s[right]);
+            maxLength = max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        n = len(s)
+        char_set = set()
+        left = 0
+        max_length = 0
+        
+        for right in range(n):
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+            char_set.add(s[right])
+            max_length = max(max_length, right - left + 1)
+        
+        return max_length` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <string.h>
+
+int lengthOfLongestSubstring(char* s) {
+    int n = strlen(s);
+    int charSet[128] = {0}; // Assuming ASCII characters
+    int left = 0;
+    int maxLength = 0;
+    
+    for (int right = 0; right < n; right++) {
+        while (charSet[s[right]]) {
+            charSet[s[left]] = 0;
+            left++;
+        }
+        charSet[s[right]] = 1;
+        int currentLength = right - left + 1;
+        if (currentLength > maxLength) {
+            maxLength = currentLength;
+        }
+    }
+    
+    return maxLength;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+
+class Solution {
+    public int LengthOfLongestSubstring(string s) {
+        int n = s.Length;
+        HashSet<char> charSet = new HashSet<char>();
+        int left = 0;
+        int maxLength = 0;
+        
+        for (int right = 0; right < n; right++) {
+            while (charSet.Contains(s[right])) {
+                charSet.Remove(s[left]);
+                left++;
+            }
+            charSet.Add(s[right]);
+            maxLength = Math.Max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function lengthOfLongestSubstring(s: string): number {
+    const n = s.length;
+    const charSet = new Set<string>();
+    let left = 0;
+    let maxLength = 0;
+    
+    for (let right = 0; right < n; right++) {
+        while (charSet.has(s[right])) {
+            charSet.delete(s[left]);
+            left++;
+        }
+        charSet.add(s[right]);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    
+    return maxLength;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func lengthOfLongestSubstring(_ s: String) -> Int {
+        let n = s.count
+        let sArray = Array(s)
+        var charSet = Set<Character>()
+        var left = 0
+        var maxLength = 0
+        
+        for right in 0..<n {
+            while charSet.contains(sArray[right]) {
+                charSet.remove(sArray[left])
+                left += 1
+            }
+            charSet.insert(sArray[right])
+            maxLength = max(maxLength, right - left + 1)
+        }
+        
+        return maxLength
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(2n) = O(n), where n is the length of the string. In the worst case, each character will be visited twice by the left and right pointers.
+- Space: O(min(m,n)), where m is the size of the character set. The space used by the HashSet is bounded by the size of the character set.
+- Notes: This approach is significantly more efficient than the brute-force method. It's a classic example of the sliding window technique, which is widely used in substring problems.
+
+---
+
+## Optimized Sliding Window with HashMap
+
+**Intuition**
+
+We can further optimize the sliding window approach by using a HashMap to store the last index of each character. This allows us to jump the left pointer directly to the correct position when a duplicate is found, avoiding unnecessary iterations.
+
+**Steps**
+
+- Initialize two pointers, left and right, and a HashMap to store the last seen index of each character.
+- Iterate through the string with the right pointer. For each character, check if it's in the HashMap and its last seen index is within the current window.
+- If so, move the left pointer to the maximum of its current position and one position after the last occurrence of the current character.
+- Update the character's last seen index in the HashMap and update the maximum length if the current window is larger.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def lengthOfLongestSubstring(s: str) -> int:
+    n = len(s)
+    char_index_map = {}
+    left = 0
+    max_length = 0
+    
+    for right in range(n):
+        if s[right] in char_index_map and char_index_map[s[right]] >= left:
+            left = char_index_map[s[right]] + 1
+        char_index_map[s[right]] = right
+        max_length = max(max_length, right - left + 1)
+    
+    return max_length` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int n = s.length();
+        Map<Character, Integer> charIndexMap = new HashMap<>();
+        int left = 0;
+        int maxLength = 0;
+        
+        for (int right = 0; right < n; right++) {
+            char currentChar = s.charAt(right);
+            if (charIndexMap.containsKey(currentChar) && charIndexMap.get(currentChar) >= left) {
+                left = charIndexMap.get(currentChar) + 1;
+            }
+            charIndexMap.put(currentChar, right);
+            maxLength = Math.max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function(s) {
+    let n = s.length;
+    let charIndexMap = new Map();
+    let left = 0;
+    let maxLength = 0;
+    
+    for (let right = 0; right < n; right++) {
+        if (charIndexMap.has(s[right]) && charIndexMap.get(s[right]) >= left) {
+            left = charIndexMap.get(s[right]) + 1;
+        }
+        charIndexMap.set(s[right], right);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    
+    return maxLength;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <unordered_map>
+#include <algorithm>
+using namespace std;
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int n = s.length();
+        unordered_map<char, int> charIndexMap;
+        int left = 0;
+        int maxLength = 0;
+        
+        for (int right = 0; right < n; right++) {
+            char currentChar = s[right];
+            if (charIndexMap.find(currentChar) != charIndexMap.end() && charIndexMap[currentChar] >= left) {
+                left = charIndexMap[currentChar] + 1;
+            }
+            charIndexMap[currentChar] = right;
+            maxLength = max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        n = len(s)
+        char_index_map = {}
+        left = 0
+        max_length = 0
+        
+        for right in range(n):
+            if s[right] in char_index_map and char_index_map[s[right]] >= left:
+                left = char_index_map[s[right]] + 1
+            char_index_map[s[right]] = right
+            max_length = max(max_length, right - left + 1)
+        
+        return max_length` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <string.h>
+
+int lengthOfLongestSubstring(char* s) {
+    int n = strlen(s);
+    int lastIndex[128]; // Assuming ASCII characters
+    for (int i = 0; i < 128; i++) {
+        lastIndex[i] = -1;
+    }
+    
+    int left = 0;
+    int maxLength = 0;
+    
+    for (int right = 0; right < n; right++) {
+        if (lastIndex[s[right]] >= left) {
+            left = lastIndex[s[right]] + 1;
+        }
+        lastIndex[s[right]] = right;
+        int currentLength = right - left + 1;
+        if (currentLength > maxLength) {
+            maxLength = currentLength;
+        }
+    }
+    
+    return maxLength;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+
+class Solution {
+    public int LengthOfLongestSubstring(string s) {
+        int n = s.Length;
+        Dictionary<char, int> charIndexMap = new Dictionary<char, int>();
+        int left = 0;
+        int maxLength = 0;
+        
+        for (int right = 0; right < n; right++) {
+            char currentChar = s[right];
+            if (charIndexMap.ContainsKey(currentChar) && charIndexMap[currentChar] >= left) {
+                left = charIndexMap[currentChar] + 1;
+            }
+            charIndexMap[currentChar] = right;
+            maxLength = Math.Max(maxLength, right - left + 1);
+        }
+        
+        return maxLength;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function lengthOfLongestSubstring(s: string): number {
+    const n = s.length;
+    const charIndexMap = new Map<string, number>();
+    let left = 0;
+    let maxLength = 0;
+    
+    for (let right = 0; right < n; right++) {
+        if (charIndexMap.has(s[right]) && charIndexMap.get(s[right])! >= left) {
+            left = charIndexMap.get(s[right])! + 1;
+        }
+        charIndexMap.set(s[right], right);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    
+    return maxLength;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func lengthOfLongestSubstring(_ s: String) -> Int {
+        let n = s.count
+        let sArray = Array(s)
+        var charIndexMap: [Character: Int] = [:]
+        var left = 0
+        var maxLength = 0
+        
+        for right in 0..<n {
+            let currentChar = sArray[right]
+            if let lastIndex = charIndexMap[currentChar], lastIndex >= left {
+                left = lastIndex + 1
+            }
+            charIndexMap[currentChar] = right
+            maxLength = max(maxLength, right - left + 1)
+        }
+        
+        return maxLength
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the string. We iterate through the string once, and each character is processed at most twice (once by right pointer, once by left pointer).
+- Space: O(min(m,n)), where m is the size of the character set. The space used by the HashMap is bounded by the size of the character set.
+- Notes: This is the optimal solution for this problem. It's a significant improvement over the previous sliding window approach, especially for strings with long repeated sequences. The key insight is using the HashMap to make large jumps when duplicates are found.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Longest Substring Without Repeating Characters Solutions","datePublished":"2025-09-07T12:13:22.153Z","description":"Given a string s, find the length of the longest substring without repeating characters.","keywords":"LeetCode, Longest Substring Without Repeating Characters, Medium, Hash Table, String, Sliding Window, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force with Nested Loops complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n^3), where n is the length of the string. The nested loops contribute O(n^2), and for each substring, checking for duplicates takes O(n).; Space: O(min(m,n)), where m is the size of the character set. In the worst case, the set stores all unique characters of the string.. This brute-force approach is inefficient due to the repeated work of checking substrings. It's useful for understanding the problem but not suitable for large inputs."}},{"@type":"Question","name":"Sliding Window with HashSet complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(2n) = O(n), where n is the length of the string. In the worst case, each character will be visited twice by the left and right pointers.; Space: O(min(m,n)), where m is the size of the character set. The space used by the HashSet is bounded by the size of the character set.. This approach is significantly more efficient than the brute-force method. It's a classic example of the sliding window technique, which is widely used in substring problems."}},{"@type":"Question","name":"Optimized Sliding Window with HashMap complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the string. We iterate through the string once, and each character is processed at most twice (once by right pointer, once by left pointer).; Space: O(min(m,n)), where m is the size of the character set. The space used by the HashMap is bounded by the size of the character set.. This is the optimal solution for this problem. It's a significant improvement over the previous sliding window approach, especially for strings with long repeated sequences. The key insight is using the HashMap to make large jumps when duplicates are found."}}]}).replace(/</g,'\\u003c')}
+</script>
