@@ -5,21 +5,40 @@ import { cn } from "@lib/utils"
 
 type Props = {
   tags: string[]
+  difficulties?: string[]
   data: CollectionEntry<"blog">[]
 }
 
-export default function Blog({ data, tags }: Props) {
+export default function Blog({ data, tags, difficulties = [] }: Props) {
   const [filter, setFilter] = createSignal(new Set<string>())
+  const [difficultyFilter, setDifficultyFilter] = createSignal(new Set<string>())
   const [posts, setPosts] = createSignal<CollectionEntry<"blog">[]>([])
 
   createEffect(() => {
-    setPosts(data.filter((entry) => 
-      Array.from(filter()).every((value) => 
-        entry.data.tags.some((tag:string) => 
-          tag.toLowerCase() === String(value).toLowerCase()
-        )
-      )
-    ))
+    const selectedTags = filter()
+    const selectedDifficulties = difficultyFilter()
+
+    setPosts(
+      data.filter((entry) => {
+        const matchesTags =
+          selectedTags.size === 0 ||
+          Array.from(selectedTags).every((value) =>
+            entry.data.tags.some((tag: string) =>
+              tag.toLowerCase() === String(value).toLowerCase()
+            )
+          )
+
+        const entryDifficulty = (entry.data as any).difficulty as string | undefined
+        const matchesDifficulty =
+          selectedDifficulties.size === 0 ||
+          (!!entryDifficulty &&
+            Array.from(selectedDifficulties).some(
+              (d) => d.toLowerCase() === entryDifficulty.toLowerCase()
+            ))
+
+        return matchesTags && matchesDifficulty
+      })
+    )
   })
 
   function toggleTag(tag: string) {
@@ -31,11 +50,38 @@ export default function Blog({ data, tags }: Props) {
     )
   }
 
+  function toggleDifficulty(d: string) {
+    setDifficultyFilter((prev) =>
+      new Set(prev.has(d) ? [...prev].filter((t) => t !== d) : [...prev, d])
+    )
+  }
+
   return (
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
       <div class="col-span-3 sm:col-span-1">
         <div class="sticky top-24">
           <div class="text-sm font-semibold uppercase mb-2 text-black dark:text-white">Filter</div>
+          {difficulties.length > 0 && (
+            <div class="mb-4">
+              <div class="text-xs uppercase mb-1 opacity-70">Difficulty</div>
+              <ul class="flex flex-wrap sm:flex-col gap-1.5">
+                <For each={difficulties}>
+                  {(d) => (
+                    <li>
+                      <button onClick={() => toggleDifficulty(d)} class={cn("w-full px-2 py-1 rounded", "whitespace-nowrap overflow-hidden overflow-ellipsis", "flex gap-2 items-center", "bg-black/5 dark:bg-white/10", "hover:bg-black/10 hover:dark:bg-white/15", "transition-colors duration-300 ease-in-out", difficultyFilter().has(d) && "text-black dark:text-white") }>
+                        <svg class={cn("size-5 fill-black/50 dark:fill-white/50", "transition-colors duration-300 ease-in-out", difficultyFilter().has(d) && "fill-black dark:fill-white")}>
+                          <use href={`/ui.svg#square`} class={cn(!difficultyFilter().has(d) ? "block" : "hidden")} />
+                          <use href={`/ui.svg#square-check`} class={cn(difficultyFilter().has(d) ? "block" : "hidden")} />
+                        </svg>
+                        {d}
+                      </button>
+                    </li>
+                  )}
+                </For>
+              </ul>
+            </div>
+          )}
+          <div class="text-xs uppercase mb-1 opacity-70">Tags</div>
           <ul class="flex flex-wrap sm:flex-col gap-1.5">
             <For each={tags}>
               {(tag) => (

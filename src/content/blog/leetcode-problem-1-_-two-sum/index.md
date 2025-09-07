@@ -7,6 +7,7 @@ tags:
 - Blind 75
 - Algorithms
 - Data Structures
+difficulty: Easy
 ---
 
 **Summary:** Explore various approaches to solving the 'Two Sum' problem on LeetCode, including brute force and hash table methods.

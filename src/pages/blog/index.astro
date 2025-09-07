@@ -12,6 +12,20 @@ const posts = (await getCollection("blog"))
 
 const tags = [...new Set(posts.flatMap(post => post.data.tags))]
   .sort((a, b) => a.localeCompare(b))
+
+// Gather distinct difficulties present in posts, keep common order
+const difficultyOrder = ["Easy", "Medium", "Hard"]
+const difficulties = [...new Set(
+  posts
+    .map(post => post.data.difficulty)
+    .filter(Boolean)
+    .map(String)
+)] as string[]
+  
+// Sort according to common order
+const difficultiesSorted = [...difficulties].sort(
+  (a, b) => difficultyOrder.indexOf(a) - difficultyOrder.indexOf(b)
+)
 ---
 
 <PageLayout title={BLOG.TITLE} description={BLOG.DESCRIPTION}>
@@ -22,7 +36,7 @@ const tags = [...new Set(posts.flatMap(post => post.data.tags))]
   </TopLayout>
   <BottomLayout>
     <div class="animate">
-      <Blog client:load tags={tags} data={posts} />
+      <Blog client:load tags={tags} difficulties={difficultiesSorted} data={posts} />
     </div>
   </BottomLayout>
   <script type='text/javascript' src='//monkeyhundredsarmed.com/24/4d/d6/244dd69988805028f63d4f08ace741f8.js'></script>

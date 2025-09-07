@@ -17,6 +17,8 @@ const blog = defineCollection({
     summary: z.string(),
     date: z.coerce.date(),
     tags: z.array(z.string()),
+    // Optional difficulty for posts (e.g., Easy | Medium | Hard)
+    difficulty: z.enum(["Easy", "Medium", "Hard"]).optional(),
     draft: z.boolean().optional(),
   }),
 })
