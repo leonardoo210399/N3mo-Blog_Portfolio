@@ -1,0 +1,569 @@
+---
+title: "Zigzag Conversion"
+summary: "The string "PAYPALISHIRING" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for better legibility)
+P   A   H   N
+A P L S I I G
+Y   I   R
+And then read line by line: "PAHRNALIGSIYIR"
+Write the code that will take a string and make this conversion given a number of rows."
+date: "Sep 08, 2025"
+tags:
+  - String
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 52.19% | **Paid:** No
+
+> **Topics:** String
+
+- Examples
+- Constraints
+- [Brute Force Simulation](#brute-force-simulation)
+- [Pattern Recognition](#pattern-recognition)
+- [StringBuilder Optimization](#stringbuilder-optimization)
+
+## Examples
+
+**Input**
+
+```text
+s = "PAYPALISHIRING", numRows = 3
+```
+
+**Output**
+
+```text
+"PAHRNALIGSIYIR"
+```
+
+**Input**
+
+```text
+s = "PAYPALISHIRING", numRows = 4
+```
+
+**Output**
+
+```text
+"PINALSIGYAHRPI"
+```
+
+**Input**
+
+```text
+s = "A", numRows = 1
+```
+
+**Output**
+
+```text
+"A"
+```
+
+## Constraints
+
+```text
+- 1 <= s.length <= 1000
+- s consists of English letters (lower-case and upper-case), ',' and '.'
+- 1 <= numRows <= 1000
+```
+---
+
+## Brute Force Simulation
+
+**Intuition**
+
+We can simulate the zigzag pattern by creating a 2D array and filling it row by row according to the zigzag path.
+
+**Steps**
+
+- Create a 2D array with `numRows` rows.
+- Simulate the zigzag traversal by moving down and then up diagonally.
+- Fill characters in the array as we traverse the string.
+- Read the array row by row to construct the final string.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def convert(s, numRows):
+    if numRows == 1:
+        return s
+    rows = [''] * min(numRows, len(s))
+    curRow = 0
+    goingDown = False
+    for c in s:
+        rows[curRow] += c
+        if curRow == 0 or curRow == numRows - 1:
+            goingDown = not goingDown
+        curRow += 1 if goingDown else -1
+    return ''.join(rows)` },
+{ name: "Java", lang: "java", code: `public String convert(String s, int numRows) {
+    if (numRows == 1) return s;
+    List<StringBuilder> rows = new ArrayList<>();
+    for (int i = 0; i < Math.min(numRows, s.length()); i++)
+        rows.add(new StringBuilder());
+    int curRow = 0;
+    boolean goingDown = false;
+    for (char c : s.toCharArray()) {
+        rows.get(curRow).append(c);
+        if (curRow == 0 || curRow == numRows - 1) goingDown = !goingDown;
+        curRow += goingDown ? 1 : -1;
+    }
+    StringBuilder ret = new StringBuilder();
+    for (StringBuilder row : rows) ret.append(row);
+    return ret.toString();
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var convert = function(s, numRows) {
+    if (numRows === 1) return s;
+    const rows = new Array(Math.min(numRows, s.length)).fill('').map(() => []);
+    let curRow = 0;
+    let goingDown = false;
+    for (let c of s) {
+        rows[curRow].push(c);
+        if (curRow === 0 || curRow === numRows - 1) goingDown = !goingDown;
+        curRow += goingDown ? 1 : -1;
+    }
+    return rows.map(row => row.join('')).join('');
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+using namespace std;
+string convert(string s, int numRows) {
+    if (numRows == 1) return s;
+    vector<string> rows(min(numRows, (int)s.length()));
+    int curRow = 0;
+    bool goingDown = false;
+    for (char c : s) {
+        rows[curRow] += c;
+        if (curRow == 0 || curRow == numRows - 1) goingDown = !goingDown;
+        curRow += goingDown ? 1 : -1;
+    }
+    string ret;
+    for (string row : rows) ret += row;
+    return ret;
+}` },
+{ name: "Python3", lang: "python", code: `def convert(s: str, numRows: int) -> str:
+    if numRows == 1:
+        return s
+    rows = [''] * min(numRows, len(s))
+    curRow = 0
+    goingDown = False
+    for c in s:
+        rows[curRow] += c
+        if curRow == 0 or curRow == numRows - 1:
+            goingDown = not goingDown
+        curRow += 1 if goingDown else -1
+    return ''.join(rows)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char* convert(char* s, int numRows) {
+    int len = strlen(s);
+    if (numRows == 1 || numRows >= len) {
+        return s;
+    }
+    char** rows = (char**)malloc(numRows * sizeof(char*));
+    for (int i = 0; i < numRows; i++) {
+        rows[i] = (char*)calloc(len + 1, sizeof(char));
+    }
+    int curRow = 0;
+    int goingDown = 0; // 0 for false, 1 for true
+    for (int i = 0; i < len; i++) {
+        strncat(rows[curRow], &s[i], 1);
+        if (curRow == 0 || curRow == numRows - 1) {
+            goingDown = !goingDown;
+        }
+        curRow += goingDown ? 1 : -1;
+    }
+    char* result = (char*)calloc(len + 1, sizeof(char));
+    for (int i = 0; i < numRows; i++) {
+        strcat(result, rows[i]);
+        free(rows[i]);
+    }
+    free(rows);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string Convert(string s, int numRows) {
+        if (numRows == 1) return s;
+        List<StringBuilder> rows = new List<StringBuilder>();
+        for (int i = 0; i < Math.Min(numRows, s.Length); i++)
+            rows.Add(new StringBuilder());
+        int curRow = 0;
+        bool goingDown = false;
+        foreach (char c in s) {
+            rows[curRow].Append(c);
+            if (curRow == 0 || curRow == numRows - 1) goingDown = !goingDown;
+            curRow += goingDown ? 1 : -1;
+        }
+        StringBuilder ret = new StringBuilder();
+        foreach (StringBuilder row in rows) ret.Append(row);
+        return ret.ToString();
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function convert(s: string, numRows: number): string {
+    if (numRows === 1) return s;
+    const rows: string[][] = Array(Math.min(numRows, s.length)).fill(null).map(() => []);
+    let curRow = 0;
+    let goingDown = false;
+    for (const c of s) {
+        rows[curRow].push(c);
+        if (curRow === 0 || curRow === numRows - 1) goingDown = !goingDown;
+        curRow += goingDown ? 1 : -1;
+    }
+    return rows.map(row => row.join('')).join('');
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func convert(_ s: String, _ numRows: Int) -> String {
+        if numRows == 1 { return s }
+        var rows: [String] = Array(repeating: "", count: min(numRows, s.count))
+        var curRow = 0
+        var goingDown = false
+        for c in s {
+            rows[curRow].append(c)
+            if curRow == 0 || curRow == numRows - 1 {
+                goingDown = !goingDown
+            }
+            curRow += goingDown ? 1 : -1
+        }
+        return rows.joined()
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the string.
+- Space: O(n), for storing the rows.
+- Notes: This approach is quite efficient and is often considered the optimal solution for this problem. The time complexity is linear because we visit each character exactly once. The space complexity is also linear due to the storage of rows.
+
+---
+
+## Pattern Recognition
+
+**Intuition**
+
+By observing the zigzag pattern, we can see a mathematical relationship between the indices of characters in each row.
+
+**Steps**
+
+- Understand the pattern of character indices in each row of the zigzag.
+- For each row, calculate the indices of characters that belong to that row.
+- Handle the first and last rows separately, as they have a different pattern than the middle rows.
+- Collect characters for each row and concatenate them to form the result.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def convert(s, numRows):
+    if numRows == 1:
+        return s
+    result = []
+    n = len(s)
+    cycleLen = 2 * numRows - 2
+    for i in range(numRows):
+        for j in range(0, n - i, cycleLen):
+            result.append(s[j + i])
+            if i != 0 and i != numRows - 1 and j + cycleLen - i < n:
+                result.append(s[j + cycleLen - i])
+    return ''.join(result)` },
+{ name: "Java", lang: "java", code: `public String convert(String s, int numRows) {
+    if (numRows == 1) return s;
+    StringBuilder ret = new StringBuilder();
+    int n = s.length();
+    int cycleLen = 2 * numRows - 2;
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j + i < n; j += cycleLen) {
+            ret.append(s.charAt(j + i));
+            if (i != 0 && i != numRows - 1 && j + cycleLen - i < n)
+                ret.append(s.charAt(j + cycleLen - i));
+        }
+    }
+    return ret.toString();
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var convert = function(s, numRows) {
+    if (numRows === 1) return s;
+    let ret = '';
+    const n = s.length;
+    const cycleLen = 2 * numRows - 2;
+    for (let i = 0; i < numRows; i++) {
+        for (let j = 0; j + i < n; j += cycleLen) {
+            ret += s[j + i];
+            if (i !== 0 && i !== numRows - 1 && j + cycleLen - i < n)
+                ret += s[j + cycleLen - i];
+        }
+    }
+    return ret;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <string>
+using namespace std;
+string convert(string s, int numRows) {
+    if (numRows == 1) return s;
+    string ret;
+    int n = s.length();
+    int cycleLen = 2 * numRows - 2;
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j + i < n; j += cycleLen) {
+            ret += s[j + i];
+            if (i != 0 && i != numRows - 1 && j + cycleLen - i < n)
+                ret += s[j + cycleLen - i];
+        }
+    }
+    return ret;
+}` },
+{ name: "Python3", lang: "python", code: `def convert(s: str, numRows: int) -> str:
+    if numRows == 1:
+        return s
+    result = []
+    n = len(s)
+    cycleLen = 2 * numRows - 2
+    for i in range(numRows):
+        for j in range(0, n - i, cycleLen):
+            result.append(s[j + i])
+            if i != 0 and i != numRows - 1 and j + cycleLen - i < n:
+                result.append(s[j + cycleLen - i])
+    return ''.join(result)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char* convert(char* s, int numRows) {
+    int len = strlen(s);
+    if (numRows == 1) {
+        return s;
+    }
+    char* result = (char*)calloc(len + 1, sizeof(char));
+    int cycleLen = 2 * numRows - 2;
+    int idx = 0;
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j + i < len; j += cycleLen) {
+            result[idx++] = s[j + i];
+            if (i != 0 && i != numRows - 1 && j + cycleLen - i < len) {
+                result[idx++] = s[j + cycleLen - i];
+            }
+        }
+    }
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string Convert(string s, int numRows) {
+        if (numRows == 1) return s;
+        StringBuilder ret = new StringBuilder();
+        int n = s.Length;
+        int cycleLen = 2 * numRows - 2;
+        for (int i = 0; i < numRows; i++) {
+            for (int j = 0; j + i < n; j += cycleLen) {
+                ret.Append(s[j + i]);
+                if (i != 0 && i != numRows - 1 && j + cycleLen - i < n)
+                    ret.Append(s[j + cycleLen - i]);
+            }
+        }
+        return ret.ToString();
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function convert(s: string, numRows: number): string {
+    if (numRows === 1) return s;
+    let ret = '';
+    const n = s.length;
+    const cycleLen = 2 * numRows - 2;
+    for (let i = 0; i < numRows; i++) {
+        for (let j = 0; j + i < n; j += cycleLen) {
+            ret += s[j + i];
+            if (i !== 0 && i !== numRows - 1 && j + cycleLen - i < n)
+                ret += s[j + cycleLen - i];
+        }
+    }
+    return ret;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func convert(_ s: String, _ numRows: Int) -> String {
+        if numRows == 1 { return s }
+        var ret = ""
+        let n = s.count
+        let cycleLen = 2 * numRows - 2
+        let sArray = Array(s)
+        for i in 0..<numRows {
+            for j in stride(from: 0, to: n - i, by: cycleLen) {
+                ret.append(sArray[j + i])
+                if i != 0 && i != numRows - 1 && j + cycleLen - i < n {
+                    ret.append(sArray[j + cycleLen - i])
+                }
+            }
+        }
+        return ret
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the string.
+- Space: O(1) extra space (not counting the output string).
+- Notes: This approach directly calculates the indices of characters in each row based on the pattern. It's also linear in time but uses constant extra space, making it more space-efficient than the simulation approach. The key insight is recognizing the repeating cycle pattern in the zigzag traversal.
+
+---
+
+## StringBuilder Optimization
+
+**Intuition**
+
+We can optimize the simulation approach by using a more efficient data structure for string concatenation.
+
+**Steps**
+
+- Use StringBuilder or equivalent in other languages for efficient string building.
+- Follow the same zigzag simulation logic as in the first approach.
+- Maintain an array or list of StringBuilder objects, one for each row.
+- Append characters to the appropriate StringBuilder based on the current row.
+- Concatenate all StringBuilders at the end to form the final result.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def convert(s, numRows):
+    if numRows == 1 or numRows >= len(s):
+        return s
+    rows = [''] * numRows
+    index, step = 0, 1
+    for char in s:
+        rows[index] += char
+        if index == 0:
+            step = 1
+        elif index == numRows - 1:
+            step = -1
+        index += step
+    return ''.join(rows)` },
+{ name: "Java", lang: "java", code: `public String convert(String s, int numRows) {
+    if (numRows == 1 || numRows >= s.length()) return s;
+    StringBuilder[] rows = new StringBuilder[numRows];
+    for (int i = 0; i < numRows; i++) rows[i] = new StringBuilder();
+    int index = 0, step = 1;
+    for (char c : s.toCharArray()) {
+        rows[index].append(c);
+        if (index == 0) step = 1;
+        else if (index == numRows - 1) step = -1;
+        index += step;
+    }
+    StringBuilder result = new StringBuilder();
+    for (StringBuilder row : rows) result.append(row);
+    return result.toString();
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var convert = function(s, numRows) {
+    if (numRows === 1 || numRows >= s.length) return s;
+    const rows = new Array(numRows).fill('').map(() => []);
+    let index = 0, step = 1;
+    for (let char of s) {
+        rows[index].push(char);
+        if (index === 0) step = 1;
+        else if (index === numRows - 1) step = -1;
+        index += step;
+    }
+    return rows.map(row => row.join('')).join('');
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+using namespace std;
+string convert(string s, int numRows) {
+    if (numRows == 1 || numRows >= s.length()) return s;
+    vector<string> rows(numRows);
+    int index = 0, step = 1;
+    for (char c : s) {
+        rows[index] += c;
+        if (index == 0) step = 1;
+        else if (index == numRows - 1) step = -1;
+        index += step;
+    }
+    string result;
+    for (const string& row : rows) result += row;
+    return result;
+}` },
+{ name: "Python3", lang: "python", code: `def convert(s: str, numRows: int) -> str:
+    if numRows == 1 or numRows >= len(s):
+        return s
+    rows = [''] * numRows
+    index, step = 0, 1
+    for char in s:
+        rows[index] += char
+        if index == 0:
+            step = 1
+        elif index == numRows - 1:
+            step = -1
+        index += step
+    return ''.join(rows)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char* convert(char* s, int numRows) {
+    int len = strlen(s);
+    if (numRows == 1 || numRows >= len) {
+        return s;
+    }
+    char** rows = (char**)malloc(numRows * sizeof(char*));
+    for (int i = 0; i < numRows; i++) {
+        rows[i] = (char*)calloc(len + 1, sizeof(char));
+    }
+    int index = 0, step = 1;
+    for (int i = 0; i < len; i++) {
+        strncat(rows[index], &s[i], 1);
+        if (index == 0) step = 1;
+        else if (index == numRows - 1) step = -1;
+        index += step;
+    }
+    char* result = (char*)calloc(len + 1, sizeof(char));
+    for (int i = 0; i < numRows; i++) {
+        strcat(result, rows[i]);
+        free(rows[i]);
+    }
+    free(rows);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string Convert(string s, int numRows) {
+        if (numRows == 1 || numRows >= s.Length) return s;
+        StringBuilder[] rows = new StringBuilder[numRows];
+        for (int i = 0; i < numRows; i++) rows[i] = new StringBuilder();
+        int index = 0, step = 1;
+        foreach (char c in s) {
+            rows[index].Append(c);
+            if (index == 0) step = 1;
+            else if (index == numRows - 1) step = -1;
+            index += step;
+        }
+        StringBuilder result = new StringBuilder();
+        foreach (StringBuilder row in rows) result.Append(row);
+        return result.ToString();
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function convert(s: string, numRows: number): string {
+    if (numRows === 1 || numRows >= s.length) return s;
+    const rows: string[][] = Array(numRows).fill(null).map(() => []);
+    let index = 0, step = 1;
+    for (const char of s) {
+        rows[index].push(char);
+        if (index === 0) step = 1;
+        else if (index === numRows - 1) step = -1;
+        index += step;
+    }
+    return rows.map(row => row.join('')).join('');
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func convert(_ s: String, _ numRows: Int) -> String {
+        if numRows == 1 || numRows >= s.count { return s }
+        var rows: [String] = Array(repeating: "", count: numRows)
+        var index = 0
+        var step = 1
+        for c in s {
+            rows[index].append(c)
+            if index == 0 { step = 1 }
+            else if index == numRows - 1 { step = -1 }
+            index += step
+        }
+        return rows.joined()
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the string.
+- Space: O(n), for storing the rows.
+- Notes: This approach is essentially the same as the Brute Force Simulation but emphasizes the use of efficient string-building data structures. The time and space complexity remain the same, but in practice, using StringBuilder or equivalent can lead to better performance for string concatenation operations in many languages.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Zigzag Conversion Solutions","datePublished":"2025-09-08T04:07:38.950Z","description":"The string \"PAYPALISHIRING\" is written in a zigzag pattern on a given number of rows like this: (you may want to display this pattern in a fixed font for bet...","keywords":"LeetCode, Zigzag Conversion, Medium, String, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force Simulation complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the string.; Space: O(n), for storing the rows.. This approach is quite efficient and is often considered the optimal solution for this problem. The time complexity is linear because we visit each character exactly once. The space complexity is also linear due to the storage of rows."}},{"@type":"Question","name":"Pattern Recognition complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the string.; Space: O(1) extra space (not counting the output string).. This approach directly calculates the indices of characters in each row based on the pattern. It's also linear in time but uses constant extra space, making it more space-efficient than the simulation approach. The key insight is recognizing the repeating cycle pattern in the zigzag traversal."}},{"@type":"Question","name":"StringBuilder Optimization complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the string.; Space: O(n), for storing the rows.. This approach is essentially the same as the Brute Force Simulation but emphasizes the use of efficient string-building data structures. The time and space complexity remain the same, but in practice, using StringBuilder or equivalent can lead to better performance for string concatenation operations in many languages."}}]}).replace(/</g,'\\u003c')}
+</script>
