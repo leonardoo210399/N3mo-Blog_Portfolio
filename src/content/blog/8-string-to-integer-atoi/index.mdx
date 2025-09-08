@@ -1,0 +1,1204 @@
+---
+title: "String to Integer (atoi)"
+summary: "Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer (similar to C/C++'s atoi function). The algorithm for myAtoi(string s) is as follows: 1. Read in and ignore any leading whitespace. 2. Check if the next character (if not already at the end of the string) is '-' or '+'. Read this character in if it is either. This determines if the final result is negative or positive respectively. If neither is present, assume the result is positive. 3. Read in next the characters until the next non-digit character or the end of the input is reached. The rest of the string is ignored. 4. Convert these digits into an integer. If no digits were read, then the integer is 0. Change the sign as necessary. 5. If the integer is out of the 32-bit signed integer range [-2^31, 2^31 - 1], then clamp the integer so that it remains in the range. Specifically, integers less than -2^31 should be clamped to -2^31, and integers greater than 2^31 - 1 should be clamped to 2^31 - 1. Return the integer as the final result."
+date: "Sep 08, 2025"
+tags:
+  - String
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 19.66% | **Paid:** No
+
+> **Topics:** String
+
+- Examples
+- Constraints
+- [Brute Force Approach](#brute-force-approach)
+- [Optimized Approach with Early Termination](#optimized-approach-with-early-termination)
+- [Regular Expression Approach](#regular-expression-approach)
+
+## Examples
+
+**Input**
+
+```text
+"42"
+```
+
+**Output**
+
+```text
+42
+```
+
+**Input**
+
+```text
+"   -42"
+```
+
+**Output**
+
+```text
+-42
+```
+
+**Input**
+
+```text
+"4193 with words"
+```
+
+**Output**
+
+```text
+4193
+```
+
+**Input**
+
+```text
+"words and 987"
+```
+
+**Output**
+
+```text
+0
+```
+
+**Input**
+
+```text
+"-91283472332"
+```
+
+**Output**
+
+```text
+-2147483648
+```
+
+**Input**
+
+```text
+"+1"
+```
+
+**Output**
+
+```text
+1
+```
+
+**Input**
+
+```text
+"+-12"
+```
+
+**Output**
+
+```text
+0
+```
+
+## Constraints
+
+```text
+- 0 <= s.length <= 200
+- s consists of English letters (lower-case and upper-case), digits (0-9), ' ', '+', '-', and '.'
+```
+---
+
+## Brute Force Approach
+
+**Intuition**
+
+Iterate through the string character by character, following the exact steps described in the problem statement. Start by skipping leading whitespaces, then check for a sign, and finally convert the digits into a number.
+
+**Steps**
+
+- Start by skipping all leading whitespaces in the string.
+- Check if the next character is '+' or '-', to determine the sign of the number. If it's '-', set a negative flag.
+- Iterate through the subsequent characters and convert them into a number until a non-digit character is encountered.
+- While converting, handle overflow by checking if the number exceeds the 32-bit signed integer limits. If so, clamp it to the appropriate limit.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def myAtoi(s: str) -> int:
+    INT_MAX = 2**31 - 1
+    INT_MIN = -2**31
+    
+    i = 0
+    n = len(s)
+    
+    # Step 1: Skip leading whitespaces
+    while i < n and s[i] == ' ':
+        i += 1
+    
+    # Step 2: Check for sign
+    sign = 1
+    if i < n and s[i] == '-':
+        sign = -1
+        i += 1
+    elif i < n and s[i] == '+':
+        i += 1
+    
+    # Step 3: Convert digits to integer
+    result = 0
+    while i < n and s[i].isdigit():
+        digit = int(s[i])
+        
+        # Step 4: Handle overflow
+        if result > (INT_MAX - digit) // 10:
+            return INT_MAX if sign == 1 else INT_MIN
+        
+        result = result * 10 + digit
+        i += 1
+    
+    # Apply sign and clamp value
+    result *= sign
+    
+    if result < INT_MIN:
+        return INT_MIN
+    if result > INT_MAX:
+        return INT_MAX
+    
+    return result` },
+{ name: "Java", lang: "java", code: `public int myAtoi(String s) {
+    int INT_MAX = Integer.MAX_VALUE;
+    int INT_MIN = Integer.MIN_VALUE;
+    
+    int i = 0, n = s.length();
+    
+    // Step 1: Skip leading whitespaces
+    while (i < n && s.charAt(i) == ' ') i++;
+    
+    // Step 2: Check for sign
+    int sign = 1;
+    if (i < n && s.charAt(i) == '-') {
+        sign = -1;
+        i++;
+    } else if (i < n && s.charAt(i) == '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits to integer
+    int result = 0;
+    while (i < n && Character.isDigit(s.charAt(i))) {
+        int digit = s.charAt(i) - '0';
+        
+        // Step 4: Handle overflow
+        if (result > (INT_MAX - digit) / 10) {
+            return sign == 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return result;
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var myAtoi = function(s) {
+    const INT_MAX = Math.pow(2, 31) - 1;
+    const INT_MIN = -Math.pow(2, 31);
+    
+    let i = 0, n = s.length;
+    
+    // Step 1: Skip leading whitespaces
+    while (i < n && s[i] === ' ') i++;
+    
+    // Step 2: Check for sign
+    let sign = 1;
+    if (i < n && s[i] === '-') {
+        sign = -1;
+        i++;
+    } else if (i < n && s[i] === '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits to integer
+    let result = 0;
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        const digit = parseInt(s[i]);
+        
+        // Step 4: Handle overflow
+        if (result > Math.floor((INT_MAX - digit) / 10)) {
+            return sign === 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <climits>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    int myAtoi(string s) {
+        int i = 0, n = s.length();
+        
+        // Step 1: Skip leading whitespaces
+        while (i < n && s[i] == ' ') i++;
+        
+        // Step 2: Check for sign
+        int sign = 1;
+        if (i < n && s[i] == '-') {
+            sign = -1;
+            i++;
+        } else if (i < n && s[i] == '+') {
+            i++;
+        }
+        
+        // Step 3: Convert digits to integer
+        int result = 0;
+        while (i < n && isdigit(s[i])) {
+            int digit = s[i] - '0';
+            
+            // Step 4: Handle overflow
+            if (result > (INT_MAX - digit) / 10) {
+                return sign == 1 ? INT_MAX : INT_MIN;
+            }
+            
+            result = result * 10 + digit;
+            i++;
+        }
+        
+        // Apply sign and clamp value
+        result *= sign;
+        
+        if (result < INT_MIN) return INT_MIN;
+        if (result > INT_MAX) return INT_MAX;
+        
+        return result;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def myAtoi(self, s: str) -> int:
+    INT_MAX = 2**31 - 1
+    INT_MIN = -2**31
+    
+    i = 0
+    n = len(s)
+    
+    # Step 1: Skip leading whitespaces
+    while i < n and s[i] == ' ':
+        i += 1
+    
+    # Step 2: Check for sign
+    sign = 1
+    if i < n and s[i] == '-':
+        sign = -1
+        i += 1
+    elif i < n and s[i] == '+':
+        i += 1
+    
+    # Step 3: Convert digits to integer
+    result = 0
+    while i < n and s[i].isdigit():
+        digit = int(s[i])
+        
+        # Step 4: Handle overflow
+        if result > (INT_MAX - digit) // 10:
+            return INT_MAX if sign == 1 else INT_MIN
+        
+        result = result * 10 + digit
+        i += 1
+    
+    # Apply sign and clamp value
+    result *= sign
+    
+    if result < INT_MIN:
+        return INT_MIN
+    if result > INT_MAX:
+        return INT_MAX
+    
+    return result` },
+{ name: "C", lang: "c", code: `#include <limits.h>
+#include <ctype.h>
+
+int myAtoi(char* s) {
+    int i = 0;
+    
+    // Step 1: Skip leading whitespaces
+    while (s[i] == ' ') i++;
+    
+    // Step 2: Check for sign
+    int sign = 1;
+    if (s[i] == '-') {
+        sign = -1;
+        i++;
+    } else if (s[i] == '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits to integer
+    long long result = 0;
+    while (s[i] >= '0' && s[i] <= '9') {
+        int digit = s[i] - '0';
+        
+        // Step 4: Handle overflow
+        if (result > (INT_MAX - digit) / 10) {
+            return sign == 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return (int)result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int MyAtoi(string s) {
+        int INT_MAX = int.MaxValue;
+        int INT_MIN = int.MinValue;
+        
+        int i = 0, n = s.Length;
+        
+        // Step 1: Skip leading whitespaces
+        while (i < n && s[i] == ' ') i++;
+        
+        // Step 2: Check for sign
+        int sign = 1;
+        if (i < n && s[i] == '-') {
+            sign = -1;
+            i++;
+        } else if (i < n && s[i] == '+') {
+            i++;
+        }
+        
+        // Step 3: Convert digits to integer
+        int result = 0;
+        while (i < n && char.IsDigit(s[i])) {
+            int digit = s[i] - '0';
+            
+            // Step 4: Handle overflow
+            if (result > (INT_MAX - digit) / 10) {
+                return sign == 1 ? INT_MAX : INT_MIN;
+            }
+            
+            result = result * 10 + digit;
+            i++;
+        }
+        
+        // Apply sign and clamp value
+        result *= sign;
+        
+        if (result < INT_MIN) return INT_MIN;
+        if (result > INT_MAX) return INT_MAX;
+        
+        return result;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function myAtoi(s: string): number {
+    const INT_MAX = Math.pow(2, 31) - 1;
+    const INT_MIN = -Math.pow(2, 31);
+    
+    let i = 0, n = s.length;
+    
+    // Step 1: Skip leading whitespaces
+    while (i < n && s[i] === ' ') i++;
+    
+    // Step 2: Check for sign
+    let sign = 1;
+    if (i < n && s[i] === '-') {
+        sign = -1;
+        i++;
+    } else if (i < n && s[i] === '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits to integer
+    let result = 0;
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        const digit = parseInt(s[i]);
+        
+        // Step 4: Handle overflow
+        if (result > Math.floor((INT_MAX - digit) / 10)) {
+            return sign === 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return result;
+};` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func myAtoi(_ s: String) -> Int {
+        let INT_MAX = Int32.max
+        let INT_MIN = Int32.min
+        
+        var chars = Array(s)
+        var i = 0
+        let n = chars.count
+        
+        // Step 1: Skip leading whitespaces
+        while i < n && chars[i] == " " {
+            i += 1
+        }
+        
+        // Step 2: Check for sign
+        var sign = 1
+        if i < n && chars[i] == "-" {
+            sign = -1
+            i += 1
+        } else if i < n && chars[i] == "+" {
+            i += 1
+        }
+        
+        // Step 3: Convert digits to integer
+        var result: Int64 = 0
+        while i < n && chars[i].isNumber {
+            let digit = Int64(String(chars[i]))!
+            
+            // Step 4: Handle overflow
+            if result > (Int64(INT_MAX) - digit) / 10 {
+                return sign == 1 ? Int(INT_MAX) : Int(INT_MIN)
+            }
+            
+            result = result * 10 + digit
+            i += 1
+        }
+        
+        // Apply sign and clamp value
+        result *= Int64(sign)
+        
+        if result < Int64(INT_MIN) { return Int(INT_MIN) }
+        if result > Int64(INT_MAX) { return Int(INT_MAX) }
+        
+        return Int(result)
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the input string s. We iterate through the string once.
+- Space: O(1). We use a constant amount of extra space.
+- Notes: The algorithm processes each character of the string at most once. Overflow checks are done using integer arithmetic to avoid using extra space for comparison.
+
+---
+
+## Optimized Approach with Early Termination
+
+**Intuition**
+
+To improve efficiency, we can terminate the conversion process as soon as we encounter a non-digit character after the number. This avoids unnecessary iterations through the rest of the string.
+
+**Steps**
+
+- Skip leading whitespaces as before.
+- Check for sign character and set appropriate flag.
+- Start converting digits to number.
+- As soon as a non-digit character is encountered, stop the conversion process.
+- Perform overflow check during conversion to prevent unnecessary operations on large numbers.
+- Return the final result after applying sign and clamping.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def myAtoi(s: str) -> int:
+    INT_MAX = 2**31 - 1
+    INT_MIN = -2**31
+    
+    i = 0
+    n = len(s)
+    
+    # Step 1: Skip leading whitespaces
+    while i < n and s[i] == ' ':
+        i += 1
+    
+    # Step 2: Check for sign
+    sign = 1
+    if i < n and s[i] == '-':
+        sign = -1
+        i += 1
+    elif i < n and s[i] == '+':
+        i += 1
+    
+    # Step 3: Convert digits to integer with early termination
+    result = 0
+    while i < n and s[i].isdigit():
+        digit = int(s[i])
+        
+        # Step 4: Handle overflow
+        if result > (INT_MAX - digit) // 10:
+            return INT_MAX if sign == 1 else INT_MIN
+        
+        result = result * 10 + digit
+        i += 1
+    
+    # Apply sign and clamp value
+    result *= sign
+    
+    if result < INT_MIN:
+        return INT_MIN
+    if result > INT_MAX:
+        return INT_MAX
+    
+    return result` },
+{ name: "Java", lang: "java", code: `public int myAtoi(String s) {
+    int INT_MAX = Integer.MAX_VALUE;
+    int INT_MIN = Integer.MIN_VALUE;
+    
+    int i = 0, n = s.length();
+    
+    // Step 1: Skip leading whitespaces
+    while (i < n && s.charAt(i) == ' ') i++;
+    
+    // Step 2: Check for sign
+    int sign = 1;
+    if (i < n && s.charAt(i) == '-') {
+        sign = -1;
+        i++;
+    } else if (i < n && s.charAt(i) == '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits with early termination
+    int result = 0;
+    while (i < n && Character.isDigit(s.charAt(i))) {
+        int digit = s.charAt(i) - '0';
+        
+        // Step 4: Handle overflow
+        if (result > (INT_MAX - digit) / 10) {
+            return sign == 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return result;
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var myAtoi = function(s) {
+    const INT_MAX = Math.pow(2, 31) - 1;
+    const INT_MIN = -Math.pow(2, 31);
+    
+    let i = 0, n = s.length;
+    
+    // Step 1: Skip leading whitespaces
+    while (i < n && s[i] === ' ') i++;
+    
+    // Step 2: Check for sign
+    let sign = 1;
+    if (i < n && s[i] === '-') {
+        sign = -1;
+        i++;
+    } else if (i < n && s[i] === '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits with early termination
+    let result = 0;
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        const digit = parseInt(s[i]);
+        
+        // Step 4: Handle overflow
+        if (result > Math.floor((INT_MAX - digit) / 10)) {
+            return sign === 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <climits>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    int myAtoi(string s) {
+        int i = 0, n = s.length();
+        
+        // Step 1: Skip leading whitespaces
+        while (i < n && s[i] == ' ') i++;
+        
+        // Step 2: Check for sign
+        int sign = 1;
+        if (i < n && s[i] == '-') {
+            sign = -1;
+            i++;
+        } else if (i < n && s[i] == '+') {
+            i++;
+        }
+        
+        // Step 3: Convert digits with early termination
+        int result = 0;
+        while (i < n && isdigit(s[i])) {
+            int digit = s[i] - '0';
+            
+            // Step 4: Handle overflow
+            if (result > (INT_MAX - digit) / 10) {
+                return sign == 1 ? INT_MAX : INT_MIN;
+            }
+            
+            result = result * 10 + digit;
+            i++;
+        }
+        
+        // Apply sign and clamp value
+        result *= sign;
+        
+        if (result < INT_MIN) return INT_MIN;
+        if (result > INT_MAX) return INT_MAX;
+        
+        return result;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def myAtoi(self, s: str) -> int:
+    INT_MAX = 2**31 - 1
+    INT_MIN = -2**31
+    
+    i = 0
+    n = len(s)
+    
+    # Step 1: Skip leading whitespaces
+    while i < n and s[i] == ' ':
+        i += 1
+    
+    # Step 2: Check for sign
+    sign = 1
+    if i < n and s[i] == '-':
+        sign = -1
+        i += 1
+    elif i < n and s[i] == '+':
+        i += 1
+    
+    # Step 3: Convert digits with early termination
+    result = 0
+    while i < n and s[i].isdigit():
+        digit = int(s[i])
+        
+        # Step 4: Handle overflow
+        if result > (INT_MAX - digit) // 10:
+            return INT_MAX if sign == 1 else INT_MIN
+        
+        result = result * 10 + digit
+        i += 1
+    
+    # Apply sign and clamp value
+    result *= sign
+    
+    if result < INT_MIN:
+        return INT_MIN
+    if result > INT_MAX:
+        return INT_MAX
+    
+    return result` },
+{ name: "C", lang: "c", code: `#include <limits.h>
+#include <ctype.h>
+
+int myAtoi(char* s) {
+    int i = 0;
+    
+    // Step 1: Skip leading whitespaces
+    while (s[i] == ' ') i++;
+    
+    // Step 2: Check for sign
+    int sign = 1;
+    if (s[i] == '-') {
+        sign = -1;
+        i++;
+    } else if (s[i] == '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits with early termination
+    long long result = 0;
+    while (s[i] >= '0' && s[i] <= '9') {
+        int digit = s[i] - '0';
+        
+        // Step 4: Handle overflow
+        if (result > (INT_MAX - digit) / 10) {
+            return sign == 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return (int)result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int MyAtoi(string s) {
+        int INT_MAX = int.MaxValue;
+        int INT_MIN = int.MinValue;
+        
+        int i = 0, n = s.Length;
+        
+        // Step 1: Skip leading whitespaces
+        while (i < n && s[i] == ' ') i++;
+        
+        // Step 2: Check for sign
+        int sign = 1;
+        if (i < n && s[i] == '-') {
+            sign = -1;
+            i++;
+        } else if (i < n && s[i] == '+') {
+            i++;
+        }
+        
+        // Step 3: Convert digits with early termination
+        int result = 0;
+        while (i < n && char.IsDigit(s[i])) {
+            int digit = s[i] - '0';
+            
+            // Step 4: Handle overflow
+            if (result > (INT_MAX - digit) / 10) {
+                return sign == 1 ? INT_MAX : INT_MIN;
+            }
+            
+            result = result * 10 + digit;
+            i++;
+        }
+        
+        // Apply sign and clamp value
+        result *= sign;
+        
+        if (result < INT_MIN) return INT_MIN;
+        if (result > INT_MAX) return INT_MAX;
+        
+        return result;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function myAtoi(s: string): number {
+    const INT_MAX = Math.pow(2, 31) - 1;
+    const INT_MIN = -Math.pow(2, 31);
+    
+    let i = 0, n = s.length;
+    
+    // Step 1: Skip leading whitespaces
+    while (i < n && s[i] === ' ') i++;
+    
+    // Step 2: Check for sign
+    let sign = 1;
+    if (i < n && s[i] === '-') {
+        sign = -1;
+        i++;
+    } else if (i < n && s[i] === '+') {
+        i++;
+    }
+    
+    // Step 3: Convert digits with early termination
+    let result = 0;
+    while (i < n && s[i] >= '0' && s[i] <= '9') {
+        const digit = parseInt(s[i]);
+        
+        // Step 4: Handle overflow
+        if (result > Math.floor((INT_MAX - digit) / 10)) {
+            return sign === 1 ? INT_MAX : INT_MIN;
+        }
+        
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Apply sign and clamp value
+    result *= sign;
+    
+    if (result < INT_MIN) return INT_MIN;
+    if (result > INT_MAX) return INT_MAX;
+    
+    return result;
+};` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func myAtoi(_ s: String) -> Int {
+        let INT_MAX = Int32.max
+        let INT_MIN = Int32.min
+        
+        var chars = Array(s)
+        var i = 0
+        let n = chars.count
+        
+        // Step 1: Skip leading whitespaces
+        while i < n && chars[i] == " " {
+            i += 1
+        }
+        
+        // Step 2: Check for sign
+        var sign = 1
+        if i < n && chars[i] == "-" {
+            sign = -1
+            i += 1
+        } else if i < n && chars[i] == "+" {
+            i += 1
+        }
+        
+        // Step 3: Convert digits with early termination
+        var result: Int64 = 0
+        while i < n && chars[i].isNumber {
+            let digit = Int64(String(chars[i]))!
+            
+            // Step 4: Handle overflow
+            if result > (Int64(INT_MAX) - digit) / 10 {
+                return sign == 1 ? Int(INT_MAX) : Int(INT_MIN)
+            }
+            
+            result = result * 10 + digit
+            i += 1
+        }
+        
+        // Apply sign and clamp value
+        result *= Int64(sign)
+        
+        if result < Int64(INT_MIN) { return Int(INT_MIN) }
+        if result > Int64(INT_MAX) { return Int(INT_MAX) }
+        
+        return Int(result)
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the input string s. We iterate through the string once, stopping early when we encounter non-digit characters.
+- Space: O(1). We use a constant amount of extra space.
+- Notes: This approach is essentially the same as the brute-force approach in terms of time complexity, but it can be slightly more efficient in practice by avoiding unnecessary iterations after the number portion.
+
+---
+
+## Regular Expression Approach
+
+**Intuition**
+
+Use regular expressions to extract the relevant portion of the string that matches the pattern for a valid integer. This approach leverages pattern matching to simplify the parsing process.
+
+**Steps**
+
+- Use a regular expression to match the optional leading whitespaces, followed by an optional sign, and then one or more digits.
+- If a match is found, extract the matched substring.
+- Convert the matched substring to an integer.
+- Apply clamping to ensure the result is within the 32-bit signed integer range.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `import re
+
+def myAtoi(s: str) -> int:
+    INT_MAX = 2**31 - 1
+    INT_MIN = -2**31
+    
+    # Use regex to find the matching pattern
+    match = re.match(r'^\s*([+-]?\d+)', s)
+    
+    if not match:
+        return 0
+    
+    num_str = match.group(1)
+    
+    try:
+        result = int(num_str)
+    except ValueError:
+        return 0
+    
+    # Clamp the result to 32-bit signed integer range
+    if result < INT_MIN:
+        return INT_MIN
+    if result > INT_MAX:
+        return INT_MAX
+    
+    return result` },
+{ name: "Java", lang: "java", code: `import java.util.regex.*;
+
+class Solution {
+    public int myAtoi(String s) {
+        int INT_MAX = Integer.MAX_VALUE;
+        int INT_MIN = Integer.MIN_VALUE;
+        
+        // Use regex to find the matching pattern
+        Pattern pattern = Pattern.compile("^\\s*([+-]?\\d+)");
+        Matcher matcher = pattern.matcher(s);
+        
+        if (!matcher.find()) {
+            return 0;
+        }
+        
+        String numStr = matcher.group(1);
+        
+        try {
+            int result = Integer.parseInt(numStr);
+            return result;
+        } catch (NumberFormatException e) {
+            // Handle overflow cases
+            if (numStr.charAt(0) == '-') {
+                return INT_MIN;
+            } else {
+                return INT_MAX;
+            }
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var myAtoi = function(s) {
+    const INT_MAX = Math.pow(2, 31) - 1;
+    const INT_MIN = -Math.pow(2, 31);
+    
+    // Use regex to find the matching pattern
+    const match = s.match(/^\s*([+-]?\d+)/);
+    
+    if (!match) {
+        return 0;
+    }
+    
+    const numStr = match[1];
+    
+    let result;
+    try {
+        result = parseInt(numStr);
+        if (isNaN(result)) {
+            return 0;
+        }
+    } catch (e) {
+        // Handle overflow cases
+        if (numStr[0] === '-') {
+            return INT_MIN;
+        } else {
+            return INT_MAX;
+        }
+    }
+    
+    // Clamp the result to 32-bit signed integer range
+    if (result < INT_MIN) {
+        return INT_MIN;
+    }
+    if (result > INT_MAX) {
+        return INT_MAX;
+    }
+    
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <regex>
+#include <climits>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    int myAtoi(string s) {
+        // Use regex to find the matching pattern
+        regex pattern("^\\s*([+-]?\\d+)");
+        smatch match;
+        
+        if (!regex_search(s, match, pattern)) {
+            return 0;
+        }
+        
+        string numStr = match.str(1);
+        
+        try {
+            long long result = stoll(numStr);
+            
+            // Clamp the result to 32-bit signed integer range
+            if (result < INT_MIN) {
+                return INT_MIN;
+            }
+            if (result > INT_MAX) {
+                return INT_MAX;
+            }
+            
+            return (int)result;
+        } catch (out_of_range&) {
+            // Handle overflow cases
+            if (numStr[0] == '-') {
+                return INT_MIN;
+            } else {
+                return INT_MAX;
+            }
+        }
+    }
+};` },
+{ name: "Python3", lang: "python", code: `import re
+
+class Solution:
+    def myAtoi(self, s: str) -> int:
+        INT_MAX = 2**31 - 1
+        INT_MIN = -2**31
+        
+        # Use regex to find the matching pattern
+        match = re.match(r'^\s*([+-]?\d+)', s)
+        
+        if not match:
+            return 0
+        
+        num_str = match.group(1)
+        
+        try:
+            result = int(num_str)
+        except ValueError:
+            return 0
+        
+        # Clamp the result to 32-bit signed integer range
+        if result < INT_MIN:
+            return INT_MIN
+        if result > INT_MAX:
+            return INT_MAX
+        
+        return result` },
+{ name: "C", lang: "c", code: `This approach is not typically used in C due to the complexity of regex implementation. It's more common to use the standard parsing approach.` },
+{ name: "C#", lang: "csharp", code: `using System.Text.RegularExpressions;
+
+class Solution {
+    public int MyAtoi(string s) {
+        int INT_MAX = int.MaxValue;
+        int INT_MIN = int.MinValue;
+        
+        // Use regex to find the matching pattern
+        Match match = Regex.Match(s, @"^\s*([+-]?\d+)");
+        
+        if (!match.Success) {
+            return 0;
+        }
+        
+        string numStr = match.Groups[1].Value;
+        
+        try {
+            long result = long.Parse(numStr);
+            
+            // Clamp the result to 32-bit signed integer range
+            if (result < INT_MIN) {
+                return INT_MIN;
+            }
+            if (result > INT_MAX) {
+                return INT_MAX;
+            }
+            
+            return (int)result;
+        } catch (OverflowException) {
+            // Handle overflow cases
+            if (numStr[0] == '-') {
+                return INT_MIN;
+            } else {
+                return INT_MAX;
+            }
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function myAtoi(s: string): number {
+    const INT_MAX = Math.pow(2, 31) - 1;
+    const INT_MIN = -Math.pow(2, 31);
+    
+    // Use regex to find the matching pattern
+    const match = s.match(/^\s*([+-]?\d+)/);
+    
+    if (!match) {
+        return 0;
+    }
+    
+    const numStr = match[1];
+    
+    let result: number;
+    try {
+        result = parseInt(numStr);
+        if (isNaN(result)) {
+            return 0;
+        }
+    } catch (e) {
+        // Handle overflow cases
+        if (numStr[0] === '-') {
+            return INT_MIN;
+        } else {
+            return INT_MAX;
+        }
+    }
+    
+    // Clamp the result to 32-bit signed integer range
+    if (result < INT_MIN) {
+        return INT_MIN;
+    }
+    if (result > INT_MAX) {
+        return INT_MAX;
+    }
+    
+    return result;
+};` },
+{ name: "Swift", lang: "swift", code: `import Foundation
+
+class Solution {
+    func myAtoi(_ s: String) -> Int {
+        let INT_MAX = Int32.max
+        let INT_MIN = Int32.min
+        
+        // Use regex to find the matching pattern
+        let regex = try! NSRegularExpression(pattern: "^\\s*([+-]?\\d+)")
+        let range = NSRange(location: 0, length: s.utf16.count)
+        let matches = regex.matches(in: s, range: range)
+        
+        if matches.isEmpty {
+            return 0
+        }
+        
+        let matchRange = matches[0].range(at: 1)
+        let numStr = (s as NSString).substring(with: matchRange)
+        
+        // Convert and clamp
+        let result = Int64(numStr) ?? 0
+        
+        if result < Int64(INT_MIN) {
+            return Int(INT_MIN)
+        }
+        if result > Int64(INT_MAX) {
+            return Int(INT_MAX)
+        }
+        
+        return Int(result)
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the input string s. The regex matching process takes linear time in the worst case.
+- Space: O(1) for the basic operation, but regex engines may use additional space for pattern matching.
+- Notes: This approach is concise and leverages built-in pattern matching capabilities. However, regex engines can have overhead, and this approach might be less efficient than manual parsing for simple cases.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode String to Integer (atoi) Solutions","datePublished":"2025-09-08T07:13:32.657Z","description":"Implement the myAtoi(string s) function, which converts a string to a 32-bit signed integer (similar to C/C++'s atoi function). The algorithm for myAtoi(stri...","keywords":"LeetCode, String to Integer (atoi), Medium, String, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the input string s. We iterate through the string once.; Space: O(1). We use a constant amount of extra space.. The algorithm processes each character of the string at most once. Overflow checks are done using integer arithmetic to avoid using extra space for comparison."}},{"@type":"Question","name":"Optimized Approach with Early Termination complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the input string s. We iterate through the string once, stopping early when we encounter non-digit characters.; Space: O(1). We use a constant amount of extra space.. This approach is essentially the same as the brute-force approach in terms of time complexity, but it can be slightly more efficient in practice by avoiding unnecessary iterations after the number portion."}},{"@type":"Question","name":"Regular Expression Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the input string s. The regex matching process takes linear time in the worst case.; Space: O(1) for the basic operation, but regex engines may use additional space for pattern matching.. This approach is concise and leverages built-in pattern matching capabilities. However, regex engines can have overhead, and this approach might be less efficient than manual parsing for simple cases."}}]}).replace(/</g,'\\u003c')}
+</script>
