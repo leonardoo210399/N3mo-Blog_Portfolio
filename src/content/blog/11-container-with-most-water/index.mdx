@@ -1,0 +1,564 @@
+---
+title: "Container With Most Water"
+summary: "You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i]).
+Find two lines that together with the x-axis form a container, such that the container contains the most water.
+Return the maximum amount of water a container can store.
+Notice that you may not slant the container."
+date: "Sep 08, 2025"
+tags:
+  - Array
+  - Two Pointers
+  - Greedy
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 58.20% | **Paid:** No
+
+> **Topics:** Array, Two Pointers, Greedy
+
+- Examples
+- Constraints
+- [Brute Force](#brute-force)
+- [Two Pointer Technique](#two-pointer-technique)
+- [Optimized Two Pointer with Early Termination](#optimized-two-pointer-with-early-termination)
+
+## Examples
+
+**Input**
+
+```text
+height = [1,8,6,2,5,4,8,3,7]
+```
+
+**Output**
+
+```text
+49
+```
+
+**Explanation**
+
+The maximum area of water (blue section) the container can contain is 49.
+
+**Input**
+
+```text
+height = [1,1]
+```
+
+**Output**
+
+```text
+1
+```
+
+## Constraints
+
+```text
+- n == height.length
+- 2 <= n <= 10^5
+- 0 <= height[i] <= 10^4
+```
+---
+
+## Brute Force
+
+**Intuition**
+
+Check every possible pair of lines to find the maximum area formed between them.
+
+**Steps**
+
+- Iterate through all pairs of lines (i, j) where i < j.
+- For every pair, calculate the area as min(height[i], height[j]) * (j - i).
+- Keep track of the maximum area seen so far.
+- Return the maximum area.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def maxArea(height):
+    max_area = 0
+    for i in range(len(height)):
+        for j in range(i + 1, len(height)):
+            area = min(height[i], height[j]) * (j - i)
+            max_area = max(max_area, area)
+    return max_area` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int maxArea(int[] height) {
+        int maxArea = 0;
+        for (int i = 0; i < height.length; i++) {
+            for (int j = i + 1; j < height.length; j++) {
+                int area = Math.min(height[i], height[j]) * (j - i);
+                maxArea = Math.max(maxArea, area);
+            }
+        }
+        return maxArea;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var maxArea = function(height) {
+    let maxArea = 0;
+    for (let i = 0; i < height.length; i++) {
+        for (let j = i + 1; j < height.length; j++) {
+            let area = Math.min(height[i], height[j]) * (j - i);
+            maxArea = Math.max(maxArea, area);
+        }
+    }
+    return maxArea;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <algorithm>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int maxArea = 0;
+        for (int i = 0; i < height.size(); i++) {
+            for (int j = i + 1; j < height.size(); j++) {
+                int area = min(height[i], height[j]) * (j - i);
+                maxArea = max(maxArea, area);
+            }
+        }
+        return maxArea;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        max_area = 0
+        for i in range(len(height)):
+            for j in range(i + 1, len(height)):
+                area = min(height[i], height[j]) * (j - i)
+                max_area = max(max_area, area)
+        return max_area` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+
+int maxArea(int* height, int heightSize) {
+    int maxArea = 0;
+    for (int i = 0; i < heightSize; i++) {
+        for (int j = i + 1; j < heightSize; j++) {
+            int area = (height[i] < height[j] ? height[i] : height[j]) * (j - i);
+            if (area > maxArea) maxArea = area;
+        }
+    }
+    return maxArea;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int MaxArea(int[] height) {
+        int maxArea = 0;
+        for (int i = 0; i < height.Length; i++) {
+            for (int j = i + 1; j < height.Length; j++) {
+                int area = Math.Min(height[i], height[j]) * (j - i);
+                maxArea = Math.Max(maxArea, area);
+            }
+        }
+        return maxArea;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function maxArea(height: number[]): number {
+    let maxArea = 0;
+    for (let i = 0; i < height.length; i++) {
+        for (let j = i + 1; j < height.length; j++) {
+            const area = Math.min(height[i], height[j]) * (j - i);
+            maxArea = Math.max(maxArea, area);
+        }
+    }
+    return maxArea;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func maxArea(_ height: [Int]) -> Int {
+        var maxArea = 0
+        for i in 0..<height.count {
+            for j in (i+1)..<height.count {
+                let area = min(height[i], height[j]) * (j - i)
+                maxArea = max(maxArea, area)
+            }
+        }
+        return maxArea
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n^2)
+- Space: O(1)
+- Notes: The algorithm checks all pairs of lines, resulting in quadratic time complexity.
+
+---
+
+## Two Pointer Technique
+
+**Intuition**
+
+Use two pointers from both ends of the array and move the one pointing to the shorter line inward.
+
+**Steps**
+
+- Initialize two pointers at the start (left) and end (right) of the array.
+- Calculate the area formed between the lines at left and right pointers.
+- Move the pointer pointing to the shorter line inward to potentially find a taller line.
+- Keep track of the maximum area encountered during this process.
+- Stop when the pointers meet.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def maxArea(height):
+    left, right = 0, len(height) - 1
+    max_area = 0
+    while left < right:
+        area = min(height[left], height[right]) * (right - left)
+        max_area = max(max_area, area)
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    return max_area` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int maxArea(int[] height) {
+        int left = 0, right = height.length - 1;
+        int maxArea = 0;
+        while (left < right) {
+            int area = Math.min(height[left], height[right]) * (right - left);
+            maxArea = Math.max(maxArea, area);
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var maxArea = function(height) {
+    let left = 0, right = height.length - 1;
+    let maxArea = 0;
+    while (left < right) {
+        let area = Math.min(height[left], height[right]) * (right - left);
+        maxArea = Math.max(maxArea, area);
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <algorithm>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int left = 0, right = height.size() - 1;
+        int maxArea = 0;
+        while (left < right) {
+            int area = min(height[left], height[right]) * (right - left);
+            maxArea = max(maxArea, area);
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        left, right = 0, len(height) - 1
+        max_area = 0
+        while left < right:
+            area = min(height[left], height[right]) * (right - left)
+            max_area = max(max_area, area)
+            if height[left] < height[right]:
+                left += 1
+            else:
+                right -= 1
+        return max_area` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+
+int maxArea(int* height, int heightSize) {
+    int left = 0, right = heightSize - 1;
+    int maxArea = 0;
+    while (left < right) {
+        int area = (height[left] < height[right] ? height[left] : height[right]) * (right - left);
+        if (area > maxArea) maxArea = area;
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int MaxArea(int[] height) {
+        int left = 0, right = height.Length - 1;
+        int maxArea = 0;
+        while (left < right) {
+            int area = Math.Min(height[left], height[right]) * (right - left);
+            maxArea = Math.Max(maxArea, area);
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function maxArea(height: number[]): number {
+    let left = 0, right = height.length - 1;
+    let maxArea = 0;
+    while (left < right) {
+        const area = Math.min(height[left], height[right]) * (right - left);
+        maxArea = Math.max(maxArea, area);
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func maxArea(_ height: [Int]) -> Int {
+        var left = 0
+        var right = height.count - 1
+        var maxArea = 0
+        while left < right {
+            let area = min(height[left], height[right]) * (right - left)
+            maxArea = max(maxArea, area)
+            if height[left] < height[right] {
+                left += 1
+            } else {
+                right -= 1
+            }
+        }
+        return maxArea
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n)
+- Space: O(1)
+- Notes: The algorithm makes a single pass through the array using two pointers, achieving linear time complexity.
+
+---
+
+## Optimized Two Pointer with Early Termination
+
+**Intuition**
+
+Improve the standard two-pointer approach by early termination when further improvement is not possible.
+
+**Steps**
+
+- Initialize two pointers at the start and end of the array.
+- Calculate area and move the shorter pointer inward while keeping track of maximum.
+- Introduce early termination conditions based on remaining potential maximum area.
+- Stop early if the maximum possible area with remaining width is less than current max.
+- Return the maximum area found.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def maxArea(height):
+    left, right = 0, len(height) - 1
+    max_area = 0
+    while left < right:
+        area = min(height[left], height[right]) * (right - left)
+        max_area = max(max_area, area)
+        # Early termination optimization
+        if max_area >= max(height) * (right - left):
+            break
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+    return max_area` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int maxArea(int[] height) {
+        int left = 0, right = height.length - 1;
+        int maxArea = 0;
+        int maxHeight = 0;
+        for (int h : height) {
+            maxHeight = Math.max(maxHeight, h);
+        }
+        while (left < right) {
+            int area = Math.min(height[left], height[right]) * (right - left);
+            maxArea = Math.max(maxArea, area);
+            // Early termination
+            if (maxArea >= maxHeight * (right - left)) {
+                break;
+            }
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var maxArea = function(height) {
+    let left = 0, right = height.length - 1;
+    let maxArea = 0;
+    const maxHeight = Math.max(...height);
+    while (left < right) {
+        let area = Math.min(height[left], height[right]) * (right - left);
+        maxArea = Math.max(maxArea, area);
+        // Early termination
+        if (maxArea >= maxHeight * (right - left)) {
+            break;
+        }
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <algorithm>
+#include <vector>
+#include <climits>
+using namespace std;
+
+class Solution {
+public:
+    int maxArea(vector<int>& height) {
+        int left = 0, right = height.size() - 1;
+        int maxArea = 0;
+        int maxHeight = *max_element(height.begin(), height.end());
+        while (left < right) {
+            int area = min(height[left], height[right]) * (right - left);
+            maxArea = max(maxArea, area);
+            // Early termination
+            if (maxArea >= maxHeight * (right - left)) {
+                break;
+            }
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def maxArea(self, height: list[int]) -> int:
+        left, right = 0, len(height) - 1
+        max_area = 0
+        max_h = max(height)
+        while left < right:
+            area = min(height[left], height[right]) * (right - left)
+            max_area = max(max_area, area)
+            # Early termination
+            if max_area >= max_h * (right - left):
+                break
+            if height[left] < height[right]:
+                left += 1
+            else:
+                right -= 1
+        return max_area` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <limits.h>
+
+int maxArea(int* height, int heightSize) {
+    int left = 0, right = heightSize - 1;
+    int maxArea = 0;
+    int maxHeight = 0;
+    for (int i = 0; i < heightSize; i++) {
+        if (height[i] > maxHeight) maxHeight = height[i];
+    }
+    while (left < right) {
+        int area = (height[left] < height[right] ? height[left] : height[right]) * (right - left);
+        if (area > maxArea) maxArea = area;
+        // Early termination
+        if (maxArea >= maxHeight * (right - left)) {
+            break;
+        }
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int MaxArea(int[] height) {
+        int left = 0, right = height.Length - 1;
+        int maxArea = 0;
+        int maxHeight = height.Max();
+        while (left < right) {
+            int area = Math.Min(height[left], height[right]) * (right - left);
+            maxArea = Math.Max(maxArea, area);
+            // Early termination
+            if (maxArea >= maxHeight * (right - left)) {
+                break;
+            }
+            if (height[left] < height[right]) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+        return maxArea;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function maxArea(height: number[]): number {
+    let left = 0, right = height.length - 1;
+    let maxArea = 0;
+    const maxHeight = Math.max(...height);
+    while (left < right) {
+        const area = Math.min(height[left], height[right]) * (right - left);
+        maxArea = Math.max(maxArea, area);
+        // Early termination
+        if (maxArea >= maxHeight * (right - left)) {
+            break;
+        }
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func maxArea(_ height: [Int]) -> Int {
+        var left = 0
+        var right = height.count - 1
+        var maxArea = 0
+        let maxHeight = height.max() ?? 0
+        while left < right {
+            let area = min(height[left], height[right]) * (right - left)
+            maxArea = max(maxArea, area)
+            // Early termination
+            if maxArea >= maxHeight * (right - left) {
+                break
+            }
+            if height[left] < height[right] {
+                left += 1
+            } else {
+                right -= 1
+            }
+        }
+        return maxArea
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n)
+- Space: O(1)
+- Notes: Although it maintains O(n) complexity like the standard two-pointer, it can finish significantly earlier on some inputs.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Container With Most Water Solutions","datePublished":"2025-09-08T10:07:48.253Z","description":"You are given an integer array height of length n. There are n vertical lines drawn such that the two endpoints of the ith line are (i, 0) and (i, height[i])...","keywords":"LeetCode, Container With Most Water, Medium, Array, Two Pointers, Greedy, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n^2); Space: O(1). The algorithm checks all pairs of lines, resulting in quadratic time complexity."}},{"@type":"Question","name":"Two Pointer Technique complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n); Space: O(1). The algorithm makes a single pass through the array using two pointers, achieving linear time complexity."}},{"@type":"Question","name":"Optimized Two Pointer with Early Termination complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n); Space: O(1). Although it maintains O(n) complexity like the standard two-pointer, it can finish significantly earlier on some inputs."}}]}).replace(/</g,'\\u003c')}
+</script>
