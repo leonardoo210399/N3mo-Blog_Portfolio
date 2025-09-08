@@ -1,0 +1,563 @@
+---
+title: "Palindrome Number"
+summary: "Given an integer x, return true if x is a palindrome, and false otherwise."
+date: "Sep 08, 2025"
+tags:
+  - Math
+draft: false
+difficulty: "Easy"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Easy | **Acceptance:** 59.55% | **Paid:** No
+
+> **Topics:** Math
+
+- Examples
+- Constraints
+- [String Conversion Approach](#string-conversion-approach)
+- [Revert Half Approach](#revert-half-approach)
+- [Recursive Approach](#recursive-approach)
+
+## Examples
+
+**Input**
+
+```text
+x = 121
+```
+
+**Output**
+
+```text
+true
+```
+
+**Explanation**
+
+121 reads as 121 from left to right and from right to left.
+
+**Input**
+
+```text
+x = -121
+```
+
+**Output**
+
+```text
+false
+```
+
+**Explanation**
+
+From left to right, it reads -121. From right to left, it becomes 121-. Therefore it is not a palindrome.
+
+**Input**
+
+```text
+x = 10
+```
+
+**Output**
+
+```text
+false
+```
+
+**Explanation**
+
+Reads 01 from right to left. Therefore it is not a palindrome.
+
+## Constraints
+
+```text
+- -2^31 <= x <= 2^31 - 1
+```
+---
+
+## String Conversion Approach
+
+**Intuition**
+
+The easiest way to check if a number is a palindrome is to convert it to a string and compare it with its reverse.
+
+**Steps**
+
+- Convert the integer x to a string representation.
+- Compare the string with its reversed version.
+- If they are equal, then x is a palindrome; otherwise, it is not.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        x_str = str(x)
+        return x_str == x_str[::-1]` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public boolean isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        String xStr = String.valueOf(x);
+        StringBuilder sb = new StringBuilder(xStr);
+        String reversedStr = sb.reverse().toString();
+        return xStr.equals(reversedStr);
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    if (x < 0) {
+        return false;
+    }
+    let xStr = x.toString();
+    return xStr === xStr.split('').reverse().join('');
+};` },
+{ name: "C++", lang: "cpp", code: `class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        std::string xStr = std::to_string(x);
+        std::string reversedStr = xStr;
+        std::reverse(reversedStr.begin(), reversedStr.end());
+        return xStr == reversedStr;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        return str(x) == str(x)[::-1]` },
+{ name: "C", lang: "c", code: `#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool isPalindrome(int x) {
+    if (x < 0) {
+        return false;
+    }
+    char xStr[12]; 
+    sprintf(xStr, "%d", x);
+    int len = strlen(xStr);
+    for (int i = 0; i < len / 2; i++) {
+        if (xStr[i] != xStr[len - i - 1]) {
+            return false;
+        }
+    }
+    return true;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public bool IsPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        string xStr = x.ToString();
+        char[] xChars = xStr.ToCharArray();
+        Array.Reverse(xChars);
+        string reversedStr = new string(xChars);
+        return xStr.Equals(reversedStr);
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function isPalindrome(x: number): boolean {
+    if (x < 0) {
+        return false;
+    }
+    const xStr: string = x.toString();
+    return xStr === xStr.split('').reverse().join('');
+};` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func isPalindrome(_ x: Int) -> Bool {
+        if x < 0 {
+            return false
+        }
+        let xStr = String(x)
+        return xStr == String(xStr.reversed())
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log n), where n is the value of the integer x. This is because converting the integer to a string takes O(log n) time.
+- Space: O(log n), where n is the value of the integer x. This is due to the storage of the string representation.
+
+---
+
+## Revert Half Approach
+
+**Intuition**
+
+Instead of converting the number to a string, we can reverse half of the integer and compare it with the other half. This avoids the extra space needed for string conversion.
+
+**Steps**
+
+- If x is negative, return false immediately since negative numbers cannot be palindromes.
+- If x ends with 0 (and x is not 0), it cannot be a palindrome because numbers don't have leading zeros.
+- Reverse half of the digits of x. This is done by extracting the last digit of x and building the reversed number.
+- Stop reversing when the original number x becomes less than or equal to the reversed number.
+- If x is equal to the reversed number (for even number of digits) or x is equal to reversed number divided by 10 (for odd number of digits), then it is a palindrome.
+- Handle the case where x is 0 separately.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0 or (x % 10 == 0 and x != 0):
+            return False
+        if x == 0:
+            return True
+        reversed_half = 0
+        while x > reversed_half:
+            reversed_half = reversed_half * 10 + x % 10
+            x //= 10
+        return x == reversed_half or x == reversed_half // 10` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public boolean isPalindrome(int x) {
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+        if (x == 0) {
+            return true;
+        }
+        int reversedHalf = 0;
+        while (x > reversedHalf) {
+            reversedHalf = reversedHalf * 10 + x % 10;
+            x /= 10;
+        }
+        return x == reversedHalf || x == reversedHalf / 10;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    if (x < 0 || (x % 10 === 0 && x !== 0)) {
+        return false;
+    }
+    if (x === 0) {
+        return true;
+    }
+    let reversedHalf = 0;
+    while (x > reversedHalf) {
+        reversedHalf = reversedHalf * 10 + x % 10;
+        x = Math.floor(x / 10);
+    }
+    return x === reversedHalf || x === Math.floor(reversedHalf / 10);
+};` },
+{ name: "C++", lang: "cpp", code: `class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+        if (x == 0) {
+            return true;
+        }
+        long long reversedHalf = 0;
+        while (x > reversedHalf) {
+            reversedHalf = reversedHalf * 10 + x % 10;
+            x /= 10;
+        }
+        return x == reversedHalf || x == reversedHalf / 10;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0 or (x % 10 == 0 and x != 0):
+            return False
+        if x == 0:
+            return True
+        reversed_half = 0
+        while x > reversed_half:
+            reversed_half = reversed_half * 10 + x % 10
+            x //= 10
+        return x == reversed_half or x == reversed_half // 10` },
+{ name: "C", lang: "c", code: `#include <stdbool.h>
+
+bool isPalindrome(int x) {
+    if (x < 0 || (x % 10 == 0 && x != 0)) {
+        return false;
+    }
+    if (x == 0) {
+        return true;
+    }
+    long long reversedHalf = 0;
+    while (x > reversedHalf) {
+        reversedHalf = reversedHalf * 10 + x % 10;
+        x /= 10;
+    }
+    return x == reversedHalf || x == reversedHalf / 10;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public bool IsPalindrome(int x) {
+        if (x < 0 || (x % 10 == 0 && x != 0)) {
+            return false;
+        }
+        if (x == 0) {
+            return true;
+        }
+        long reversedHalf = 0;
+        while (x > reversedHalf) {
+            reversedHalf = reversedHalf * 10 + x % 10;
+            x /= 10;
+        }
+        return x == reversedHalf || x == reversedHalf / 10;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function isPalindrome(x: number): boolean {
+    if (x < 0 || (x % 10 === 0 && x !== 0)) {
+        return false;
+    }
+    if (x === 0) {
+        return true;
+    }
+    let reversedHalf: number = 0;
+    while (x > reversedHalf) {
+        reversedHalf = reversedHalf * 10 + x % 10;
+        x = Math.floor(x / 10);
+    }
+    return x === reversedHalf || x === Math.floor(reversedHalf / 10);
+};` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func isPalindrome(_ x: Int) -> Bool {
+        if x < 0 || (x % 10 == 0 && x != 0) {
+            return false
+        }
+        if x == 0 {
+            return true
+        }
+        var num = x
+        var reversedHalf = 0
+        while num > reversedHalf {
+            reversedHalf = reversedHalf * 10 + num % 10
+            num /= 10
+        }
+        return num == reversedHalf || num == reversedHalf / 10
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log n), where n is the value of the integer x. This is because we process half of the digits of x, and the number of digits is proportional to log n.
+- Space: O(1). We only use a constant amount of extra space for the reversedHalf variable.
+
+---
+
+## Recursive Approach
+
+**Intuition**
+
+A palindrome reads the same forward and backward. We can use recursion to check if the first and last digits are the same and then recursively check the remaining substring.
+
+**Steps**
+
+- Convert the integer x to a string.
+- Create a recursive helper function that takes two indices, start and end.
+- In the base case, if start index is greater than or equal to end index, return true.
+- In the recursive case, compare the characters at start and end indices. If they are not equal, return false.
+- If they are equal, make a recursive call with start + 1 and end - 1.
+- Return the result of the recursive call.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        x_str = str(x)
+        return self.is_palindrome_recursive(x_str, 0, len(x_str) - 1)
+    
+    def is_palindrome_recursive(self, s: str, start: int, end: int) -> bool:
+        if start >= end:
+            return True
+        
+        if s[start] != s[end]:
+            return False
+        
+        return self.is_palindrome_recursive(s, start + 1, end - 1)` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public boolean isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        String xStr = String.valueOf(x);
+        return isPalindromeRecursive(xStr, 0, xStr.length() - 1);
+    }
+    
+    private boolean isPalindromeRecursive(String s, int start, int end) {
+        if (start >= end) {
+            return true;
+        }
+        
+        if (s.charAt(start) != s.charAt(end)) {
+            return false;
+        }
+        
+        return isPalindromeRecursive(s, start + 1, end - 1);
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `/**
+ * @param {number} x
+ * @return {boolean}
+ */
+var isPalindrome = function(x) {
+    if (x < 0) {
+        return false;
+    }
+    const xStr = x.toString();
+    return isPalindromeRecursive(xStr, 0, xStr.length - 1);
+};
+
+function isPalindromeRecursive(s, start, end) {
+    if (start >= end) {
+        return true;
+    }
+    
+    if (s[start] !== s[end]) {
+        return false;
+    }
+    
+    return isPalindromeRecursive(s, start + 1, end - 1);
+}` },
+{ name: "C++", lang: "cpp", code: `class Solution {
+public:
+    bool isPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        std::string xStr = std::to_string(x);
+        return isPalindromeRecursive(xStr, 0, xStr.length() - 1);
+    }
+    
+private:
+    bool isPalindromeRecursive(const std::string& s, int start, int end) {
+        if (start >= end) {
+            return true;
+        }
+        
+        if (s[start] != s[end]) {
+            return false;
+        }
+        
+        return isPalindromeRecursive(s, start + 1, end - 1);
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        x_str = str(x)
+        return self.is_palindrome_recursive(x_str, 0, len(x_str) - 1)
+    
+    def is_palindrome_recursive(self, s: str, start: int, end: int) -> bool:
+        if start >= end:
+            return True
+        
+        if s[start] != s[end]:
+            return False
+        
+        return self.is_palindrome_recursive(s, start + 1, end - 1)` },
+{ name: "C", lang: "c", code: `#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+bool isPalindromeRecursive(char* s, int start, int end) {
+    if (start >= end) {
+        return true;
+    }
+    
+    if (s[start] != s[end]) {
+        return false;
+    }
+    
+    return isPalindromeRecursive(s, start + 1, end - 1);
+}
+
+bool isPalindrome(int x) {
+    if (x < 0) {
+        return false;
+    }
+    char xStr[12];
+    sprintf(xStr, "%d", x);
+    int len = strlen(xStr);
+    return isPalindromeRecursive(xStr, 0, len - 1);
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public bool IsPalindrome(int x) {
+        if (x < 0) {
+            return false;
+        }
+        string xStr = x.ToString();
+        return IsPalindromeRecursive(xStr, 0, xStr.Length - 1);
+    }
+    
+    private bool IsPalindromeRecursive(string s, int start, int end) {
+        if (start >= end) {
+            return true;
+        }
+        
+        if (s[start] != s[end]) {
+            return false;
+        }
+        
+        return IsPalindromeRecursive(s, start + 1, end - 1);
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function isPalindrome(x: number): boolean {
+    if (x < 0) {
+        return false;
+    }
+    const xStr: string = x.toString();
+    return isPalindromeRecursive(xStr, 0, xStr.length - 1);
+}
+
+function isPalindromeRecursive(s: string, start: number, end: number): boolean {
+    if (start >= end) {
+        return true;
+    }
+    
+    if (s[start] !== s[end]) {
+        return false;
+    }
+    
+    return isPalindromeRecursive(s, start + 1, end - 1);
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func isPalindrome(_ x: Int) -> Bool {
+        if x < 0 {
+            return false
+        }
+        let xStr = String(x)
+        return isPalindromeRecursive(Array(xStr), 0, xStr.count - 1)
+    }
+    
+    private func isPalindromeRecursive(_ s: [Character], _ start: Int, _ end: Int) -> Bool {
+        if start >= end {
+            return true
+        }
+        
+        if s[start] != s[end] {
+            return false
+        }
+        
+        return isPalindromeRecursive(s, start + 1, end - 1)
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log n), where n is the value of the integer x. In the worst case, we make a recursive call for each character in the string representation of x.
+- Space: O(log n), where n is the value of the integer x. This is due to the recursive call stack depth, which goes up to the number of digits in x.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Palindrome Number Solutions","datePublished":"2025-09-08T08:07:03.056Z","description":"Given an integer x, return true if x is a palindrome, and false otherwise.","keywords":"LeetCode, Palindrome Number, Easy, Math, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"String Conversion Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log n), where n is the value of the integer x. This is because converting the integer to a string takes O(log n) time.; Space: O(log n), where n is the value of the integer x. This is due to the storage of the string representation.. "}},{"@type":"Question","name":"Revert Half Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log n), where n is the value of the integer x. This is because we process half of the digits of x, and the number of digits is proportional to log n.; Space: O(1). We only use a constant amount of extra space for the reversedHalf variable.. "}},{"@type":"Question","name":"Recursive Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log n), where n is the value of the integer x. In the worst case, we make a recursive call for each character in the string representation of x.; Space: O(log n), where n is the value of the integer x. This is due to the recursive call stack depth, which goes up to the number of digits in x.. "}}]}).replace(/</g,'\\u003c')}
+</script>
