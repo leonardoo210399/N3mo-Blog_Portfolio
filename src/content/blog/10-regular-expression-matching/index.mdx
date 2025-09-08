@@ -1,0 +1,629 @@
+---
+title: "Regular Expression Matching"
+summary: "Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'. '.' Matches any single character. '*' Matches zero or more of the preceding element. The matching should cover the entire input string (not partial)."
+date: "Sep 08, 2025"
+tags:
+  - String
+  - Dynamic Programming
+  - Recursion
+draft: false
+difficulty: "Hard"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Hard | **Acceptance:** 29.56% | **Paid:** No
+
+> **Topics:** String, Dynamic Programming, Recursion
+
+- Examples
+- Constraints
+- [Brute Force Recursion](#brute-force-recursion)
+- [Top-Down Memoization](#top-down-memoization)
+- [Bottom-Up Dynamic Programming](#bottom-up-dynamic-programming)
+
+## Examples
+
+**Input**
+
+```text
+s = "aa", p = "a"
+```
+
+**Output**
+
+```text
+false
+```
+
+**Explanation**
+
+"a" does not match the entire string "aa".
+
+**Input**
+
+```text
+s = "aa", p = "a*"
+```
+
+**Output**
+
+```text
+true
+```
+
+**Explanation**
+
+'*' means zero or more of the preceding element, 'a'. Therefore, by repeating 'a' once, it becomes "aa".
+
+**Input**
+
+```text
+s = "ab", p = ".*"
+```
+
+**Output**
+
+```text
+true
+```
+
+**Explanation**
+
+".*" means "zero or more (*) of any character (.)".
+
+## Constraints
+
+```text
+- 1 <= s.length <= 20
+- 1 <= p.length <= 20
+- s contains only lowercase English letters.
+- p contains only lowercase English letters, '.', and '*'.
+- It is guaranteed for each appearance of the character '*', there will be a previous valid character to match.
+```
+---
+
+## Brute Force Recursion
+
+**Intuition**
+
+A direct recursive approach that checks all possible matches by exploring every possibility of '*' and '.' characters.
+
+**Steps**
+
+- Base cases: if pattern is empty, string must also be empty for a match.
+- If the next character in pattern is '*', consider two possibilities: zero occurrence or one/more occurrence.
+- If current characters match or pattern has '.', proceed with the rest of string and pattern.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def isMatch(s: str, p: str) -> bool:
+    if not p:
+        return not s
+    first_match = bool(s) and p[0] in {s[0], '.'}
+    if len(p) >= 2 and p[1] == '*':
+        return (isMatch(s, p[2:]) or
+                (first_match and isMatch(s[1:], p)))
+    else:
+        return first_match and isMatch(s[1:], p[1:])` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public boolean isMatch(String s, String p) {
+        if (p.isEmpty()) return s.isEmpty();
+        boolean firstMatch = !s.isEmpty() && (p.charAt(0) == s.charAt(0) || p.charAt(0) == '.');
+        if (p.length() >= 2 && p.charAt(1) == '*') {
+            return isMatch(s, p.substring(2)) || (firstMatch && isMatch(s.substring(1), p));
+        } else {
+            return firstMatch && isMatch(s.substring(1), p.substring(1));
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var isMatch = function(s, p) {
+    if (!p) return !s;
+    let firstMatch = s && (p[0] === s[0] || p[0] === '.');
+    if (p.length >= 2 && p[1] === '*') {
+        return isMatch(s, p.slice(2)) || (firstMatch && isMatch(s.slice(1), p));
+    } else {
+        return firstMatch && isMatch(s.slice(1), p.slice(1));
+    }
+};` },
+{ name: "C++", lang: "cpp", code: `#include <string>
+using namespace std;
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        if (p.empty()) return s.empty();
+        bool firstMatch = !s.empty() && (p[0] == s[0] || p[0] == '.');
+        if (p.length() >= 2 && p[1] == '*') {
+            return isMatch(s, p.substr(2)) || (firstMatch && isMatch(s.substr(1), p));
+        } else {
+            return firstMatch && isMatch(s.substr(1), p.substr(1));
+        }
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        if not p:
+            return not s
+        first_match = bool(s) and p[0] in {s[0], '.'}
+        if len(p) >= 2 and p[1] == '*':
+            return (self.isMatch(s, p[2:]) or
+                    (first_match and self.isMatch(s[1:], p)))
+        else:
+            return first_match and self.isMatch(s[1:], p[1:])` },
+{ name: "C", lang: "c", code: `#include <stdbool.h>
+#include <string.h>
+bool isMatch(char* s, char* p) {
+    if (!*p) return !*s;
+    bool firstMatch = *s && (*p == *s || *p == '.');
+    if (strlen(p) >= 2 && *(p+1) == '*') {
+        return isMatch(s, p+2) || (firstMatch && isMatch(s+1, p));
+    } else {
+        return firstMatch && isMatch(s+1, p+1);
+    }
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public bool IsMatch(string s, string p) {
+        if (p.Length == 0) return s.Length == 0;
+        bool firstMatch = s.Length > 0 && (p[0] == s[0] || p[0] == '.');
+        if (p.Length >= 2 && p[1] == '*') {
+            return IsMatch(s, p.Substring(2)) || (firstMatch && IsMatch(s.Substring(1), p));
+        } else {
+            return firstMatch && IsMatch(s.Substring(1), p.Substring(1));
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function isMatch(s: string, p: string): boolean {
+    if (!p) return !s;
+    const firstMatch = s && (p[0] === s[0] || p[0] === '.');
+    if (p.length >= 2 && p[1] === '*') {
+        return isMatch(s, p.slice(2)) || (firstMatch && isMatch(s.slice(1), p));
+    } else {
+        return firstMatch && isMatch(s.slice(1), p.slice(1));
+    }
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func isMatch(_ s: String, _ p: String) -> Bool {
+        if p.isEmpty { return s.isEmpty }
+        let firstMatch = !s.isEmpty && (p.first! == s.first! || p.first! == ".")
+        if p.count >= 2 && p[p.index(after: p.startIndex)] == "*" {
+            return isMatch(s, String(p[p.index(p.startIndex, offsetBy: 2)...])) || (firstMatch && isMatch(String(s[s.index(after: s.startIndex)...]), p))
+        } else {
+            return firstMatch && isMatch(String(s[s.index(after: s.startIndex)...]), String(p[p.index(after: p.startIndex)...]))
+        }
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O((T+P) * 2^(T+P/2)) where T is length of text and P is length of pattern
+- Space: O((T+P) * 2^(T+P/2)) due to recursion stack in worst case
+- Notes: Exponential time due to overlapping subproblems
+
+---
+
+## Top-Down Memoization
+
+**Intuition**
+
+To optimize the brute-force approach by caching results of subproblems to avoid redundant computation.
+
+**Steps**
+
+- Use a memoization table (or dictionary) to store results of (i,j) pairs representing current positions in string and pattern.
+- Before computing result for any (i,j), check if already computed.
+- Otherwise, compute using same recurrence relation but store result in memo table.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def isMatch(s: str, p: str) -> bool:
+    memo = {}
+    def dp(i, j):
+        if (i, j) in memo:
+            return memo[(i, j)]
+        if j == len(p):
+            ans = i == len(s)
+        else:
+            first_match = i < len(s) and p[j] in {s[i], '.'}
+            if j+1 < len(p) and p[j+1] == '*':
+                ans = (dp(i, j+2) or
+                       (first_match and dp(i+1, j)))
+            else:
+                ans = first_match and dp(i+1, j+1)
+        memo[(i, j)] = ans
+        return ans
+    return dp(0, 0)` },
+{ name: "Java", lang: "java", code: `import java.util.HashMap;
+import java.util.Map;
+class Solution {
+    Map<String, Boolean> memo = new HashMap<>();
+    public boolean isMatch(String s, String p) {
+        return dp(0, 0, s, p);
+    }
+    private boolean dp(int i, int j, String s, String p) {
+        String key = i + "," + j;
+        if (memo.containsKey(key)) return memo.get(key);
+        boolean ans;
+        if (j == p.length()) {
+            ans = i == s.length();
+        } else {
+            boolean firstMatch = (i < s.length() &&
+                                  (p.charAt(j) == s.charAt(i) || p.charAt(j) == '.'));
+            if (j + 1 < p.length() && p.charAt(j+1) == '*') {
+                ans = (dp(i, j+2, s, p) ||
+                       (firstMatch && dp(i+1, j, s, p)));
+            } else {
+                ans = firstMatch && dp(i+1, j+1, s, p);
+            }
+        }
+        memo.put(key, ans);
+        return ans;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var isMatch = function(s, p) {
+    const memo = new Map();
+    function dp(i, j) {
+        const key = \`${i},${j}\`;
+        if (memo.has(key)) return memo.get(key);
+        let ans;
+        if (j === p.length) {
+            ans = i === s.length;
+        } else {
+            const firstMatch = (i < s.length &&
+                               (p[j] === s[i] || p[j] === '.'));
+            if (j + 1 < p.length && p[j+1] === '*') {
+                ans = (dp(i, j+2) ||
+                       (firstMatch && dp(i+1, j)));
+            } else {
+                ans = firstMatch && dp(i+1, j+1);
+            }
+        }
+        memo.set(key, ans);
+        return ans;
+    }
+    return dp(0, 0);
+};` },
+{ name: "C++", lang: "cpp", code: `#include <unordered_map>
+#include <string>
+using namespace std;
+class Solution {
+public:
+    unordered_map<string, bool> memo;
+    bool isMatch(string s, string p) {
+        return dp(0, 0, s, p);
+    }
+    bool dp(int i, int j, const string& s, const string& p) {
+        string key = to_string(i) + "," + to_string(j);
+        if (memo.count(key)) return memo[key];
+        bool ans;
+        if (j == p.length()) {
+            ans = i == s.length();
+        } else {
+            bool firstMatch = (i < s.length() &&
+                              (p[j] == s[i] || p[j] == '.'));
+            if (j + 1 < p.length() && p[j+1] == '*') {
+                ans = (dp(i, j+2, s, p) ||
+                       (firstMatch && dp(i+1, j, s, p)));
+            } else {
+                ans = firstMatch && dp(i+1, j+1, s, p);
+            }
+        }
+        memo[key] = ans;
+        return ans;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        memo = {}
+        def dp(i, j):
+            if (i, j) in memo:
+                return memo[(i, j)]
+            if j == len(p):
+                ans = i == len(s)
+            else:
+                first_match = i < len(s) and p[j] in {s[i], '.'}
+                if j+1 < len(p) and p[j+1] == '*':
+                    ans = (dp(i, j+2) or
+                           (first_match and dp(i+1, j)))
+                else:
+                    ans = first_match and dp(i+1, j+1)
+            memo[(i, j)] = ans
+            return ans
+        return dp(0, 0)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX 1000
+int memo[MAX][MAX];
+bool dp(int i, int j, char* s, char* p) {
+    if (memo[i][j] != -1) return memo[i][j];
+    bool ans;
+    if (p[j] == '\0') {
+        ans = (s[i] == '\0');
+    } else {
+        bool firstMatch = (s[i] != '\0' && (p[j] == s[i] || p[j] == '.'));
+        if (p[j+1] == '*') {
+            ans = (dp(i, j+2, s, p) || (firstMatch && dp(i+1, j, s, p)));
+        } else {
+            ans = firstMatch && dp(i+1, j+1, s, p);
+        }
+    }
+    memo[i][j] = ans;
+    return ans;
+}
+bool isMatch(char* s, char* p) {
+    for(int i=0; i<MAX; i++) for(int j=0; j<MAX; j++) memo[i][j] = -1;
+    return dp(0, 0, s, p);
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+public class Solution {
+    private Dictionary<string, bool> memo = new Dictionary<string, bool>();
+    public bool IsMatch(string s, string p) {
+        return Dp(0, 0, s, p);
+    }
+    private bool Dp(int i, int j, string s, string p) {
+        string key = $"{i},{j}";
+        if (memo.ContainsKey(key)) return memo[key];
+        bool ans;
+        if (j == p.Length) {
+            ans = i == s.Length;
+        } else {
+            bool firstMatch = (i < s.Length && (p[j] == s[i] || p[j] == '.'));
+            if (j + 1 < p.Length && p[j+1] == '*') {
+                ans = (Dp(i, j+2, s, p) || (firstMatch && Dp(i+1, j, s, p)));
+            } else {
+                ans = firstMatch && Dp(i+1, j+1, s, p);
+            }
+        }
+        memo[key] = ans;
+        return ans;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function isMatch(s: string, p: string): boolean {
+    const memo = new Map<string, boolean>();
+    function dp(i: number, j: number): boolean {
+        const key = \`${i},${j}\`;
+        if (memo.has(key)) return memo.get(key)!;
+        let ans: boolean;
+        if (j === p.length) {
+            ans = i === s.length;
+        } else {
+            const firstMatch = (i < s.length &&
+                               (p[j] === s[i] || p[j] === '.'));
+            if (j + 1 < p.length && p[j+1] === '*') {
+                ans = (dp(i, j+2) ||
+                       (firstMatch && dp(i+1, j)));
+            } else {
+                ans = firstMatch && dp(i+1, j+1);
+            }
+        }
+        memo.set(key, ans);
+        return ans;
+    }
+    return dp(0, 0);
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    var memo: [String: Bool] = [:]
+    func isMatch(_ s: String, _ p: String) -> Bool {
+        return dp(0, 0, Array(s), Array(p))
+    }
+    func dp(_ i: Int, _ j: Int, _ s: [Character], _ p: [Character]) -> Bool {
+        let key = "\(i),\(j)"
+        if let val = memo[key] { return val }
+        var ans: Bool
+        if j == p.count {
+            ans = i == s.count
+        } else {
+            let firstMatch = i < s.count && (p[j] == s[i] || p[j] == ".")
+            if j + 1 < p.count && p[j+1] == "*" {
+                ans = dp(i, j+2, s, p) || (firstMatch && dp(i+1, j, s, p))
+            } else {
+                ans = firstMatch && dp(i+1, j+1, s, p)
+            }
+        }
+        memo[key] = ans
+        return ans
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(T*P) where T is length of text and P is length of pattern
+- Space: O(T*P) for memoization table
+- Notes: Avoids recomputation of overlapping subproblems
+
+---
+
+## Bottom-Up Dynamic Programming
+
+**Intuition**
+
+Build up solution from smaller subproblems using a 2D table, solving from end to beginning to ensure subproblems are solved before needed.
+
+**Steps**
+
+- Create a 2D boolean DP table where dp[i][j] represents whether s[i:] matches p[j:].
+- Initialize base cases: dp[len(s)][len(p)] = true.
+- Fill the table from bottom-right to top-left according to recurrence relation.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def isMatch(s: str, p: str) -> bool:
+    dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]
+    dp[len(s)][len(p)] = True
+    for i in range(len(s), -1, -1):
+        for j in range(len(p) - 1, -1, -1):
+            first_match = i < len(s) and p[j] in {s[i], '.'}
+            if j+1 < len(p) and p[j+1] == '*':
+                dp[i][j] = dp[i][j+2] or (first_match and dp[i+1][j])
+            else:
+                dp[i][j] = first_match and dp[i+1][j+1]
+    return dp[0][0]` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public boolean isMatch(String s, String p) {
+        boolean[][] dp = new boolean[s.length() + 1][p.length() + 1];
+        dp[s.length()][p.length()] = true;
+        for (int i = s.length(); i >= 0; i--){
+            for (int j = p.length() - 1; j >= 0; j--){
+                boolean firstMatch = (i < s.length() &&
+                                      (p.charAt(j) == s.charAt(i) ||
+                                       p.charAt(j) == '.'));
+                if (j + 1 < p.length() && p.charAt(j+1) == '*'){
+                    dp[i][j] = dp[i][j+2] || (firstMatch && dp[i+1][j]);
+                } else {
+                    dp[i][j] = firstMatch && dp[i+1][j+1];
+                }
+            }
+        }
+        return dp[0][0];
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var isMatch = function(s, p) {
+    const dp = Array(s.length + 1).fill(null).map(() => Array(p.length + 1).fill(false));
+    dp[s.length][p.length] = true;
+    
+    for (let i = s.length; i >= 0; i--) {
+        for (let j = p.length - 1; j >= 0; j--) {
+            const firstMatch = (i < s.length &&
+                               (p[j] === s[i] || p[j] === '.'));
+            if (j + 1 < p.length && p[j+1] === '*') {
+                dp[i][j] = dp[i][j+2] || (firstMatch && dp[i+1][j]);
+            } else {
+                dp[i][j] = firstMatch && dp[i+1][j+1];
+            }
+        }
+    }
+    return dp[0][0];
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+using namespace std;
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        vector<vector<bool>> dp(s.length() + 1, vector<bool>(p.length() + 1, false));
+        dp[s.length()][p.length()] = true;
+        for (int i = s.length(); i >= 0; i--) {
+            for (int j = p.length() - 1; j >= 0; j--) {
+                bool firstMatch = (i < s.length() &&
+                                  (p[j] == s[i] || p[j] == '.'));
+                if (j + 1 < p.length() && p[j+1] == '*'){
+                    dp[i][j] = dp[i][j+2] || (firstMatch && dp[i+1][j]);
+                } else {
+                    dp[i][j] = firstMatch && dp[i+1][j+1];
+                }
+            }
+        }
+        return dp[0][0];
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def isMatch(self, s: str, p: str) -> bool:
+        dp = [[False] * (len(p) + 1) for _ in range(len(s) + 1)]
+        dp[len(s)][len(p)] = True
+        for i in range(len(s), -1, -1):
+            for j in range(len(p) - 1, -1, -1):
+                first_match = i < len(s) and p[j] in {s[i], '.'}
+                if j+1 < len(p) and p[j+1] == '*':
+                    dp[i][j] = dp[i][j+2] or (first_match and dp[i+1][j])
+                else:
+                    dp[i][j] = first_match and dp[i+1][j+1]
+        return dp[0][0]` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+bool isMatch(char* s, char* p) {
+    int slen = strlen(s);
+    int plen = strlen(p);
+    bool** dp = (bool**)malloc((slen + 1) * sizeof(bool*));
+    for (int i = 0; i <= slen; i++) {
+        dp[i] = (bool*)calloc(plen + 1, sizeof(bool));
+    }
+    dp[slen][plen] = true;
+    
+    for (int i = slen; i >= 0; i--) {
+        for (int j = plen - 1; j >= 0; j--) {
+            bool firstMatch = (i < slen && (p[j] == s[i] || p[j] == '.'));
+            if (j + 1 < plen && p[j+1] == '*') {
+                dp[i][j] = dp[i][j+2] || (firstMatch && dp[i+1][j]);
+            } else {
+                dp[i][j] = firstMatch && dp[i+1][j+1];
+            }
+        }
+    }
+    
+    bool result = dp[0][0];
+    for (int i = 0; i <= slen; i++) {
+        free(dp[i]);
+    }
+    free(dp);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public bool IsMatch(string s, string p) {
+        bool[,] dp = new bool[s.Length + 1, p.Length + 1];
+        dp[s.Length, p.Length] = true;
+        
+        for (int i = s.Length; i >= 0; i--){
+            for (int j = p.Length - 1; j >= 0; j--){
+                bool firstMatch = (i < s.Length &&
+                                  (p[j] == s[i] ||
+                                   p[j] == '.'));
+                if (j + 1 < p.Length && p[j+1] == '*'){
+                    dp[i, j] = dp[i, j+2] || (firstMatch && dp[i+1, j]);
+                } else {
+                    dp[i, j] = firstMatch && dp[i+1, j+1];
+                }
+            }
+        }
+        return dp[0, 0];
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function isMatch(s: string, p: string): boolean {
+    const dp: boolean[][] = Array(s.length + 1).fill(null).map(() => Array(p.length + 1).fill(false));
+    dp[s.length][p.length] = true;
+    
+    for (let i = s.length; i >= 0; i--) {
+        for (let j = p.length - 1; j >= 0; j--) {
+            const firstMatch = (i < s.length &&
+                               (p[j] === s[i] || p[j] === '.'));
+            if (j + 1 < p.length && p[j+1] === '*') {
+                dp[i][j] = dp[i][j+2] || (firstMatch && dp[i+1][j]);
+            } else {
+                dp[i][j] = firstMatch && dp[i+1][j+1];
+            }
+        }
+    }
+    return dp[0][0];
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func isMatch(_ s: String, _ p: String) -> Bool {
+        let sArray = Array(s)
+        let pArray = Array(p)
+        var dp = Array(repeating: Array(repeating: false, count: pArray.count + 1), count: sArray.count + 1)
+        dp[sArray.count][pArray.count] = true
+        
+        for i in stride(from: sArray.count, through: 0, by: -1) {
+            for j in stride(from: pArray.count - 1, through: 0, by: -1) {
+                let firstMatch = (i < sArray.count &&
+                                 (pArray[j] == sArray[i] ||
+                                  pArray[j] == "."))
+                if (j + 1 < pArray.count && pArray[j+1] == "*") {
+                    dp[i][j] = dp[i][j+2] || (firstMatch && dp[i+1][j])
+                } else {
+                    dp[i][j] = firstMatch && dp[i+1][j+1]
+                }
+            }
+        }
+        return dp[0][0]
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(T*P) where T is length of text and P is length of pattern
+- Space: O(T*P) for the DP table
+- Notes: Bottom-up approach with iterative filling of DP table
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Regular Expression Matching Solutions","datePublished":"2025-09-08T09:07:57.358Z","description":"Given an input string (s) and a pattern (p), implement regular expression matching with support for '.' and '*'. '.' Matches any single character. '*' Matche...","keywords":"LeetCode, Regular Expression Matching, Hard, String, Dynamic Programming, Recursion, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force Recursion complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O((T+P) * 2^(T+P/2)) where T is length of text and P is length of pattern; Space: O((T+P) * 2^(T+P/2)) due to recursion stack in worst case. Exponential time due to overlapping subproblems"}},{"@type":"Question","name":"Top-Down Memoization complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(T*P) where T is length of text and P is length of pattern; Space: O(T*P) for memoization table. Avoids recomputation of overlapping subproblems"}},{"@type":"Question","name":"Bottom-Up Dynamic Programming complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(T*P) where T is length of text and P is length of pattern; Space: O(T*P) for the DP table. Bottom-up approach with iterative filling of DP table"}}]}).replace(/</g,'\\u003c')}
+</script>
