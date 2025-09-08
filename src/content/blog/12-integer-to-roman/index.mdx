@@ -1,0 +1,777 @@
+---
+title: "Integer to Roman"
+summary: "Seven different symbols represent Roman numerals with the following values:
+
+Symbol    Value
+I         1
+V         5
+X         10
+L         50
+C         100
+D         500
+M         1000
+
+Roman numerals are formed by appending the conversions of decimal place values from highest to lowest. Converting a decimal place value into a Roman numeral has the following rules:
+
+If the value does not start with 4 or 9, select the symbol of the maximal value that can be subtracted from the input, append that symbol to the result, subtract its value, and convert the remainder to a Roman numeral.
+If the value starts with 4 or 9 use the subtractive form representing one symbol subtracted from the following symbol, for example, 4 is 1 (I) less than 5 (V): IV and 9 is 1 (I) less than 10 (X): IX. Only the following subtractive forms are used: 4 (IV), 9 (IX), 40 (XL), 90 (XC), 400 (CD) and 900 (CM).
+Only powers of 10 (I, X, C, M) can be appended consecutively at most 3 times to represent multiples of 10. You cannot append 5 (V), 50 (L), or 500 (D) multiple times. If you need to append a symbol 4 times use the subtractive form.
+
+Given an integer, convert it to a Roman numeral."
+date: "Sep 08, 2025"
+tags:
+  - Hash Table
+  - Math
+  - String
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 69.22% | **Paid:** No
+
+> **Topics:** Hash Table, Math, String
+
+- Examples
+- Constraints
+- [Brute Force Approach](#brute-force-approach)
+- [Digit-by-Digit Approach](#digit-by-digit-approach)
+- [Greedy Subtraction](#greedy-subtraction)
+
+## Examples
+
+**Input**
+
+```text
+num = 3749
+```
+
+**Output**
+
+```text
+"MMMDCCXLIX"
+```
+
+**Explanation**
+
+3000 = MMM as 1000 (M) + 1000 (M) + 1000 (M)
+700 = DCC as 500 (D) + 100 (C) + 100 (C)
+40 = XL as 10 (X) less of 50 (L)
+9 = IX as 1 (I) less of 10 (X)
+Note: 49 is not 1 (I) less of 50 (L) because the conversion is based on decimal places
+
+**Input**
+
+```text
+num = 58
+```
+
+**Output**
+
+```text
+"LVIII"
+```
+
+**Explanation**
+
+50 = L
+8 = VIII
+
+**Input**
+
+```text
+num = 1994
+```
+
+**Output**
+
+```text
+"MCMXCIV"
+```
+
+**Explanation**
+
+1000 = M
+900 = CM
+90 = XC
+4 = IV
+
+## Constraints
+
+```text
+- 1 <= num <= 3999
+```
+---
+
+## Brute Force Approach
+
+**Intuition**
+
+The basic idea is to use the largest value Roman numeral symbols first and subtract them from the number until it's zero. We need to handle special subtractive cases like IV, IX, XL, XC, CD, CM explicitly.
+
+**Steps**
+
+- Identify all valid Roman numeral combinations in descending order of their values, including both regular symbols and subtractive cases.
+- Iterate through these values, subtracting the largest possible value from the number and appending the corresponding Roman symbol to the result string.
+- Repeat until the input number becomes zero.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Define the mapping from integer values to Roman numeral strings
+        # Including both regular symbols and subtractive cases like 4, 9, 40, 90, 400, 900
+        values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        numerals = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+        
+        result = []
+        
+        # Process each value from the highest to the lowest
+        for i in range(len(values)):
+            # While the current value can be subtracted from num
+            while num >= values[i]:
+                num -= values[i]
+                result.append(numerals[i])
+        
+        # Join the list into a single string and return
+        return ''.join(result)` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public String intToRoman(int num) {
+        // Define the mapping from integer values to Roman numeral strings
+        int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] numerals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        
+        StringBuilder result = new StringBuilder();
+        
+        // Process each value from the highest to the lowest
+        for (int i = 0; i < values.length; i++) {
+            // While the current value can be subtracted from num
+            while (num >= values[i]) {
+                num -= values[i];
+                result.append(numerals[i]);
+            }
+        }
+        
+        // Convert StringBuilder to String and return
+        return result.toString();
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var intToRoman = function(num) {
+    // Define the mapping from integer values to Roman numeral strings
+    const values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    const numerals = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+    
+    let result = "";
+    
+    // Process each value from the highest to the lowest
+    for (let i = 0; i < values.length; i++) {
+        // While the current value can be subtracted from num
+        while (num >= values[i]) {
+            num -= values[i];
+            result += numerals[i];
+        }
+    }
+    
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <string>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    string intToRoman(int num) {
+        // Define the mapping from integer values to Roman numeral strings
+        vector<int> values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        vector<string> numerals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        
+        string result = "";
+        
+        // Process each value from the highest to the lowest
+        for (int i = 0; i < values.size(); i++) {
+            // While the current value can be subtracted from num
+            while (num >= values[i]) {
+                num -= values[i];
+                result += numerals[i];
+            }
+        }
+        
+        return result;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Define the mapping from integer values to Roman numeral strings
+        # Including both regular symbols and subtractive cases like 4, 9, 40, 90, 400, 900
+        values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        numerals = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+        
+        result = []
+        
+        # Process each value from the highest to the lowest
+        for i in range(len(values)):
+            # While the current value can be subtracted from num
+            while num >= values[i]:
+                num -= values[i]
+                result.append(numerals[i])
+        
+        # Join the list into a single string and return
+        return ''.join(result)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* intToRoman(int num) {
+    // Define the mapping from integer values to Roman numeral strings
+    int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    char* numerals[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    
+    // Allocate memory for the result string
+    char* result = (char*)malloc(20 * sizeof(char));
+    result[0] = '\0'; // Initialize as empty string
+    
+    // Process each value from the highest to the lowest
+    for (int i = 0; i < 13; i++) {
+        // While the current value can be subtracted from num
+        while (num >= values[i]) {
+            num -= values[i];
+            strcat(result, numerals[i]);
+        }
+    }
+    
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string IntToRoman(int num) {
+        // Define the mapping from integer values to Roman numeral strings
+        int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        string[] numerals = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        
+        System.Text.StringBuilder result = new System.Text.StringBuilder();
+        
+        // Process each value from the highest to the lowest
+        for (int i = 0; i < values.Length; i++) {
+            // While the current value can be subtracted from num
+            while (num >= values[i]) {
+                num -= values[i];
+                result.Append(numerals[i]);
+            }
+        }
+        
+        // Convert StringBuilder to String and return
+        return result.ToString();
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function intToRoman(num: number): string {
+    // Define the mapping from integer values to Roman numeral strings
+    const values: number[] = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+    const numerals: string[] = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+    
+    let result: string = "";
+    
+    // Process each value from the highest to the lowest
+    for (let i = 0; i < values.length; i++) {
+        // While the current value can be subtracted from num
+        while (num >= values[i]) {
+            num -= values[i];
+            result += numerals[i];
+        }
+    }
+    
+    return result;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func intToRoman(_ num: Int) -> String {
+        // Define the mapping from integer values to Roman numeral strings
+        let values = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+        let numerals = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
+        
+        var result = ""
+        var num = num
+        
+        // Process each value from the highest to the lowest
+        for i in 0..<values.count {
+            // While the current value can be subtracted from num
+            while num >= values[i] {
+                num -= values[i]
+                result += numerals[i]
+            }
+        }
+        
+        return result
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(1) - Since there are a fixed number of iterations based on the limited input range (max 3999), we can consider it constant time.
+- Space: O(1) - We only use a fixed amount of extra space regardless of the input size.
+- Notes: This is often considered O(1) because the number of operations is bounded by a constant, not dependent on the input size in the asymptotic sense.
+
+---
+
+## Digit-by-Digit Approach
+
+**Intuition**
+
+Instead of processing the whole number, we can process it digit by digit, starting from thousands down to units. For each digit, we can use a lookup table to get the corresponding Roman numeral part.
+
+**Steps**
+
+- Break the number into its digits (thousands, hundreds, tens, units).
+- Create lookup tables for each digit place that map numbers 0-9 to their Roman numeral equivalents, considering subtractive forms.
+- Build the result string by concatenating the Roman numeral parts for each digit.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Lookup tables for each digit place
+        thousands = ["", "M", "MM", "MMM"]
+        hundreds = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"]
+        tens = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"]
+        units = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+        
+        # Extract each digit and use lookup tables
+        return (thousands[num // 1000] + 
+                hundreds[(num % 1000) // 100] + 
+                tens[(num % 100) // 10] + 
+                units[num % 10])` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public String intToRoman(int num) {
+        // Lookup tables for each digit place
+        String[] thousands = {"", "M", "MM", "MMM"};
+        String[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        String[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        String[] units = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        
+        // Extract each digit and use lookup tables
+        return thousands[num / 1000] + 
+               hundreds[(num % 1000) / 100] + 
+               tens[(num % 100) / 10] + 
+               units[num % 10];
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var intToRoman = function(num) {
+    // Lookup tables for each digit place
+    const thousands = ["", "M", "MM", "MMM"];
+    const hundreds = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"];
+    const tens = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"];
+    const units = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
+    
+    // Extract each digit and use lookup tables
+    return thousands[Math.floor(num / 1000)] + 
+           hundreds[Math.floor((num % 1000) / 100)] + 
+           tens[Math.floor((num % 100) / 10)] + 
+           units[num % 10];
+};` },
+{ name: "C++", lang: "cpp", code: `#include <string>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    string intToRoman(int num) {
+        // Lookup tables for each digit place
+        vector<string> thousands = {"", "M", "MM", "MMM"};
+        vector<string> hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        vector<string> tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        vector<string> units = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        
+        // Extract each digit and use lookup tables
+        return thousands[num / 1000] + 
+               hundreds[(num % 1000) / 100] + 
+               tens[(num % 100) / 10] + 
+               units[num % 10];
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Lookup tables for each digit place
+        thousands = ["", "M", "MM", "MMM"]
+        hundreds = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"]
+        tens = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"]
+        units = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+        
+        # Extract each digit and use lookup tables
+        return (thousands[num // 1000] + 
+                hundreds[(num % 1000) // 100] + 
+                tens[(num % 100) // 10] + 
+                units[num % 10])` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* intToRoman(int num) {
+    // Lookup tables for each digit place
+    char* thousands[] = {"", "M", "MM", "MMM"};
+    char* hundreds[] = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+    char* tens[] = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+    char* units[] = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+    
+    // Allocate memory for the result string
+    char* result = (char*)malloc(20 * sizeof(char));
+    result[0] = '\0'; // Initialize as empty string
+    
+    // Extract each digit and use lookup tables
+    strcat(result, thousands[num / 1000]);
+    strcat(result, hundreds[(num % 1000) / 100]);
+    strcat(result, tens[(num % 100) / 10]);
+    strcat(result, units[num % 10]);
+    
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string IntToRoman(int num) {
+        // Lookup tables for each digit place
+        string[] thousands = {"", "M", "MM", "MMM"};
+        string[] hundreds = {"", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+        string[] tens = {"", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+        string[] units = {"", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+        
+        // Extract each digit and use lookup tables
+        return thousands[num / 1000] + 
+               hundreds[(num % 1000) / 100] + 
+               tens[(num % 100) / 10] + 
+               units[num % 10];
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function intToRoman(num: number): string {
+    // Lookup tables for each digit place
+    const thousands: string[] = ["", "M", "MM", "MMM"];
+    const hundreds: string[] = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"];
+    const tens: string[] = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"];
+    const units: string[] = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"];
+    
+    // Extract each digit and use lookup tables
+    return thousands[Math.floor(num / 1000)] + 
+           hundreds[Math.floor((num % 1000) / 100)] + 
+           tens[Math.floor((num % 100) / 10)] + 
+           units[num % 10];
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func intToRoman(_ num: Int) -> String {
+        // Lookup tables for each digit place
+        let thousands = ["", "M", "MM", "MMM"]
+        let hundreds = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"]
+        let tens = ["", "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"]
+        let units = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"]
+        
+        // Extract each digit and use lookup tables
+        return thousands[num / 1000] + 
+               hundreds[(num % 1000) / 100] + 
+               tens[(num % 100) / 10] + 
+               units[num % 10]
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(1) - As the number of operations is constant and independent of the input value.
+- Space: O(1) - We use a fixed-size lookup table, so the space complexity is constant.
+- Notes: This approach is very efficient since it directly computes the result without looping. It's a classic example of trading space for time.
+
+---
+
+## Greedy Subtraction
+
+**Intuition**
+
+This is a greedy algorithm where at each step we subtract the largest possible Roman numeral value. It's similar to the brute force but emphasizes that we're making a locally optimal choice at each step.
+
+**Steps**
+
+- Create a list of value-symbol pairs in descending order, including subtractive cases.
+- Iterate through this list, and for each pair, repeatedly subtract the value from the number and append the symbol to the result as long as the value is less than or equal to the current number.
+- Continue until the number becomes zero.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Define the value-symbol pairs in descending order
+        value_symbols = [
+            (1000, "M"),
+            (900, "CM"),
+            (500, "D"),
+            (400, "CD"),
+            (100, "C"),
+            (90, "XC"),
+            (50, "L"),
+            (40, "XL"),
+            (10, "X"),
+            (9, "IX"),
+            (5, "V"),
+            (4, "IV"),
+            (1, "I")
+        ]
+        
+        result = []
+        
+        # Process each pair from the largest to the smallest
+        for value, symbol in value_symbols:
+            # Add the symbol while the value can be subtracted from num
+            count = num // value
+            if count:
+                result.append(symbol * count)
+                num -= value * count
+                
+        # Join the list into a single string and return
+        return ''.join(result)` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public String intToRoman(int num) {
+        // Define the value-symbol pairs in descending order
+        int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        String[] symbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        
+        StringBuilder result = new StringBuilder();
+        
+        // Process each pair from the largest to the smallest
+        for (int i = 0; i < values.length; i++) {
+            // Add the symbol while the value can be subtracted from num
+            int count = num / values[i];
+            if (count > 0) {
+                for (int j = 0; j < count; j++) {
+                    result.append(symbols[i]);
+                }
+                num -= values[i] * count;
+            }
+        }
+        
+        // Convert StringBuilder to String and return
+        return result.toString();
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var intToRoman = function(num) {
+    // Define the value-symbol pairs in descending order
+    const valueSymbols = [
+        [1000, "M"],
+        [900, "CM"],
+        [500, "D"],
+        [400, "CD"],
+        [100, "C"],
+        [90, "XC"],
+        [50, "L"],
+        [40, "XL"],
+        [10, "X"],
+        [9, "IX"],
+        [5, "V"],
+        [4, "IV"],
+        [1, "I"]
+    ];
+    
+    let result = "";
+    
+    // Process each pair from the largest to the smallest
+    for (const [value, symbol] of valueSymbols) {
+        // Add the symbol while the value can be subtracted from num
+        const count = Math.floor(num / value);
+        if (count > 0) {
+            result += symbol.repeat(count);
+            num -= value * count;
+        }
+    }
+    
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <string>
+#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    string intToRoman(int num) {
+        // Define the value-symbol pairs in descending order
+        vector<pair<int, string>> value_symbols = {
+            {1000, "M"},
+            {900, "CM"},
+            {500, "D"},
+            {400, "CD"},
+            {100, "C"},
+            {90, "XC"},
+            {50, "L"},
+            {40, "XL"},
+            {10, "X"},
+            {9, "IX"},
+            {5, "V"},
+            {4, "IV"},
+            {1, "I"}
+        };
+        
+        string result = "";
+        
+        // Process each pair from the largest to the smallest
+        for (const auto& [value, symbol] : value_symbols) {
+            // Add the symbol while the value can be subtracted from num
+            int count = num / value;
+            if (count > 0) {
+                result.append(count, symbol[0]); // For single char symbols
+                if (symbol.length() > 1) {
+                    result += symbol.substr(1); // Add remaining chars if any
+                }
+                num -= value * count;
+            }
+        }
+        
+        return result;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def intToRoman(self, num: int) -> str:
+        # Define the value-symbol pairs in descending order
+        value_symbols = [
+            (1000, "M"),
+            (900, "CM"),
+            (500, "D"),
+            (400, "CD"),
+            (100, "C"),
+            (90, "XC"),
+            (50, "L"),
+            (40, "XL"),
+            (10, "X"),
+            (9, "IX"),
+            (5, "V"),
+            (4, "IV"),
+            (1, "I")
+        ]
+        
+        result = []
+        
+        # Process each pair from the largest to the smallest
+        for value, symbol in value_symbols:
+            # Add the symbol while the value can be subtracted from num
+            count = num // value
+            if count:
+                result.append(symbol * count)
+                num -= value * count
+                
+        # Join the list into a single string and return
+        return ''.join(result)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* intToRoman(int num) {
+    // Define the value-symbol pairs in descending order
+    int values[] = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    char* symbols[] = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    
+    // Allocate memory for the result string
+    char* result = (char*)malloc(20 * sizeof(char));
+    result[0] = '\0'; // Initialize as empty string
+    
+    // Process each pair from the largest to the smallest
+    for (int i = 0; i < 13; i++) {
+        // Add the symbol while the value can be subtracted from num
+        int count = num / values[i];
+        if (count > 0) {
+            for (int j = 0; j < count; j++) {
+                strcat(result, symbols[i]);
+            }
+            num -= values[i] * count;
+        }
+    }
+    
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string IntToRoman(int num) {
+        // Define the value-symbol pairs in descending order
+        int[] values = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+        string[] symbols = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+        
+        System.Text.StringBuilder result = new System.Text.StringBuilder();
+        
+        // Process each pair from the largest to the smallest
+        for (int i = 0; i < values.Length; i++) {
+            // Add the symbol while the value can be subtracted from num
+            int count = num / values[i];
+            if (count > 0) {
+                for (int j = 0; j < count; j++) {
+                    result.Append(symbols[i]);
+                }
+                num -= values[i] * count;
+            }
+        }
+        
+        // Convert StringBuilder to String and return
+        return result.ToString();
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function intToRoman(num: number): string {
+    // Define the value-symbol pairs in descending order
+    const valueSymbols: [number, string][] = [
+        [1000, "M"],
+        [900, "CM"],
+        [500, "D"],
+        [400, "CD"],
+        [100, "C"],
+        [90, "XC"],
+        [50, "L"],
+        [40, "XL"],
+        [10, "X"],
+        [9, "IX"],
+        [5, "V"],
+        [4, "IV"],
+        [1, "I"]
+    ];
+    
+    let result: string = "";
+    
+    // Process each pair from the largest to the smallest
+    for (const [value, symbol] of valueSymbols) {
+        // Add the symbol while the value can be subtracted from num
+        const count = Math.floor(num / value);
+        if (count > 0) {
+            result += symbol.repeat(count);
+            num -= value * count;
+        }
+    }
+    
+    return result;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func intToRoman(_ num: Int) -> String {
+        // Define the value-symbol pairs in descending order
+        let valueSymbols: [(Int, String)] = [
+            (1000, "M"),
+            (900, "CM"),
+            (500, "D"),
+            (400, "CD"),
+            (100, "C"),
+            (90, "XC"),
+            (50, "L"),
+            (40, "XL"),
+            (10, "X"),
+            (9, "IX"),
+            (5, "V"),
+            (4, "IV"),
+            (1, "I")
+        ]
+        
+        var result = ""
+        var num = num
+        
+        // Process each pair from the largest to the smallest
+        for (value, symbol) in valueSymbols {
+            // Add the symbol while the value can be subtracted from num
+            let count = num / value
+            if count > 0 {
+                result += String(repeating: symbol, count: count)
+                num -= value * count
+            }
+        }
+        
+        return result
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(1) - The number of operations is bounded by a constant due to the fixed input range.
+- Space: O(1) - We use a fixed amount of extra space regardless of the input size.
+- Notes: This is essentially the same as the brute force approach, but framed as a greedy algorithm.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Integer to Roman Solutions","datePublished":"2025-09-08T11:06:46.152Z","description":"Seven different symbols represent Roman numerals with the following values: Symbol Value I 1 V 5 X 10 L 50 C 100 D 500 M 1000 Roman numerals are formed by ap...","keywords":"LeetCode, Integer to Roman, Medium, Hash Table, Math, String, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(1) - Since there are a fixed number of iterations based on the limited input range (max 3999), we can consider it constant time.; Space: O(1) - We only use a fixed amount of extra space regardless of the input size.. This is often considered O(1) because the number of operations is bounded by a constant, not dependent on the input size in the asymptotic sense."}},{"@type":"Question","name":"Digit-by-Digit Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(1) - As the number of operations is constant and independent of the input value.; Space: O(1) - We use a fixed-size lookup table, so the space complexity is constant.. This approach is very efficient since it directly computes the result without looping. It's a classic example of trading space for time."}},{"@type":"Question","name":"Greedy Subtraction complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(1) - The number of operations is bounded by a constant due to the fixed input range.; Space: O(1) - We use a fixed amount of extra space regardless of the input size.. This is essentially the same as the brute force approach, but framed as a greedy algorithm."}}]}).replace(/</g,'\\u003c')}
+</script>
