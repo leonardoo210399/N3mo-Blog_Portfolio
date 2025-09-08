@@ -1,0 +1,584 @@
+---
+title: "Reverse Integer"
+summary: "Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-2^31, 2^31 - 1], then return 0. Assume the environment does not allow you to store 64-bit integers (signed or unsigned)."
+date: "Sep 08, 2025"
+tags:
+  - Math
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 30.67% | **Paid:** No
+
+> **Topics:** Math
+
+- Examples
+- Constraints
+- [String Conversion Approach](#string-conversion-approach)
+- [Mathematical Approach](#mathematical-approach)
+- [Pop and Push Digits Approach](#pop-and-push-digits-approach)
+
+## Examples
+
+**Input**
+
+```text
+x = 123
+```
+
+**Output**
+
+```text
+321
+```
+
+**Input**
+
+```text
+x = -123
+```
+
+**Output**
+
+```text
+-321
+```
+
+**Input**
+
+```text
+x = 120
+```
+
+**Output**
+
+```text
+21
+```
+
+**Input**
+
+```text
+x = 0
+```
+
+**Output**
+
+```text
+0
+```
+
+## Constraints
+
+```text
+- -2^31 <= x <= 2^31 - 1
+```
+---
+
+## String Conversion Approach
+
+**Intuition**
+
+Convert the integer to a string, reverse the string, and convert back to an integer. Handle the sign separately.
+
+**Steps**
+
+- Check if the input is negative and store the sign.
+- Convert the absolute value of the integer to a string.
+- Reverse the string using slicing.
+- Convert the reversed string back to an integer.
+- Apply the original sign to the result.
+- Check if the result is within the 32-bit integer range; if not, return 0.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def reverse(x):
+    INT_MIN, INT_MAX = -2**31, 2**31 - 1
+    sign = -1 if x < 0 else 1
+    x_str = str(abs(x))
+    reversed_str = x_str[::-1]
+    result = sign * int(reversed_str)
+    if result < INT_MIN or result > INT_MAX:
+        return 0
+    return result` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int reverse(int x) {
+        int INT_MIN = -2147483648;
+        int INT_MAX = 2147483647;
+        int sign = x < 0 ? -1 : 1;
+        x = Math.abs(x);
+        StringBuilder sb = new StringBuilder(String.valueOf(x));
+        String reversedStr = sb.reverse().toString();
+        try {
+            int result = sign * Integer.parseInt(reversedStr);
+            return result;
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function reverse(x) {
+    const INT_MIN = -2147483648;
+    const INT_MAX = 2147483647;
+    const sign = x < 0 ? -1 : 1;
+    const xStr = Math.abs(x).toString();
+    const reversedStr = xStr.split('').reverse().join('');
+    const result = sign * parseInt(reversedStr, 10);
+    if (result < INT_MIN || result > INT_MAX) {
+        return 0;
+    }
+    return result;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <string>
+#include <algorithm>
+#include <climits>
+
+class Solution {
+public:
+    int reverse(int x) {
+        long long sign = x < 0 ? -1 : 1;
+        long long absX = llabs(x);
+        std::string xStr = std::to_string(absX);
+        std::reverse(xStr.begin(), xStr.end());
+        long long result = sign * std::stoll(xStr);
+        if (result < INT_MIN || result > INT_MAX) {
+            return 0;
+        }
+        return static_cast<int>(result);
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def reverse(self, x: int) -> int:
+        INT_MIN, INT_MAX = -2**31, 2**31 - 1
+        sign = -1 if x < 0 else 1
+        x_str = str(abs(x))
+        reversed_str = x_str[::-1]
+        result = sign * int(reversed_str)
+        if result < INT_MIN or result > INT_MAX:
+            return 0
+        return result` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <string.h>
+#include <limits.h>
+
+int reverse(int x) {
+    long long result = 0;
+    int sign = x < 0 ? -1 : 1;
+    x = x * sign;
+    while (x != 0) {
+        result = result * 10 + x % 10;
+        x /= 10;
+    }
+    result *= sign;
+    if (result < INT_MIN || result > INT_MAX) {
+        return 0;
+    }
+    return (int)result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int Reverse(int x) {
+        int INT_MIN = -2147483648;
+        int INT_MAX = 2147483647;
+        int sign = x < 0 ? -1 : 1;
+        x = Math.Abs(x);
+        string xStr = x.ToString();
+        char[] charArray = xStr.ToCharArray();
+        Array.Reverse(charArray);
+        string reversedStr = new string(charArray);
+        try {
+            int result = sign * int.Parse(reversedStr);
+            return result;
+        } catch (OverflowException) {
+            return 0;
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function reverse(x: number): number {
+    const INT_MIN = -2147483648;
+    const INT_MAX = 2147483647;
+    const sign = x < 0 ? -1 : 1;
+    const xStr = Math.abs(x).toString();
+    const reversedStr = xStr.split('').reverse().join('');
+    const result = sign * parseInt(reversedStr, 10);
+    if (result < INT_MIN || result > INT_MAX) {
+        return 0;
+    }
+    return result;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func reverse(_ x: Int) -> Int {
+        let INT_MIN = -2147483648
+        let INT_MAX = 2147483647
+        let sign = x < 0 ? -1 : 1
+        let xStr = String(abs(x))
+        let reversedStr = String(xStr.reversed())
+        let result = sign * (Int(reversedStr) ?? 0)
+        if result < INT_MIN || result > INT_MAX {
+            return 0
+        }
+        return result
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log x) where log x is the number of digits in x
+- Space: O(log x) for storing the string representation
+
+---
+
+## Mathematical Approach
+
+**Intuition**
+
+Extract digits one by one from the end of the number and build the reversed number mathematically.
+
+**Steps**
+
+- Initialize a variable to store the reversed number.
+- Iterate while the input number is not zero.
+- In each iteration, extract the last digit using modulo 10.
+- Before appending the digit to the reversed number, check for overflow.
+- Append the digit to the reversed number by multiplying by 10 and adding the digit.
+- Remove the last digit from the input number by integer division by 10.
+- Return the reversed number after the loop.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def reverse(x):
+    INT_MIN, INT_MAX = -2**31, 2**31 - 1
+    sign = -1 if x < 0 else 1
+    x_abs = abs(x)
+    reversed_num = 0
+    while x_abs != 0:
+        digit = x_abs % 10
+        if reversed_num > (INT_MAX - digit) // 10:
+            return 0
+        reversed_num = reversed_num * 10 + digit
+        x_abs //= 10
+    return sign * reversed_num` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int reverse(int x) {
+        int INT_MIN = -2147483648;
+        int INT_MAX = 2147483647;
+        int sign = x < 0 ? -1 : 1;
+        x = Math.abs(x);
+        int reversed = 0;
+        while (x != 0) {
+            int digit = x % 10;
+            if (reversed > (INT_MAX - digit) / 10) {
+                return 0;
+            }
+            reversed = reversed * 10 + digit;
+            x /= 10;
+        }
+        return sign * reversed;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function reverse(x) {
+    const INT_MIN = -2147483648;
+    const INT_MAX = 2147483647;
+    const sign = x < 0 ? -1 : 1;
+    x = Math.abs(x);
+    let reversed = 0;
+    while (x !== 0) {
+        const digit = x % 10;
+        if (reversed > Math.floor((INT_MAX - digit) / 10)) {
+            return 0;
+        }
+        reversed = reversed * 10 + digit;
+        x = Math.floor(x / 10);
+    }
+    return sign * reversed;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <climits>
+
+class Solution {
+public:
+    int reverse(int x) {
+        int sign = x < 0 ? -1 : 1;
+        long long xAbs = llabs(x);
+        long long reversed = 0;
+        while (xAbs != 0) {
+            int digit = xAbs % 10;
+            if (reversed > (INT_MAX - digit) / 10) {
+                return 0;
+            }
+            reversed = reversed * 10 + digit;
+            xAbs /= 10;
+        }
+        return sign * reversed;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def reverse(self, x: int) -> int:
+        INT_MIN, INT_MAX = -2**31, 2**31 - 1
+        sign = -1 if x < 0 else 1
+        x_abs = abs(x)
+        reversed_num = 0
+        while x_abs != 0:
+            digit = x_abs % 10
+            if reversed_num > (INT_MAX - digit) // 10:
+                return 0
+            reversed_num = reversed_num * 10 + digit
+            x_abs //= 10
+        return sign * reversed_num` },
+{ name: "C", lang: "c", code: `#include <limits.h>
+
+int reverse(int x) {
+    long long result = 0;
+    while (x != 0) {
+        result = result * 10 + x % 10;
+        x /= 10;
+    }
+    if (result < INT_MIN || result > INT_MAX) {
+        return 0;
+    }
+    return (int)result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int Reverse(int x) {
+        int INT_MIN = -2147483648;
+        int INT_MAX = 2147483647;
+        int sign = x < 0 ? -1 : 1;
+        x = Math.Abs(x);
+        int reversed = 0;
+        while (x != 0) {
+            int digit = x % 10;
+            if (reversed > (INT_MAX - digit) / 10) {
+                return 0;
+            }
+            reversed = reversed * 10 + digit;
+            x /= 10;
+        }
+        return sign * reversed;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function reverse(x: number): number {
+    const INT_MIN = -2147483648;
+    const INT_MAX = 2147483647;
+    const sign = x < 0 ? -1 : 1;
+    x = Math.abs(x);
+    let reversed = 0;
+    while (x !== 0) {
+        const digit = x % 10;
+        if (reversed > Math.floor((INT_MAX - digit) / 10)) {
+            return 0;
+        }
+        reversed = reversed * 10 + digit;
+        x = Math.floor(x / 10);
+    }
+    return sign * reversed;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func reverse(_ x: Int) -> Int {
+        let INT_MIN = -2147483648
+        let INT_MAX = 2147483647
+        let sign = x < 0 ? -1 : 1
+        var x = abs(x)
+        var reversed = 0
+        while x != 0 {
+            let digit = x % 10
+            if reversed > (INT_MAX - digit) / 10 {
+                return 0
+            }
+            reversed = reversed * 10 + digit
+            x /= 10
+        }
+        return sign * reversed
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log x) where log x is the number of digits in x
+- Space: O(1) as we use only a constant amount of extra space
+
+---
+
+## Pop and Push Digits Approach
+
+**Intuition**
+
+Directly manipulate the digits mathematically without converting to string, handling overflow carefully.
+
+**Steps**
+
+- Initialize the result to 0.
+- Process each digit from right to left.
+- For each digit, check if pushing it to the result would cause overflow.
+- If overflow is detected, return 0.
+- Otherwise, push the digit to the result.
+- Continue until all digits are processed.
+- Return the final result.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def reverse(x):
+    INT_MIN, INT_MAX = -2**31, 2**31 - 1
+    result = 0
+    sign = -1 if x < 0 else 1
+    x_abs = abs(x)
+    while x_abs != 0:
+        pop = x_abs % 10
+        x_abs //= 10
+        if result > INT_MAX // 10 or (result == INT_MAX // 10 and pop > 7):
+            return 0
+        if result < INT_MIN // 10 or (result == INT_MIN // 10 and pop < -8):
+            return 0
+        result = result * 10 + pop
+    return sign * result` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int reverse(int x) {
+        int INT_MIN = -2147483648;
+        int INT_MAX = 2147483647;
+        int result = 0;
+        while (x != 0) {
+            int pop = x % 10;
+            x /= 10;
+            if (result > INT_MAX / 10 || (result == INT_MAX / 10 && pop > 7)) {
+                return 0;
+            }
+            if (result < INT_MIN / 10 || (result == INT_MIN / 10 && pop < -8)) {
+                return 0;
+            }
+            result = result * 10 + pop;
+        }
+        return result;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function reverse(x) {
+    const INT_MIN = -2147483648;
+    const INT_MAX = 2147483647;
+    let result = 0;
+    while (x !== 0) {
+        const pop = x % 10;
+        x = Math.trunc(x / 10);
+        if (result > INT_MAX / 10 || (result === INT_MAX / 10 && pop > 7)) {
+            return 0;
+        }
+        if (result < INT_MIN / 10 || (result === INT_MIN / 10 && pop < -8)) {
+            return 0;
+        }
+        result = result * 10 + pop;
+    }
+    return result;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <climits>
+
+class Solution {
+public:
+    int reverse(int x) {
+        int result = 0;
+        while (x != 0) {
+            int pop = x % 10;
+            x /= 10;
+            if (result > INT_MAX / 10 || (result == INT_MAX / 10 && pop > 7)) {
+                return 0;
+            }
+            if (result < INT_MIN / 10 || (result == INT_MIN / 10 && pop < -8)) {
+                return 0;
+            }
+            result = result * 10 + pop;
+        }
+        return result;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def reverse(self, x: int) -> int:
+        INT_MIN, INT_MAX = -2**31, 2**31 - 1
+        result = 0
+        sign = -1 if x < 0 else 1
+        x_abs = abs(x)
+        while x_abs != 0:
+            pop = x_abs % 10
+            x_abs //= 10
+            if result > INT_MAX // 10 or (result == INT_MAX // 10 and pop > 7):
+                return 0
+            if result < INT_MIN // 10 or (result == INT_MIN // 10 and pop < -8):
+                return 0
+            result = result * 10 + pop
+        return sign * result` },
+{ name: "C", lang: "c", code: `#include <limits.h>
+
+int reverse(int x) {
+    int result = 0;
+    while (x != 0) {
+        int pop = x % 10;
+        x /= 10;
+        if (result > INT_MAX / 10 || (result == INT_MAX / 10 && pop > 7)) {
+            return 0;
+        }
+        if (result < INT_MIN / 10 || (result == INT_MIN / 10 && pop < -8)) {
+            return 0;
+        }
+        result = result * 10 + pop;
+    }
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int Reverse(int x) {
+        int INT_MIN = -2147483648;
+        int INT_MAX = 2147483647;
+        int result = 0;
+        while (x != 0) {
+            int pop = x % 10;
+            x /= 10;
+            if (result > INT_MAX / 10 || (result == INT_MAX / 10 && pop > 7)) {
+                return 0;
+            }
+            if (result < INT_MIN / 10 || (result == INT_MIN / 10 && pop < -8)) {
+                return 0;
+            }
+            result = result * 10 + pop;
+        }
+        return result;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function reverse(x: number): number {
+    const INT_MIN = -2147483648;
+    const INT_MAX = 2147483647;
+    let result = 0;
+    while (x !== 0) {
+        const pop = x % 10;
+        x = Math.trunc(x / 10);
+        if (result > INT_MAX / 10 || (result === INT_MAX / 10 && pop > 7)) {
+            return 0;
+        }
+        if (result < INT_MIN / 10 || (result === INT_MIN / 10 && pop < -8)) {
+            return 0;
+        }
+        result = result * 10 + pop;
+    }
+    return result;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func reverse(_ x: Int) -> Int {
+        let INT_MIN = -2147483648
+        let INT_MAX = 2147483647
+        var x = x
+        var result = 0
+        while x != 0 {
+            let pop = x % 10
+            x /= 10
+            if result > INT_MAX / 10 || (result == INT_MAX / 10 && pop > 7) {
+                return 0
+            }
+            if result < INT_MIN / 10 || (result == INT_MIN / 10 && pop < -8) {
+                return 0
+            }
+            result = result * 10 + pop
+        }
+        return result
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(log x) where log x is the number of digits in x
+- Space: O(1) as we only use a constant amount of extra space
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Reverse Integer Solutions","datePublished":"2025-09-08T06:05:05.252Z","description":"Given a signed 32-bit integer x, return x with its digits reversed. If reversing x causes the value to go outside the signed 32-bit integer range [-2^31, 2^3...","keywords":"LeetCode, Reverse Integer, Medium, Math, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"String Conversion Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log x) where log x is the number of digits in x; Space: O(log x) for storing the string representation. "}},{"@type":"Question","name":"Mathematical Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log x) where log x is the number of digits in x; Space: O(1) as we use only a constant amount of extra space. "}},{"@type":"Question","name":"Pop and Push Digits Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(log x) where log x is the number of digits in x; Space: O(1) as we only use a constant amount of extra space. "}}]}).replace(/</g,'\\u003c')}
+</script>
