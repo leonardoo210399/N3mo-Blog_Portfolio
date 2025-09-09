@@ -1,0 +1,904 @@
+---
+title: "3Sum Closest"
+summary: "Given an integer array nums of length n and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the three integers. You may assume that each input would have exactly one solution."
+date: "Sep 09, 2025"
+tags:
+  - Array
+  - Two Pointers
+  - Sorting
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 47.17% | **Paid:** No
+
+> **Topics:** Array, Two Pointers, Sorting
+
+- Examples
+- Constraints
+- [Brute Force](#brute-force)
+- [Two Pointer Approach](#two-pointer-approach)
+- [Binary Search Approach](#binary-search-approach)
+
+## Examples
+
+**Input**
+
+```text
+nums = [-1,2,1,-4], target = 1
+```
+
+**Output**
+
+```text
+2
+```
+
+**Explanation**
+
+The sum that is closest to the target is 2. (-1 + 2 + 1 = 2).
+
+**Input**
+
+```text
+nums = [0,0,0], target = 1
+```
+
+**Output**
+
+```text
+0
+```
+
+**Explanation**
+
+The sum that is closest to the target is 0. (0 + 0 + 0 = 0).
+
+## Constraints
+
+```text
+- 3 <= nums.length <= 500
+- -1000 <= nums[i] <= 1000
+- -10^4 <= target <= 10^4
+```
+---
+
+## Brute Force
+
+**Intuition**
+
+Check all possible triplets in the array to find the one whose sum is closest to the target. Since we need three numbers, we can iterate through all combinations using three nested loops.
+
+**Steps**
+
+- We will use three nested loops to generate all possible triplets from the array.
+- For each triplet, compute the sum and compare it with the target to determine how close it is.
+- Keep track of the closest sum encountered so far by comparing the absolute differences between the sums and the target.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def threeSumClosest(nums, target):
+    closest_sum = float('inf')
+    min_diff = float('inf')
+    n = len(nums)
+    
+    for i in range(n - 2):
+        for j in range(i + 1, n - 1):
+            for k in range(j + 1, n):
+                current_sum = nums[i] + nums[j] + nums[k]
+                diff = abs(current_sum - target)
+                if diff < min_diff:
+                    min_diff = diff
+                    closest_sum = current_sum
+    return closest_sum` },
+{ name: "Java", lang: "java", code: `public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        int closestSum = Integer.MAX_VALUE;
+        int minDiff = Integer.MAX_VALUE;
+        int n = nums.length;
+        
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    int currentSum = nums[i] + nums[j] + nums[k];
+                    int diff = Math.abs(currentSum - target);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestSum = currentSum;
+                    }
+                }
+            }
+        }
+        return closestSum;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function threeSumClosest(nums, target) {
+    let closestSum = Infinity;
+    let minDiff = Infinity;
+    const n = nums.length;
+    
+    for (let i = 0; i < n - 2; i++) {
+        for (let j = i + 1; j < n - 1; j++) {
+            for (let k = j + 1; k < n; k++) {
+                const currentSum = nums[i] + nums[j] + nums[k];
+                const diff = Math.abs(currentSum - target);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestSum = currentSum;
+                }
+            }
+        }
+    }
+    return closestSum;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <climits>
+#include <cmath>
+using namespace std;
+
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        int closestSum = INT_MAX;
+        int minDiff = INT_MAX;
+        int n = nums.size();
+        
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    int currentSum = nums[i] + nums[j] + nums[k];
+                    int diff = abs(currentSum - target);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestSum = currentSum;
+                    }
+                }
+            }
+        }
+        return closestSum;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def threeSumClosest(nums, target):
+    closest_sum = float('inf')
+    min_diff = float('inf')
+    n = len(nums)
+    
+    for i in range(n - 2):
+        for j in range(i + 1, n - 1):
+            for k in range(j + 1, n):
+                current_sum = nums[i] + nums[j] + nums[k]
+                diff = abs(current_sum - target)
+                if diff < min_diff:
+                    min_diff = diff
+                    closest_sum = current_sum
+    return closest_sum` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+int threeSumClosest(int* nums, int numsSize, int target) {
+    int closestSum = INT_MAX;
+    int minDiff = INT_MAX;
+    
+    for (int i = 0; i < numsSize - 2; i++) {
+        for (int j = i + 1; j < numsSize - 1; j++) {
+            for (int k = j + 1; k < numsSize; k++) {
+                int currentSum = nums[i] + nums[j] + nums[k];
+                int diff = abs(currentSum - target);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestSum = currentSum;
+                }
+            }
+        }
+    }
+    return closestSum;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int ThreeSumClosest(int[] nums, int target) {
+        int closestSum = int.MaxValue;
+        int minDiff = int.MaxValue;
+        int n = nums.Length;
+        
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                for (int k = j + 1; k < n; k++) {
+                    int currentSum = nums[i] + nums[j] + nums[k];
+                    int diff = Math.Abs(currentSum - target);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestSum = currentSum;
+                    }
+                }
+            }
+        }
+        return closestSum;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function threeSumClosest(nums: number[], target: number): number {
+    let closestSum = Infinity;
+    let minDiff = Infinity;
+    const n = nums.length;
+    
+    for (let i = 0; i < n - 2; i++) {
+        for (let j = i + 1; j < n - 1; j++) {
+            for (let k = j + 1; k < n; k++) {
+                const currentSum = nums[i] + nums[j] + nums[k];
+                const diff = Math.abs(currentSum - target);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestSum = currentSum;
+                }
+            }
+        }
+    }
+    return closestSum;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func threeSumClosest(_ nums: [Int], _ target: Int) -> Int {
+        var closestSum = Int.max
+        var minDiff = Int.max
+        let n = nums.count
+        
+        for i in 0..<n-2 {
+            for j in i+1..<n-1 {
+                for k in j+1..<n {
+                    let currentSum = nums[i] + nums[j] + nums[k]
+                    let diff = abs(currentSum - target)
+                    if diff < minDiff {
+                        minDiff = diff
+                        closestSum = currentSum
+                    }
+                }
+            }
+        }
+        return closestSum
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n^3) where n is the length of the input array. We have three nested loops, each iterating up to n times in the worst case.
+- Space: O(1) as we only use a constant amount of extra space for variables regardless of the input size.
+- Notes: This approach is straightforward but inefficient for large inputs due to its cubic time complexity. It's suitable for small arrays or as a baseline for understanding the problem.
+
+---
+
+## Two Pointer Approach
+
+**Intuition**
+
+After sorting the array, we can fix one element and use the two-pointer technique to find the other two elements efficiently. This reduces the problem from three dimensions to two dimensions for the inner search.
+
+**Steps**
+
+- Sort the input array to enable the two-pointer technique.
+- Iterate through the array, fixing one element at a time as the first element of the triplet.
+- For each fixed element, use two pointers (left and right) to find the other two elements such that their sum is closest to the target.
+- Adjust the pointers based on whether the current sum is less than or greater than the target, moving toward a potentially better solution.
+- Keep track of the closest sum encountered throughout the process.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def threeSumClosest(nums, target):
+    nums.sort()
+    n = len(nums)
+    closest_sum = nums[0] + nums[1] + nums[2]
+    
+    for i in range(n - 2):
+        left, right = i + 1, n - 1
+        
+        while left < right:
+            current_sum = nums[i] + nums[left] + nums[right]
+            
+            if current_sum == target:
+                return current_sum
+            
+            if abs(current_sum - target) < abs(closest_sum - target):
+                closest_sum = current_sum
+            
+            if current_sum < target:
+                left += 1
+            else:
+                right -= 1
+    
+    return closest_sum` },
+{ name: "Java", lang: "java", code: `import java.util.Arrays;
+
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int closestSum = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < n - 2; i++) {
+            int left = i + 1, right = n - 1;
+            
+            while (left < right) {
+                int currentSum = nums[i] + nums[left] + nums[right];
+                
+                if (currentSum == target) {
+                    return currentSum;
+                }
+                
+                if (Math.abs(currentSum - target) < Math.abs(closestSum - target)) {
+                    closestSum = currentSum;
+                }
+                
+                if (currentSum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        
+        return closestSum;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function threeSumClosest(nums, target) {
+    nums.sort((a, b) => a - b);
+    const n = nums.length;
+    let closestSum = nums[0] + nums[1] + nums[2];
+    
+    for (let i = 0; i < n - 2; i++) {
+        let left = i + 1, right = n - 1;
+        
+        while (left < right) {
+            const currentSum = nums[i] + nums[left] + nums[right];
+            
+            if (currentSum === target) {
+                return currentSum;
+            }
+            
+            if (Math.abs(currentSum - target) < Math.abs(closestSum - target)) {
+                closestSum = currentSum;
+            }
+            
+            if (currentSum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return closestSum;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        int closestSum = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < n - 2; i++) {
+            int left = i + 1, right = n - 1;
+            
+            while (left < right) {
+                int currentSum = nums[i] + nums[left] + nums[right];
+                
+                if (currentSum == target) {
+                    return currentSum;
+                }
+                
+                if (abs(currentSum - target) < abs(closestSum - target)) {
+                    closestSum = currentSum;
+                }
+                
+                if (currentSum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        
+        return closestSum;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def threeSumClosest(nums, target):
+    nums.sort()
+    n = len(nums)
+    closest_sum = nums[0] + nums[1] + nums[2]
+    
+    for i in range(n - 2):
+        left, right = i + 1, n - 1
+        
+        while left < right:
+            current_sum = nums[i] + nums[left] + nums[right]
+            
+            if current_sum == target:
+                return current_sum
+            
+            if abs(current_sum - target) < abs(closest_sum - target):
+                closest_sum = current_sum
+            
+            if current_sum < target:
+                left += 1
+            else:
+                right -= 1
+    
+    return closest_sum` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int threeSumClosest(int* nums, int numsSize, int target) {
+    qsort(nums, numsSize, sizeof(int), compare);
+    int closestSum = nums[0] + nums[1] + nums[2];
+    
+    for (int i = 0; i < numsSize - 2; i++) {
+        int left = i + 1, right = numsSize - 1;
+        
+        while (left < right) {
+            int currentSum = nums[i] + nums[left] + nums[right];
+            
+            if (currentSum == target) {
+                return currentSum;
+            }
+            
+            if (abs(currentSum - target) < abs(closestSum - target)) {
+                closestSum = currentSum;
+            }
+            
+            if (currentSum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return closestSum;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int ThreeSumClosest(int[] nums, int target) {
+        Array.Sort(nums);
+        int n = nums.Length;
+        int closestSum = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < n - 2; i++) {
+            int left = i + 1, right = n - 1;
+            
+            while (left < right) {
+                int currentSum = nums[i] + nums[left] + nums[right];
+                
+                if (currentSum == target) {
+                    return currentSum;
+                }
+                
+                if (Math.Abs(currentSum - target) < Math.Abs(closestSum - target)) {
+                    closestSum = currentSum;
+                }
+                
+                if (currentSum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        
+        return closestSum;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function threeSumClosest(nums: number[], target: number): number {
+    nums.sort((a, b) => a - b);
+    const n = nums.length;
+    let closestSum = nums[0] + nums[1] + nums[2];
+    
+    for (let i = 0; i < n - 2; i++) {
+        let left = i + 1, right = n - 1;
+        
+        while (left < right) {
+            const currentSum = nums[i] + nums[left] + nums[right];
+            
+            if (currentSum === target) {
+                return currentSum;
+            }
+            
+            if (Math.abs(currentSum - target) < Math.abs(closestSum - target)) {
+                closestSum = currentSum;
+            }
+            
+            if (currentSum < target) {
+                left++;
+            } else {
+                right--;
+            }
+        }
+    }
+    
+    return closestSum;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func threeSumClosest(_ nums: [Int], _ target: Int) -> Int {
+        let nums = nums.sorted()
+        let n = nums.count
+        var closestSum = nums[0] + nums[1] + nums[2]
+        
+        for i in 0..<n-2 {
+            var left = i + 1
+            var right = n - 1
+            
+            while left < right {
+                let currentSum = nums[i] + nums[left] + nums[right]
+                
+                if currentSum == target {
+                    return currentSum
+                }
+                
+                if abs(currentSum - target) < abs(closestSum - target) {
+                    closestSum = currentSum
+                }
+                
+                if currentSum < target {
+                    left += 1
+                } else {
+                    right -= 1
+                }
+            }
+        }
+        
+        return closestSum
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n^2) where n is the length of the input array. The sorting takes O(n log n), and the main loop with two pointers takes O(n^2). Since O(n^2) dominates O(n log n), the overall complexity is O(n^2).
+- Space: O(1) if we don't count the space used by sorting (which is O(log n) in most implementations). We only use a constant amount of extra space for variables regardless of the input size.
+- Notes: This approach is significantly more efficient than the brute force method for large inputs. It leverages the sorted array property and two-pointer technique to reduce the search space effectively. The key insight is that by fixing one element and using two pointers for the other two elements, we can navigate toward the target more intelligently than checking all combinations.
+
+---
+
+## Binary Search Approach
+
+**Intuition**
+
+After sorting the array, we can fix two elements and use binary search to find the third element that makes the sum closest to the target. This can be more efficient than the two-pointer approach in some cases.
+
+**Steps**
+
+- Sort the input array to enable binary search.
+- Iterate through the array with two nested loops to fix two elements of the triplet.
+- For each pair of fixed elements, calculate the required third element value to reach the target.
+- Use binary search to find the closest value to this required element in the remaining part of the array.
+- Calculate all possible sums with the two fixed elements and the closest elements found via binary search.
+- Keep track of the overall closest sum as we progress through all combinations.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def threeSumClosest(nums, target):
+    nums.sort()
+    n = len(nums)
+    closest_sum = nums[0] + nums[1] + nums[2]
+    
+    for i in range(n - 2):
+        for j in range(i + 1, n - 1):
+            required = target - nums[i] - nums[j]
+            
+            # Binary search for the closest element
+            left, right = j + 1, n - 1
+            while left < right:
+                mid = (left + right) // 2
+                if nums[mid] < required:
+                    left = mid + 1
+                else:
+                    right = mid
+            
+            # Check the element at left and its predecessor if exists
+            for k in [left - 1, left]:
+                if j < k < n:
+                    current_sum = nums[i] + nums[j] + nums[k]
+                    if abs(current_sum - target) < abs(closest_sum - target):
+                        closest_sum = current_sum
+    
+    return closest_sum` },
+{ name: "Java", lang: "java", code: `import java.util.Arrays;
+
+public class Solution {
+    public int threeSumClosest(int[] nums, int target) {
+        Arrays.sort(nums);
+        int n = nums.length;
+        int closestSum = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                int required = target - nums[i] - nums[j];
+                
+                // Binary search for the closest element
+                int left = j + 1, right = n - 1;
+                while (left < right) {
+                    int mid = left + (right - left) / 2;
+                    if (nums[mid] < required) {
+                        left = mid + 1;
+                    } else {
+                        right = mid;
+                    }
+                }
+                
+                // Check the element at left and its predecessor if exists
+                for (int k : new int[]{left - 1, left}) {
+                    if (j < k && k < n) {
+                        int currentSum = nums[i] + nums[j] + nums[k];
+                        if (Math.abs(currentSum - target) < Math.abs(closestSum - target)) {
+                            closestSum = currentSum;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return closestSum;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function threeSumClosest(nums, target) {
+    nums.sort((a, b) => a - b);
+    const n = nums.length;
+    let closestSum = nums[0] + nums[1] + nums[2];
+    
+    for (let i = 0; i < n - 2; i++) {
+        for (let j = i + 1; j < n - 1; j++) {
+            const required = target - nums[i] - nums[j];
+            
+            // Binary search for the closest element
+            let left = j + 1, right = n - 1;
+            while (left < right) {
+                const mid = Math.floor((left + right) / 2);
+                if (nums[mid] < required) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            }
+            
+            // Check the element at left and its predecessor if exists
+            for (const k of [left - 1, left]) {
+                if (j < k && k < n) {
+                    const currentSum = nums[i] + nums[j] + nums[k];
+                    if (Math.abs(currentSum - target) < Math.abs(closestSum - target)) {
+                        closestSum = currentSum;
+                    }
+                }
+            }
+        }
+    }
+    
+    return closestSum;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <algorithm>
+#include <cmath>
+using namespace std;
+
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        sort(nums.begin(), nums.end());
+        int n = nums.size();
+        int closestSum = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                int required = target - nums[i] - nums[j];
+                
+                // Binary search for the closest element
+                int left = j + 1, right = n - 1;
+                while (left < right) {
+                    int mid = left + (right - left) / 2;
+                    if (nums[mid] < required) {
+                        left = mid + 1;
+                    } else {
+                        right = mid;
+                    }
+                }
+                
+                // Check the element at left and its predecessor if exists
+                for (int k : {left - 1, left}) {
+                    if (j < k && k < n) {
+                        int currentSum = nums[i] + nums[j] + nums[k];
+                        if (abs(currentSum - target) < abs(closestSum - target)) {
+                            closestSum = currentSum;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return closestSum;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def threeSumClosest(nums, target):
+    nums.sort()
+    n = len(nums)
+    closest_sum = nums[0] + nums[1] + nums[2]
+    
+    for i in range(n - 2):
+        for j in range(i + 1, n - 1):
+            required = target - nums[i] - nums[j]
+            
+            # Binary search for the closest element
+            left, right = j + 1, n - 1
+            while left < right:
+                mid = (left + right) // 2
+                if nums[mid] < required:
+                    left = mid + 1
+                else:
+                    right = mid
+            
+            # Check the element at left and its predecessor if exists
+            for k in [left - 1, left]:
+                if j < k < n:
+                    current_sum = nums[i] + nums[j] + nums[k]
+                    if abs(current_sum - target) < abs(closest_sum - target):
+                        closest_sum = current_sum
+    
+    return closest_sum` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int threeSumClosest(int* nums, int numsSize, int target) {
+    qsort(nums, numsSize, sizeof(int), compare);
+    int closestSum = nums[0] + nums[1] + nums[2];
+    
+    for (int i = 0; i < numsSize - 2; i++) {
+        for (int j = i + 1; j < numsSize - 1; j++) {
+            int required = target - nums[i] - nums[j];
+            
+            // Binary search for the closest element
+            int left = j + 1, right = numsSize - 1;
+            while (left < right) {
+                int mid = left + (right - left) / 2;
+                if (nums[mid] < required) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            }
+            
+            // Check the element at left and its predecessor if exists
+            for (int k = left - 1; k <= left; k++) {
+                if (j < k && k < numsSize) {
+                    int currentSum = nums[i] + nums[j] + nums[k];
+                    if (abs(currentSum - target) < abs(closestSum - target)) {
+                        closestSum = currentSum;
+                    }
+                }
+            }
+        }
+    }
+    
+    return closestSum;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int ThreeSumClosest(int[] nums, int target) {
+        Array.Sort(nums);
+        int n = nums.Length;
+        int closestSum = nums[0] + nums[1] + nums[2];
+        
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i + 1; j < n - 1; j++) {
+                int required = target - nums[i] - nums[j];
+                
+                // Binary search for the closest element
+                int left = j + 1, right = n - 1;
+                while (left < right) {
+                    int mid = left + (right - left) / 2;
+                    if (nums[mid] < required) {
+                        left = mid + 1;
+                    } else {
+                        right = mid;
+                    }
+                }
+                
+                // Check the element at left and its predecessor if exists
+                foreach (int k in new int[]{left - 1, left}) {
+                    if (j < k && k < n) {
+                        int currentSum = nums[i] + nums[j] + nums[k];
+                        if (Math.Abs(currentSum - target) < Math.Abs(closestSum - target)) {
+                            closestSum = currentSum;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return closestSum;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function threeSumClosest(nums: number[], target: number): number {
+    nums.sort((a, b) => a - b);
+    const n = nums.length;
+    let closestSum = nums[0] + nums[1] + nums[2];
+    
+    for (let i = 0; i < n - 2; i++) {
+        for (let j = i + 1; j < n - 1; j++) {
+            const required = target - nums[i] - nums[j];
+            
+            // Binary search for the closest element
+            let left = j + 1, right = n - 1;
+            while (left < right) {
+                const mid = Math.floor((left + right) / 2);
+                if (nums[mid] < required) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            }
+            
+            // Check the element at left and its predecessor if exists
+            for (const k of [left - 1, left]) {
+                if (j < k && k < n) {
+                    const currentSum = nums[i] + nums[j] + nums[k];
+                    if (Math.abs(currentSum - target) < Math.abs(closestSum - target)) {
+                        closestSum = currentSum;
+                    }
+                }
+            }
+        }
+    }
+    
+    return closestSum;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func threeSumClosest(_ nums: [Int], _ target: Int) -> Int {
+        let nums = nums.sorted()
+        let n = nums.count
+        var closestSum = nums[0] + nums[1] + nums[2]
+        
+        for i in 0..<n-2 {
+            for j in (i+1)..<n-1 {
+                let required = target - nums[i] - nums[j]
+                
+                // Binary search for the closest element
+                var left = j + 1
+                var right = n - 1
+                while left < right {
+                    let mid = left + (right - left) / 2
+                    if nums[mid] < required {
+                        left = mid + 1
+                    } else {
+                        right = mid
+                    }
+                }
+                
+                // Check the element at left and its predecessor if exists
+                for k in [left - 1, left] {
+                    if j < k && k < n {
+                        let currentSum = nums[i] + nums[j] + nums[k]
+                        if abs(currentSum - target) < abs(closestSum - target) {
+                            closestSum = currentSum
+                        }
+                    }
+                }
+            }
+        }
+        
+        return closestSum
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n^2 log n) where n is the length of the input array. The sorting takes O(n log n). The nested loops run O(n^2) times, and each binary search operation takes O(log n), resulting in O(n^2 log n) overall.
+- Space: O(1) if we don't count the space used by sorting. We only use a constant amount of extra space for variables regardless of the input size.
+- Notes: This approach is conceptually interesting but not as efficient as the two-pointer approach for this specific problem. While it demonstrates a creative use of binary search, the overhead of performing binary search for each pair makes it slower than the two-pointer technique. It might be more useful in scenarios where you need to find multiple closest sums or when the array is very large but already sorted.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode 3Sum Closest Solutions","datePublished":"2025-09-09T05:03:11.462Z","description":"Given an integer array nums of length n and an integer target, find three integers in nums such that the sum is closest to target. Return the sum of the thre...","keywords":"LeetCode, 3Sum Closest, Medium, Array, Two Pointers, Sorting, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n^3) where n is the length of the input array. We have three nested loops, each iterating up to n times in the worst case.; Space: O(1) as we only use a constant amount of extra space for variables regardless of the input size.. This approach is straightforward but inefficient for large inputs due to its cubic time complexity. It's suitable for small arrays or as a baseline for understanding the problem."}},{"@type":"Question","name":"Two Pointer Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n^2) where n is the length of the input array. The sorting takes O(n log n), and the main loop with two pointers takes O(n^2). Since O(n^2) dominates O(n log n), the overall complexity is O(n^2).; Space: O(1) if we don't count the space used by sorting (which is O(log n) in most implementations). We only use a constant amount of extra space for variables regardless of the input size.. This approach is significantly more efficient than the brute force method for large inputs. It leverages the sorted array property and two-pointer technique to reduce the search space effectively. The key insight is that by fixing one element and using two pointers for the other two elements, we can navigate toward the target more intelligently than checking all combinations."}},{"@type":"Question","name":"Binary Search Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n^2 log n) where n is the length of the input array. The sorting takes O(n log n). The nested loops run O(n^2) times, and each binary search operation takes O(log n), resulting in O(n^2 log n) overall.; Space: O(1) if we don't count the space used by sorting. We only use a constant amount of extra space for variables regardless of the input size.. This approach is conceptually interesting but not as efficient as the two-pointer approach for this specific problem. While it demonstrates a creative use of binary search, the overhead of performing binary search for each pair makes it slower than the two-pointer technique. It might be more useful in scenarios where you need to find multiple closest sums or when the array is very large but already sorted."}}]}).replace(/</g,'\\u003c')}
+</script>
