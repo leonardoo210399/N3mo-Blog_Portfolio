@@ -1,0 +1,789 @@
+---
+title: "3Sum"
+summary: "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0. Notice that the solution set must not contain duplicate triplets."
+date: "Sep 09, 2025"
+tags:
+  - Array
+  - Two Pointers
+  - Sorting
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 37.56% | **Paid:** No
+
+> **Topics:** Array, Two Pointers, Sorting
+
+- Examples
+- Constraints
+- [Brute Force with Sorting and Skipping Duplicates](#brute-force-with-sorting-and-skipping-duplicates)
+- [Hash Map for Two-Sum Lookup](#hash-map-for-two-sum-lookup)
+- [Optimized Two-Pointer Technique](#optimized-two-pointer-technique)
+
+## Examples
+
+**Input**
+
+```text
+nums = [-1,0,1,2,-1,-4]
+```
+
+**Output**
+
+```text
+[[-1,-1,2],[-1,0,1]]
+```
+
+**Explanation**
+
+The distinct triplets are [-1,0,1] and [-1,-1,2]. Notice that the order of the output and the order of the triplets does not matter.
+
+**Input**
+
+```text
+nums = [0,1,1]
+```
+
+**Output**
+
+```text
+[]
+```
+
+**Explanation**
+
+The only possible triplet does not sum up to 0.
+
+**Input**
+
+```text
+nums = [0,0,0]
+```
+
+**Output**
+
+```text
+[[0,0,0]]
+```
+
+**Explanation**
+
+The only possible triplet sums up to 0.
+
+## Constraints
+
+```text
+- 3 <= nums.length <= 3000
+- -105 <= nums[i] <= 105
+```
+---
+
+## Brute Force with Sorting and Skipping Duplicates
+
+**Intuition**
+
+A straightforward approach is to examine all combinations of triplets using three nested loops. We can sort the array upfront to make checking for duplicates easier and to simplify the skipping logic.
+
+**Steps**
+
+- Sort the input array to bring like elements together and allow efficient duplicate skipping.
+- Use three nested loops: `i` to fix the first element, `j` for the second, and `k` for the third.
+- For each triplet, check if `nums[i] + nums[j] + nums[k]` equals zero.
+- If the sum is zero, add the triplet to our result list.
+- Crucially, before moving an index to its next value, skip over any duplicate elements to avoid adding duplicate triplets to the result.
+- A duplicate for `i` is `nums[i] == nums[i-1]` (after `i > 0`). For `j` and `k`, the check is similar but depends on their valid iteration space.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def threeSum(nums):
+    nums.sort()
+    res = []
+    n = len(nums)
+    for i in range(n - 2):
+        if i > 0 and nums[i] == nums[i-1]:
+            continue
+        for j in range(i + 1, n - 1):
+            if j > i + 1 and nums[j] == nums[j-1]:
+                continue
+            for k in range(j + 1, n):
+                if k > j + 1 and nums[k] == nums[k-1]:
+                    continue
+                if nums[i] + nums[j] + nums[k] == 0:
+                    res.append([nums[i], nums[j], nums[k]])
+    return res` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        int n = nums.length;
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            for (int j = i + 1; j < n - 1; j++) {
+                if (j > i + 1 && nums[j] == nums[j-1]) continue;
+                for (int k = j + 1; k < n; k++) {
+                    if (k > j + 1 && nums[k] == nums[k-1]) continue;
+                    if (nums[i] + nums[j] + nums[k] == 0) {
+                        res.add(Arrays.asList(nums[i], nums[j], nums[k]));
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var threeSum = function(nums) {
+    nums.sort((a, b) => a - b);
+    const res = [];
+    const n = nums.length;
+    for (let i = 0; i < n - 2; i++) {
+        if (i > 0 && nums[i] === nums[i - 1]) continue;
+        for (let j = i + 1; j < n - 1; j++) {
+            if (j > i + 1 && nums[j] === nums[j - 1]) continue;
+            for (let k = j + 1; k < n; k++) {
+                if (k > j + 1 && nums[k] === nums[k - 1]) continue;
+                if (nums[i] + nums[j] + nums[k] === 0) {
+                    res.push([nums[i], nums[j], nums[k]]);
+                }
+            }
+        }
+    }
+    return res;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <algorithm>
+using namespace std;
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        int n = nums.size();
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            for (int j = i + 1; j < n - 1; j++) {
+                if (j > i + 1 && nums[j] == nums[j-1]) continue;
+                for (int k = j + 1; k < n; k++) {
+                    if (k > j + 1 && nums[k] == nums[k-1]) continue;
+                    if (nums[i] + nums[j] + nums[k] == 0) {
+                        res.push_back({nums[i], nums[j], nums[k]});
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def threeSum(self, nums: list[int]) -> list[list[int]]:
+        nums.sort()
+        res = []
+        n = len(nums)
+        for i in range(n - 2):
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+            for j in range(i + 1, n - 1):
+                if j > i + 1 and nums[j] == nums[j - 1]:
+                    continue
+                for k in range(j + 1, n):
+                    if k > j + 1 and nums[k] == nums[k - 1]:
+                        continue
+                    if nums[i] + nums[j] + nums[k] == 0:
+                        res.append([nums[i], nums[j], nums[k]])
+        return res` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+#include <stdio.h>
+int cmpfunc (const void * a, const void * b) { return ( *(int*)a - *(int*)b ); }
+int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes){
+    qsort(nums, numsSize, sizeof(int), cmpfunc);
+    int** res = (int**)malloc(100000 * sizeof(int*));
+    int* colSizes = (int*)malloc(100000 * sizeof(int));
+    int size = 0;
+    for (int i = 0; i < numsSize - 2; i++) {
+        if (i > 0 && nums[i] == nums[i-1]) continue;
+        for (int j = i + 1; j < numsSize - 1; j++) {
+            if (j > i + 1 && nums[j] == nums[j-1]) continue;
+            for (int k = j + 1; k < numsSize; k++) {
+                if (k > j + 1 && nums[k] == nums[k-1]) continue;
+                if (nums[i] + nums[j] + nums[k] == 0) {
+                    res[size] = (int*)malloc(3 * sizeof(int));
+                    res[size][0] = nums[i]; res[size][1] = nums[j]; res[size][2] = nums[k];
+                    colSizes[size] = 3;
+                    size++;
+                }
+            }
+        }
+    }
+    *returnSize = size;
+    *returnColumnSizes = colSizes;
+    return res;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+public class Solution {
+    public IList<IList<int>> ThreeSum(int[] nums) {
+        System.Array.Sort(nums);
+        var res = new List<IList<int>>();
+        int n = nums.Length;
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i-1]) continue;
+            for (int j = i + 1; j < n - 1; j++) {
+                if (j > i + 1 && nums[j] == nums[j-1]) continue;
+                for (int k = j + 1; k < n; k++) {
+                    if (k > j + 1 && nums[k] == nums[k-1]) continue;
+                    if (nums[i] + nums[j] + nums[k] == 0) {
+                        res.Add(new List<int>{nums[i], nums[j], nums[k]});
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function threeSum(nums: number[]): number[][] {
+    nums.sort((a, b) => a - b);
+    const res: number[][] = [];
+    const n: number = nums.length;
+    for (let i = 0; i < n - 2; i++) {
+        if (i > 0 && nums[i] === nums[i - 1]) continue;
+        for (let j = i + 1; j < n - 1; j++) {
+            if (j > i + 1 && nums[j] === nums[j - 1]) continue;
+            for (let k = j + 1; k < n; k++) {
+                if (k > j + 1 && nums[k] === nums[k - 1]) continue;
+                if (nums[i] + nums[j] + nums[k] === 0) {
+                    res.push([nums[i], nums[j], nums[k]]);
+                }
+            }
+        }
+    }
+    return res;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func threeSum(_ nums: [Int]) -> [[Int]] {
+        let nums = nums.sorted()
+        var res: [[Int]] = []
+        let n = nums.count
+        for i in 0..<(n - 2) {
+            if i > 0 && nums[i] == nums[i - 1] { continue }
+            for j in (i + 1)..<(n - 1) {
+                if j > i + 1 && nums[j] == nums[j - 1] { continue }
+                for k in (j + 1)..<n {
+                    if k > j + 1 && nums[k] == nums[k - 1] { continue }
+                    if nums[i] + nums[j] + nums[k] == 0 {
+                        res.append([nums[i], nums[j], nums[k]])
+                    }
+                }
+            }
+        }
+        return res
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(N^3), where N is the length of the array. The three nested loops dominate the runtime.
+- Space: O(1) if we don't count the space required for the output. For sorting in-place algorithms like heapsort, the auxiliary space is constant. However, sorting typically requires O(log N) space implicitly.
+- Notes: This approach is correct but inefficient for larger inputs due to its cubic time complexity. It's sufficient to pass basic tests but will be too slow for arrays with lengths close to the constraint's upper limit of 3000.
+
+---
+
+## Hash Map for Two-Sum Lookup
+
+**Intuition**
+
+We can fix one number `a` and then reframe the problem as a classic Two-Sum: find two numbers `b` and `c` such that `b + c = -a`. A hash map can efficiently find such pairs in a single pass.
+
+**Steps**
+
+- Iterate through the array with an index `i` to fix the first number `a = nums[i]`.
+- For the subarray `nums[i+1..n-1]`, solve the Two-Sum problem for a target of `-a`.
+- Create a hash map to store the value-to-index mappings of elements in the subarray.
+- Iterate through the subarray again. For each element `b = nums[j]`, calculate `c = -a - b`.
+- Check if `c` exists in the hash map (and has an index different from `j`). If so, we have found a valid triplet `(a, b, c)`.
+- To handle duplicates, store found triplets in a set of sorted tuples. A set automatically handles uniqueness.
+- Convert the final set of sorted tuples to a list of lists.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def threeSum(nums):
+    nums.sort()
+    res = set()
+    n = len(nums)
+    for i in range(n - 2):
+        a = nums[i]
+        seen = {}
+        for j in range(i + 1, n):
+            b = nums[j]
+            c = -a - b
+            if c in seen:
+                triplet = (a, b, c)
+                res.add(triplet)
+            seen[b] = j
+    return [list(triplet) for triplet in res]` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        Set<List<Integer>> resSet = new HashSet<>();
+        int n = nums.length;
+        for (int i = 0; i < n - 2; i++) {
+            int a = nums[i];
+            Map<Integer, Integer> seen = new HashMap<>();
+            for (int j = i + 1; j < n; j++) {
+                int b = nums[j];
+                int c = -a - b;
+                if (seen.containsKey(c)) {
+                    List<Integer> triplet = Arrays.asList(a, b, c);
+                    Collections.sort(triplet);
+                    resSet.add(triplet);
+                }
+                seen.put(b, j);
+            }
+        }
+        return new ArrayList<>(resSet);
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var threeSum = function(nums) {
+    nums.sort((a, b) => a - b);
+    const resSet = new Set();
+    const n = nums.length;
+    for (let i = 0; i < n - 2; i++) {
+        const a = nums[i];
+        const seen = new Map();
+        for (let j = i + 1; j < n; j++) {
+            const b = nums[j];
+            const c = -a - b;
+            if (seen.has(c)) {
+                const triplet = [a, b, c];
+                resSet.add(JSON.stringify(triplet));
+            }
+            seen.set(b, j);
+        }
+    }
+    return Array.from(resSet).map(JSON.parse);
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <unordered_map>
+#include <set>
+#include <algorithm>
+using namespace std;
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        set<vector<int>> resSet;
+        int n = nums.size();
+        for (int i = 0; i < n - 2; i++) {
+            int a = nums[i];
+            unordered_map<int, int> seen;
+            for (int j = i + 1; j < n; j++) {
+                int b = nums[j];
+                int c = -a - b;
+                if (seen.find(c) != seen.end()) {
+                    vector<int> triplet = {a, b, c};
+                    sort(triplet.begin(), triplet.end());
+                    resSet.insert(triplet);
+                }
+                seen[b] = j;
+            }
+        }
+        return vector<vector<int>>(resSet.begin(), resSet.end());
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def threeSum(self, nums: list[int]) -> list[list[int]]:
+        nums.sort()
+        res = set()
+        n = len(nums)
+        for i in range(n - 2):
+            a = nums[i]
+            seen = {}
+            for j in range(i + 1, n):
+                b = nums[j]
+                c = -a - b
+                if c in seen:
+                    triplet = (a, b, c)
+                    res.add(triplet)
+                seen[b] = j
+        return [list(triplet) for triplet in res]` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+#include <stdio.h>
+int cmpfunc (const void * a, const void * b) { return ( *(int*)a - *(int*)b ); }
+int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes){
+    qsort(nums, numsSize, sizeof(int), cmpfunc);
+    int** temp = (int**)malloc(100000 * sizeof(int*));
+    int* colSizes = (int*)malloc(100000 * sizeof(int));
+    int size = 0;
+    for (int i = 0; i < numsSize - 2; i++) {
+        int a = nums[i];
+        int* seen = (int*)malloc(100000 * sizeof(int));
+        for (int j = i + 1; j < numsSize; j++) {
+            int b = nums[j];
+            int c = -a - b;
+            int found = 0;
+            for(int k = 0; k < j; k++) if(nums[k] == c) { found = 1; break; }
+            if (found) {
+                temp[size] = (int*)malloc(3 * sizeof(int));
+                temp[size][0] = a; temp[size][1] = b; temp[size][2] = c;
+                colSizes[size] = 3;
+                size++;
+            }
+        }
+        free(seen);
+    }
+    *returnSize = size;
+    *returnColumnSizes = colSizes;
+    return temp;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+public class Solution {
+    public IList<IList<int>> ThreeSum(int[] nums) {
+        System.Array.Sort(nums);
+        var resSet = new HashSet<List<int>>(new IntListComparer());
+        int n = nums.Length;
+        for (int i = 0; i < n - 2; i++) {
+            int a = nums[i];
+            var seen = new Dictionary<int, int>();
+            for (int j = i + 1; j < n; j++) {
+                int b = nums[j];
+                int c = -a - b;
+                if (seen.ContainsKey(c)) {
+                    var triplet = new List<int>{a, b, c};
+                    triplet.Sort();
+                    resSet.Add(triplet);
+                }
+                seen[b] = j;
+            }
+        }
+        return new List<IList<int>>(resSet);
+    }
+    class IntListComparer : IEqualityComparer<List<int>> {
+        public bool Equals(List<int> x, List<int> y) {
+            if (x.Count != y.Count) return false;
+            for (int i = 0; i < x.Count; i++) if (x[i] != y[i]) return false;
+            return true;
+        }
+        public int GetHashCode(List<int> obj) {
+            int hash = 17;
+            foreach (int i in obj) hash = hash * 31 + i;
+            return hash;
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function threeSum(nums: number[]): number[][] {
+    nums.sort((a, b) => a - b);
+    const resSet = new Set<string>();
+    const n: number = nums.length;
+    for (let i = 0; i < n - 2; i++) {
+        const a = nums[i];
+        const seen = new Map<number, number>();
+        for (let j = i + 1; j < n; j++) {
+            const b = nums[j];
+            const c = -a - b;
+            if (seen.has(c)) {
+                const triplet = [a, b, c].sort((x, y) => x - y);
+                resSet.add(JSON.stringify(triplet));
+            }
+            seen.set(b, j);
+        }
+    }
+    return Array.from(resSet).map(str => JSON.parse(str));
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func threeSum(_ nums: [Int]) -> [[Int]] {
+        let nums = nums.sorted()
+        var resSet: Set<[Int]> = Set()
+        let n = nums.count
+        for i in 0..<(n - 2) {
+            let a = nums[i]
+            var seen: [Int: Int] = [:]
+            for j in (i + 1)..<n {
+                let b = nums[j]
+                let c = -a - b
+                if seen[c] != nil {
+                    let triplet = [a, b, c].sorted()
+                    resSet.insert(triplet)
+                }
+                seen[b] = j
+            }
+        }
+        return Array(resSet)
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(N^2), where N is the length of the array. The outer loop runs O(N) times, and the inner loop runs O(N) times for each outer loop iteration.
+- Space: O(N) for the hash map `seen` and the set `resSet`. The hash map stores up to O(N) elements.
+- Notes: This is a significant improvement over brute force. It leverages the efficiency of hash map lookups. The set helps in managing duplicates, although the initial sort is still beneficial for deterministic output format and can help with duplicate skipping in a 2-pointer version.
+
+---
+
+## Optimized Two-Pointer Technique
+
+**Intuition**
+
+After sorting the array, we can use a two-pointer technique to find pairs that sum up to a specific target, reducing the inner loop's complexity. For 3Sum, fix the first element and use two pointers for the rest.
+
+**Steps**
+
+- Sort the array. This allows for a deterministic two-pointer search and easy duplicate skipping.
+- Iterate through the array with index `i` to fix the first number of the triplet, `nums[i]`.
+- To avoid duplicate triplets, skip `i` if `nums[i] == nums[i-1]` (after `i > 0`).
+- For the remaining subarray `nums[i+1..n-1]`, use two pointers: `left` starting at `i+1` and `right` starting at `n-1`.
+- Calculate the sum `sum = nums[i] + nums[left] + nums[right]`.
+- If `sum < 0`, we need a larger number; increment `left`.
+- If `sum > 0`, we need a smaller number; decrement `right`.
+- If `sum == 0`, we have found a valid triplet. Add it to the result. Then, to skip duplicates for `left` and `right`, increment `left` and decrement `right` as long as they point to the same values.
+- Continue the two-pointer search until `left < right`.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def threeSum(nums):
+    nums.sort()
+    res = []
+    n = len(nums)
+    for i in range(n - 2):
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+        left, right = i + 1, n - 1
+        while left < right:
+            total = nums[i] + nums[left] + nums[right]
+            if total < 0:
+                left += 1
+            elif total > 0:
+                right -= 1
+            else:
+                res.append([nums[i], nums[left], nums[right]])
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+                while left < right and nums[right] == nums[right - 1]:
+                    right -= 1
+                left += 1
+                right -= 1
+    return res` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+public class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<>();
+        int n = nums.length;
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int left = i + 1, right = n - 1;
+            while (left < right) {
+                int total = nums[i] + nums[left] + nums[right];
+                if (total < 0) {
+                    left++;
+                } else if (total > 0) {
+                    right--;
+                } else {
+                    res.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+                    left++;
+                    right--;
+                }
+            }
+        }
+        return res;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var threeSum = function(nums) {
+    nums.sort((a, b) => a - b);
+    const res = [];
+    const n = nums.length;
+    for (let i = 0; i < n - 2; i++) {
+        if (i > 0 && nums[i] === nums[i - 1]) continue;
+        let left = i + 1, right = n - 1;
+        while (left < right) {
+            const total = nums[i] + nums[left] + nums[right];
+            if (total < 0) {
+                left++;
+            } else if (total > 0) {
+                right--;
+            } else {
+                res.push([nums[i], nums[left], nums[right]]);
+                while (left < right && nums[left] === nums[left + 1]) left++;
+                while (left < right && nums[right] === nums[right - 1]) right--;
+                left++;
+                right--;
+            }
+        }
+    }
+    return res;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <algorithm>
+using namespace std;
+class Solution {
+public:
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        sort(nums.begin(), nums.end());
+        vector<vector<int>> res;
+        int n = nums.size();
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int left = i + 1, right = n - 1;
+            while (left < right) {
+                int total = nums[i] + nums[left] + nums[right];
+                if (total < 0) {
+                    left++;
+                } else if (total > 0) {
+                    right--;
+                } else {
+                    res.push_back({nums[i], nums[left], nums[right]});
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+                    left++;
+                    right--;
+                }
+            }
+        }
+        return res;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class Solution:
+    def threeSum(self, nums: list[int]) -> list[list[int]]:
+        nums.sort()
+        res = []
+        n = len(nums)
+        for i in range(n - 2):
+            if i > 0 and nums[i] == nums[i - 1]:
+                continue
+            left, right = i + 1, n - 1
+            while left < right:
+                total = nums[i] + nums[left] + nums[right]
+                if total < 0:
+                    left += 1
+                elif total > 0:
+                    right -= 1
+                else:
+                    res.append([nums[i], nums[left], nums[right]])
+                    while left < right and nums[left] == nums[left + 1]:
+                        left += 1
+                    while left < right and nums[right] == nums[right - 1]:
+                        right -= 1
+                    left += 1
+                    right -= 1
+        return res` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+#include <stdio.h>
+int cmpfunc (const void * a, const void * b) { return ( *(int*)a - *(int*)b ); }
+int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes){
+    qsort(nums, numsSize, sizeof(int), cmpfunc);
+    int** res = (int**)malloc(100000 * sizeof(int*));
+    int* colSizes = (int*)malloc(100000 * sizeof(int));
+    int size = 0;
+    for (int i = 0; i < numsSize - 2; i++) {
+        if (i > 0 && nums[i] == nums[i-1]) continue;
+        int left = i + 1, right = numsSize - 1;
+        while (left < right) {
+            int total = nums[i] + nums[left] + nums[right];
+            if (total < 0) {
+                left++;
+            } else if (total > 0) {
+                right--;
+            } else {
+                res[size] = (int*)malloc(3 * sizeof(int));
+                res[size][0] = nums[i]; res[size][1] = nums[left]; res[size][2] = nums[right];
+                colSizes[size] = 3;
+                size++;
+                while (left < right && nums[left] == nums[left + 1]) left++;
+                while (left < right && nums[right] == nums[right - 1]) right--;
+                left++;
+                right--;
+            }
+        }
+    }
+    *returnSize = size;
+    *returnColumnSizes = colSizes;
+    return res;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+public class Solution {
+    public IList<IList<int>> ThreeSum(int[] nums) {
+        System.Array.Sort(nums);
+        var res = new List<IList<int>>();
+        int n = nums.Length;
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue;
+            int left = i + 1, right = n - 1;
+            while (left < right) {
+                int total = nums[i] + nums[left] + nums[right];
+                if (total < 0) {
+                    left++;
+                } else if (total > 0) {
+                    right--;
+                } else {
+                    res.Add(new List<int>{nums[i], nums[left], nums[right]});
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+                    left++;
+                    right--;
+                }
+            }
+        }
+        return res;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function threeSum(nums: number[]): number[][] {
+    nums.sort((a, b) => a - b);
+    const res: number[][] = [];
+    const n: number = nums.length;
+    for (let i = 0; i < n - 2; i++) {
+        if (i > 0 && nums[i] === nums[i - 1]) continue;
+        let left = i + 1, right = n - 1;
+        while (left < right) {
+            const total = nums[i] + nums[left] + nums[right];
+            if (total < 0) {
+                left++;
+            } else if (total > 0) {
+                right--;
+            } else {
+                res.push([nums[i], nums[left], nums[right]]);
+                while (left < right && nums[left] === nums[left + 1]) left++;
+                while (left < right && nums[right] === nums[right - 1]) right--;
+                left++;
+                right--;
+            }
+        }
+    }
+    return res;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func threeSum(_ nums: [Int]) -> [[Int]] {
+        let nums = nums.sorted()
+        var res: [[Int]] = []
+        let n = nums.count
+        for i in 0..<(n - 2) {
+            if i > 0 && nums[i] == nums[i - 1] { continue }
+            var left = i + 1, right = n - 1
+            while left < right {
+                let total = nums[i] + nums[left] + nums[right]
+                if total < 0 {
+                    left += 1
+                } else if total > 0 {
+                    right -= 1
+                } else {
+                    res.append([nums[i], nums[left], nums[right]])
+                    while left < right && nums[left] == nums[left + 1] { left += 1 }
+                    while left < right && nums[right] == nums[right - 1] { right -= 1 }
+                    left += 1
+                    right -= 1
+                }
+            }
+        }
+        return res
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(N^2), where N is the length of the array. Sorting takes O(N log N). The outer loop runs O(N) times. For each outer loop iteration, the two-pointer search takes O(N) time, leading to O(N * N) for the nested loops.
+- Space: O(1) if we don't count the space for the output. The sorting can be done in-place, and the two-pointer technique uses only a constant amount of extra space.
+- Notes: This is the standard optimal solution for the 3Sum problem. It's efficient and correct, leveraging the sorted order for early loop exits and structured search. The duplicate skipping logic is crucial for correctness.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode 3Sum Solutions","datePublished":"2025-09-09T02:03:22.758Z","description":"Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0. ...","keywords":"LeetCode, 3Sum, Medium, Array, Two Pointers, Sorting, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force with Sorting and Skipping Duplicates complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(N^3), where N is the length of the array. The three nested loops dominate the runtime.; Space: O(1) if we don't count the space required for the output. For sorting in-place algorithms like heapsort, the auxiliary space is constant. However, sorting typically requires O(log N) space implicitly.. This approach is correct but inefficient for larger inputs due to its cubic time complexity. It's sufficient to pass basic tests but will be too slow for arrays with lengths close to the constraint's upper limit of 3000."}},{"@type":"Question","name":"Hash Map for Two-Sum Lookup complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(N^2), where N is the length of the array. The outer loop runs O(N) times, and the inner loop runs O(N) times for each outer loop iteration.; Space: O(N) for the hash map `seen` and the set `resSet`. The hash map stores up to O(N) elements.. This is a significant improvement over brute force. It leverages the efficiency of hash map lookups. The set helps in managing duplicates, although the initial sort is still beneficial for deterministic output format and can help with duplicate skipping in a 2-pointer version."}},{"@type":"Question","name":"Optimized Two-Pointer Technique complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(N^2), where N is the length of the array. Sorting takes O(N log N). The outer loop runs O(N) times. For each outer loop iteration, the two-pointer search takes O(N) time, leading to O(N * N) for the nested loops.; Space: O(1) if we don't count the space for the output. The sorting can be done in-place, and the two-pointer technique uses only a constant amount of extra space.. This is the standard optimal solution for the 3Sum problem. It's efficient and correct, leveraging the sorted order for early loop exits and structured search. The duplicate skipping logic is crucial for correctness."}}]}).replace(/</g,'\\u003c')}
+</script>
