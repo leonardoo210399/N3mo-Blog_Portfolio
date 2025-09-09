@@ -1,0 +1,956 @@
+---
+title: "Letter Combinations of a Phone Number"
+summary: "Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order. A mapping of digits to letters (just like on the telephone buttons) is given below. Note that 1 does not map to any letters."
+date: "Sep 09, 2025"
+tags:
+  - Hash Table
+  - String
+  - Backtracking
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 64.38% | **Paid:** No
+
+> **Topics:** Hash Table, String, Backtracking
+
+- Examples
+- Constraints
+- [Brute Force - Recursive Backtracking](#brute-force-recursive-backtracking)
+- [Iterative with Queue](#iterative-with-queue)
+- [Optimized Recursive Backtracking (String Building)](#optimized-recursive-backtracking-string-building)
+
+## Examples
+
+**Input**
+
+```text
+digits = "23"
+```
+
+**Output**
+
+```text
+["ad","ae","af","bd","be","bf","cd","ce","cf"]
+```
+
+**Input**
+
+```text
+digits = ""
+```
+
+**Output**
+
+```text
+[]
+```
+
+**Input**
+
+```text
+digits = "2"
+```
+
+**Output**
+
+```text
+["a","b","c"]
+```
+
+## Constraints
+
+```text
+- 0 <= digits.length <= 4
+- digits[i] is a digit in the range ['2', '9']
+```
+---
+
+## Brute Force - Recursive Backtracking
+
+**Intuition**
+
+The problem asks for all possible combinations, which naturally suggests a recursive approach or backtracking. We can exhaustively explore all possible letter combinations by making choices at each digit and backtracking when reaching a dead end.
+
+**Steps**
+
+- Create a mapping of digits to their corresponding letters (as on a phone keypad).
+- Use a recursive function to build combinations character by character.
+- The base case occurs when the current combination's length equals the input digits' length. At this point, add the combination to the result list.
+- For each digit in the input, iterate through its corresponding letters. For each letter, make a choice, recurse for the next digit, and then backtrack (remove the choice) to explore other possibilities.
+- Handle the edge case of an empty input string by returning an empty list.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def letterCombinations(digits):
+    if not digits:
+        return []
+    
+    phone_map = {
+        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+    }
+    
+    def backtrack(index, path):
+        if index == len(digits):
+            combinations.append(''.join(path))
+            return
+        
+        possible_letters = phone_map[digits[index]]
+        for letter in possible_letters:
+            path.append(letter)
+            backtrack(index + 1, path)
+            path.pop()
+    
+    combinations = []
+    backtrack(0, [])
+    return combinations` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    Map<Character, String> phoneMap = new HashMap<Character, String>() {{
+        put('2', "abc"); put('3', "def"); put('4', "ghi"); put('5', "jkl");
+        put('6', "mno"); put('7', "pqrs"); put('8', "tuv"); put('9', "wxyz");
+    }};
+    
+    public List<String> letterCombinations(String digits) {
+        List<String> result = new ArrayList<>();
+        if (digits == null || digits.length() == 0) return result;
+        
+        backtrack(0, new StringBuilder(), digits, result);
+        return result;
+    }
+    
+    private void backtrack(int index, StringBuilder path, String digits, List<String> result) {
+        if (index == digits.length()) {
+            result.add(path.toString());
+            return;
+        }
+        
+        String possibleLetters = phoneMap.get(digits.charAt(index));
+        for (char letter : possibleLetters.toCharArray()) {
+            path.append(letter);
+            backtrack(index + 1, path, digits, result);
+            path.deleteCharAt(path.length() - 1);
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var letterCombinations = function(digits) {
+    if (!digits || digits.length === 0) return [];
+    
+    const phoneMap = {
+        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+    };
+    
+    const result = [];
+    
+    function backtrack(index, path) {
+        if (index === digits.length) {
+            result.push(path.join(''));
+            return;
+        }
+        
+        const possibleLetters = phoneMap[digits[index]];
+        for (const letter of possibleLetters) {
+            path.push(letter);
+            backtrack(index + 1, path);
+            path.pop();
+        }
+    }
+    
+    backtrack(0, []);
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if (digits.empty()) return {};
+        
+        unordered_map<char, string> phoneMap = {
+            {'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"},
+            {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}
+        };
+        
+        vector<string> result;
+        string combination;
+        backtrack(0, combination, digits, phoneMap, result);
+        return result;
+    }
+    
+private:
+    void backtrack(int index, string& combination, const string& digits,
+                   const unordered_map<char, string>& phoneMap,
+                   vector<string>& result) {
+        if (index == digits.length()) {
+            result.push_back(combination);
+            return;
+        }
+        
+        string possibleLetters = phoneMap.at(digits[index]);
+        for (char letter : possibleLetters) {
+            combination.push_back(letter);
+            backtrack(index + 1, combination, digits, phoneMap, result);
+            combination.pop_back();
+        }
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+        
+        phone_map = {
+            '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+            '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+        }
+        
+        def backtrack(index: int, path: List[str]) -> None:
+            if index == len(digits):
+                combinations.append(''.join(path))
+                return
+            
+            possible_letters = phone_map[digits[index]]
+            for letter in possible_letters:
+                path.append(letter)
+                backtrack(index + 1, path)
+                path.pop()
+        
+        combinations = []
+        backtrack(0, [])
+        return combinations` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** letterCombinations(char* digits, int* returnSize);
+
+char** letterCombinations(char* digits, int* returnSize) {
+    if (digits == NULL || strlen(digits) == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    char* phoneMap[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    int sizes[] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4};
+    
+    int totalCombinations = 1;
+    for (int i = 0; digits[i] != '\0'; i++) {
+        totalCombinations *= sizes[digits[i] - '0'];
+    }
+    
+    char** result = (char**)malloc(totalCombinations * sizeof(char*));
+    for (int i = 0; i < totalCombinations; i++) {
+        result[i] = (char*)malloc((strlen(digits) + 1) * sizeof(char));
+    }
+    
+    int count = 0;
+    char* path = (char*)malloc((strlen(digits) + 1) * sizeof(char));
+    
+    void backtrack(int index) {
+        if (index == strlen(digits)) {
+            path[index] = '\0';
+            strcpy(result[count], path);
+            count++;
+            return;
+        }
+        
+        int digit = digits[index] - '0';
+        for (int i = 0; i < sizes[digit]; i++) {
+            path[index] = phoneMap[digit][i];
+            backtrack(index + 1);
+        }
+    }
+    
+    backtrack(0);
+    free(path);
+    *returnSize = totalCombinations;
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `using System;
+using System.Collections.Generic;
+
+class Solution {
+    private Dictionary<char, string> phoneMap = new Dictionary<char, string> {
+        {'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"},
+        {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}
+    };
+    
+    public IList<string> LetterCombinations(string digits) {
+        var result = new List<string>();
+        if (string.IsNullOrEmpty(digits)) return result;
+        
+        Backtrack(0, new StringBuilder(), digits, result);
+        return result;
+    }
+    
+    private void Backtrack(int index, StringBuilder path, string digits, List<string> result) {
+        if (index == digits.Length) {
+            result.Add(path.ToString());
+            return;
+        }
+        
+        string possibleLetters = phoneMap[digits[index]];
+        foreach (char letter in possibleLetters) {
+            path.Append(letter);
+            Backtrack(index + 1, path, digits, result);
+            path.Remove(path.Length - 1, 1);
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function letterCombinations(digits: string): string[] {
+    if (!digits || digits.length === 0) return [];
+    
+    const phoneMap: { [key: string]: string } = {
+        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+    };
+    
+    const result: string[] = [];
+    
+    function backtrack(index: number, path: string[]): void {
+        if (index === digits.length) {
+            result.push(path.join(''));
+            return;
+        }
+        
+        const possibleLetters = phoneMap[digits[index]];
+        for (const letter of possibleLetters) {
+            path.push(letter);
+            backtrack(index + 1, path);
+            path.pop();
+        }
+    }
+    
+    backtrack(0, []);
+    return result;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func letterCombinations(_ digits: String) -> [String] {
+        if digits.isEmpty { return [] }
+        
+        let phoneMap: [Character: String] = [
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"
+        ]
+        
+        var result: [String] = []
+        var path: [Character] = []
+        
+        func backtrack(_ index: Int) {
+            if index == digits.count {
+                result.append(String(path))
+                return
+            }
+            
+            let digit = digits[digits.index(digits.startIndex, offsetBy: index)]
+            let possibleLetters = phoneMap[digit]!
+            for letter in possibleLetters {
+                path.append(letter)
+                backtrack(index + 1)
+                path.removeLast()
+            }
+        }
+        
+        backtrack(0)
+        return result
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(3^N * 4^M) where N is the number of digits that map to 3 letters (2,3,4,5,6,8) and M is the number of digits that map to 4 letters (7,9). This is because for each digit, we might have 3 or 4 choices. The worst case is when all digits are 7 or 9. The 3^N * 4^M term accounts for all possible combinations, and we generate each combination exactly once.
+- Space: O(3^N * 4^M) to store all the combinations in the output. The recursion depth can go up to N+M, which contributes to the call stack space, but this is typically dominated by the output space. For the recursion stack, it's O(N+M).
+- Notes: This is a classic backtracking algorithm. The time complexity is exponential because we're generating all possible combinations. Each recursive call explores a possible letter from the current digit, and we make choices for each digit in sequence. The space complexity is primarily driven by the need to store all valid combinations. The auxiliary space for recursion is linear with respect to the input length.
+
+---
+
+## Iterative with Queue
+
+**Intuition**
+
+Instead of recursion, we can use an iterative approach. We start with an empty string and iteratively build combinations by appending possible letters for each digit. A queue (or a list) can help manage the intermediate combinations.
+
+**Steps**
+
+- Handle the base case where the input digits string is empty.
+- Initialize a queue (or list) with an empty string to start building combinations.
+- Iterate through each digit in the input string.
+- For each digit, get its corresponding letters.
+- While the queue is not empty and the length of the front item equals the current digit index (before processing this digit), pop an item.
+- For each possible letter of the current digit, append the letter to the popped item and add it back to the queue.
+- After processing all digits, the queue contains all valid combinations.
+- Convert the final queue to a list and return.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `from collections import deque
+
+def letterCombinations(digits):
+    if not digits:
+        return []
+    
+    phone_map = {
+        '2': 'abc', '3': "def", '4': "ghi", '5': "jkl",
+        '6': "mno", '7': "pqrs", '8': "tuv", '9': "wxyz"
+    }
+    
+    queue = deque([''])
+    
+    for digit in digits:
+        letters = phone_map[digit]
+        # Process all combinations of the current length
+        for _ in range(len(queue)):
+            combination = queue.popleft()
+            for letter in letters:
+                queue.append(combination + letter)
+    
+    return list(queue)` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> result = new ArrayList<>();
+        if (digits == null || digits.length() == 0) return result;
+        
+        Map<Character, String> phoneMap = new HashMap<Character, String>() {{
+            put('2', "abc"); put('3', "def"); put('4', "ghi"); put('5', "jkl");
+            put('6', "mno"); put('7', "pqrs"); put('8', "tuv"); put('9', "wxyz");
+        }};
+        
+        Queue<String> queue = new LinkedList<>();
+        queue.offer("");
+        
+        for (char digit : digits.toCharArray()) {
+            String letters = phoneMap.get(digit);
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                String combination = queue.poll();
+                for (char letter : letters.toCharArray()) {
+                    queue.offer(combination + letter);
+                }
+            }
+        }
+        
+        result.addAll(queue);
+        return result;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var letterCombinations = function(digits) {
+    if (!digits || digits.length === 0) return [];
+    
+    const phoneMap = {
+        '2': 'abc', '3': "def", '4': "ghi", '5': "jkl",
+        '6': "mno", '7': "pqrs", '8': "tuv", '9': "wxyz"
+    };
+    
+    let queue = [''];
+    
+    for (const digit of digits) {
+        const letters = phoneMap[digit];
+        const size = queue.length;
+        for (let i = 0; i < size; i++) {
+            const combination = queue.shift();
+            for (const letter of letters) {
+                queue.push(combination + letter);
+            }
+        }
+    }
+    
+    return queue;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+#include <unordered_map>
+#include <queue>
+using namespace std;
+
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if (digits.empty()) return {};
+        
+        unordered_map<char, string> phoneMap = {
+            {'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"},
+            {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}
+        };
+        
+        queue<string> q;
+        q.push("");
+        
+        for (char digit : digits) {
+            string letters = phoneMap[digit];
+            int size = q.size();
+            for (int i = 0; i < size; i++) {
+                string combination = q.front(); q.pop();
+                for (char letter : letters) {
+                    q.push(combination + letter);
+                }
+            }
+        }
+        
+        vector<string> result;
+        while (!q.empty()) {
+            result.push_back(q.front());
+            q.pop();
+        }
+        return result;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from collections import deque
+from typing import List
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+        
+        phone_map = {
+            '2': 'abc', '3': "def", '4': "ghi", '5': "jkl",
+            '6': "mno", '7': "pqrs", '8': "tuv", '9': "wxyz"
+        }
+        
+        queue = deque([''])
+        
+        for digit in digits:
+            letters = phone_map[digit]
+            # Process all combinations of the current length
+            for _ in range(len(queue)):
+                combination = queue.popleft()
+                for letter in letters:
+                    queue.append(combination + letter)
+        
+        return list(queue)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** letterCombinations(char* digits, int* returnSize) {
+    if (digits == NULL || strlen(digits) == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    char* phoneMap[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    int sizes[] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4};
+    
+    int totalCombinations = 1;
+    for (int i = 0; digits[i] != '\0'; i++) {
+        totalCombinations *= sizes[digits[i] - '0'];
+    }
+    
+    char** result = (char**)malloc(totalCombinations * sizeof(char*));
+    int resultSize = 0;
+    
+    char** queue = (char**)malloc(totalCombinations * sizeof(char*));
+    int queueSize = 1;
+    queue[0] = (char*)malloc(sizeof(char));
+    queue[0][0] = '\0';
+    
+    for (int i = 0; digits[i] != '\0'; i++) {
+        int digit = digits[i] - '0';
+        int currentQueueSize = queueSize;
+        queueSize = 0;
+        
+        for (int j = 0; j < currentQueueSize; j++) {
+            for (int k = 0; k < sizes[digit]; k++) {
+                int len = strlen(queue[j]);
+                queue[queueSize] = (char*)malloc((len + 2) * sizeof(char));
+                strcpy(queue[queueSize], queue[j]);
+                queue[queueSize][len] = phoneMap[digit][k];
+                queue[queueSize][len + 1] = '\0';
+                queueSize++;
+            }
+            free(queue[j]);
+        }
+    }
+    
+    for (int i = 0; i < queueSize; i++) {
+        result[i] = queue[i];
+    }
+    
+    *returnSize = queueSize;
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `using System;
+using System.Collections.Generic;
+
+class Solution {
+    public IList<string> LetterCombinations(string digits) {
+        var result = new List<string>();
+        if (string.IsNullOrEmpty(digits)) return result;
+        
+        var phoneMap = new Dictionary<char, string> {
+            {'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"},
+            {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}
+        };
+        
+        var queue = new Queue<string>();
+        queue.Enqueue("");
+        
+        foreach (char digit in digits) {
+            string letters = phoneMap[digit];
+            int size = queue.Count;
+            for (int i = 0; i < size; i++) {
+                string combination = queue.Dequeue();
+                foreach (char letter in letters) {
+                    queue.Enqueue(combination + letter);
+                }
+            }
+        }
+        
+        result.AddRange(queue);
+        return result;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function letterCombinations(digits: string): string[] {
+    if (!digits || digits.length === 0) return [];
+    
+    const phoneMap: { [key: string]: string } = {
+        '2': 'abc', '3': "def", '4': "ghi", '5': "jkl",
+        '6': "mno", '7': "pqrs", '8': "tuv", '9': "wxyz"
+    };
+    
+    let queue: string[] = [''];
+    
+    for (const digit of digits) {
+        const letters = phoneMap[digit];
+        const size = queue.length;
+        for (let i = 0; i < size; i++) {
+            const combination = queue.shift()!;
+            for (const letter of letters) {
+                queue.push(combination + letter);
+            }
+        }
+    }
+    
+    return queue;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func letterCombinations(_ digits: String) -> [String] {
+        if digits.isEmpty { return [] }
+        
+        let phoneMap: [Character: String] = [
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"
+        ]
+        
+        var queue: [String] = [""]
+        
+        for digit in digits {
+            let letters = phoneMap[digit]!
+            let size = queue.count
+            for _ in 0..<size {
+                let combination = queue.removeFirst()
+                for letter in letters {
+                    queue.append(combination + String(letter))
+                }
+            }
+        }
+        
+        return queue
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(3^N * 4^M) where N and M are as defined in the brute force approach. The time complexity is the same because we're still generating all possible combinations. Each combination is built incrementally, and every valid combination is generated once.
+- Space: O(3^N * 4^M) for the space required to store all combinations. The queue can also grow to hold a number of intermediate strings proportional to the final output size, but this is also bounded by the output size.
+- Notes: This approach is iterative and avoids recursion. It's essentially a breadth-first search on the implicit tree of combinations. The queue holds partial combinations, and for each digit, we process all current combinations in the queue. The space for the queue can peak at a significant fraction of the final output size, making it less efficient in terms of auxiliary space than the recursive approach. However, it avoids potential stack overflow issues with deep recursion. The time complexity is the same as the recursive approach since the same amount of work is performed.
+
+---
+
+## Optimized Recursive Backtracking (String Building)
+
+**Intuition**
+
+The standard recursive backtracking approach can be slightly optimized by using string concatenation directly instead of a list for path tracking, simplifying the logic a bit at the cost of potentially more string operations.
+
+**Steps**
+
+- Set up the digit-letter mapping as before.
+- Define a recursive helper function that takes the current index and the current combination string.
+- If the current combination's length equals the input digits' length, add it to the result list.
+- Otherwise, for the current digit, iterate through its letters, and for each letter, recursively call the function with the next index and the combination string appended with the current letter.
+- This approach avoids explicit backtracking steps by using the call stack to manage the state of the combination string.
+- Handle the empty input base case.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def letterCombinations(digits):
+    if not digits:
+        return []
+    
+    phone_map = {
+        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+    }
+    
+    def backtrack(index, current_combination):
+        if index == len(digits):
+            combinations.append(current_combination)
+            return
+        
+        possible_letters = phone_map[digits[index]]
+        for letter in possible_letters:
+            backtrack(index + 1, current_combination + letter)
+    
+    combinations = []
+    backtrack(0, "")
+    return combinations` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    Map<Character, String> phoneMap = new HashMap<Character, String>() {{
+        put('2', "abc"); put('3', "def"); put('4', "ghi"); put('5', "jkl");
+        put('6', "mno"); put('7', "pqrs"); put('8', "tuv"); put('9', "wxyz");
+    }};
+    
+    public List<String> letterCombinations(String digits) {
+        List<String> result = new ArrayList<>();
+        if (digits == null || digits.length() == 0) return result;
+        
+        backtrack(0, "", digits, result);
+        return result;
+    }
+    
+    private void backtrack(int index, String currentCombination, String digits, List<String> result) {
+        if (index == digits.length()) {
+            result.add(currentCombination);
+            return;
+        }
+        
+        String possibleLetters = phoneMap.get(digits.charAt(index));
+        for (char letter : possibleLetters.toCharArray()) {
+            backtrack(index + 1, currentCombination + letter, digits, result);
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var letterCombinations = function(digits) {
+    if (!digits || digits.length === 0) return [];
+    
+    const phoneMap = {
+        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+    };
+    
+    const result = [];
+    
+    function backtrack(index, currentCombination) {
+        if (index === digits.length) {
+            result.push(currentCombination);
+            return;
+        }
+        
+        const possibleLetters = phoneMap[digits[index]];
+        for (const letter of possibleLetters) {
+            backtrack(index + 1, currentCombination + letter);
+        }
+    }
+    
+    backtrack(0, "");
+    return result;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if (digits.empty()) return {};
+        
+        unordered_map<char, string> phoneMap = {
+            {'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"},
+            {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}
+        };
+        
+        vector<string> result;
+        backtrack(0, "", digits, phoneMap, result);
+        return result;
+    }
+    
+private:
+    void backtrack(int index, string currentCombination, const string& digits,
+                   const unordered_map<char, string>& phoneMap,
+                   vector<string>& result) {
+        if (index == digits.length()) {
+            result.push_back(currentCombination);
+            return;
+        }
+        
+        string possibleLetters = phoneMap.at(digits[index]);
+        for (char letter : possibleLetters) {
+            backtrack(index + 1, currentCombination + letter, digits, phoneMap, result);
+        }
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        if not digits:
+            return []
+        
+        phone_map = {
+            '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+            '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+        }
+        
+        def backtrack(index: int, current_combination: str) -> None:
+            if index == len(digits):
+                combinations.append(current_combination)
+                return
+            
+            possible_letters = phone_map[digits[index]]
+            for letter in possible_letters:
+                backtrack(index + 1, current_combination + letter)
+        
+        combinations = []
+        backtrack(0, "")
+        return combinations` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char** letterCombinations(char* digits, int* returnSize) {
+    if (digits == NULL || strlen(digits) == 0) {
+        *returnSize = 0;
+        return NULL;
+    }
+    
+    char* phoneMap[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    int sizes[] = {0, 0, 3, 3, 3, 3, 3, 4, 3, 4};
+    
+    int totalCombinations = 1;
+    for (int i = 0; digits[i] != '\0'; i++) {
+        totalCombinations *= sizes[digits[i] - '0'];
+    }
+    
+    char** result = (char**)malloc(totalCombinations * sizeof(char*));
+    *returnSize = 0;
+    
+    void backtrack(int index, char* currentCombination) {
+        if (index == strlen(digits)) {
+            result[*returnSize] = (char*)malloc((strlen(currentCombination) + 1) * sizeof(char));
+            strcpy(result[(*returnSize)++], currentCombination);
+            return;
+        }
+        
+        int digit = digits[index] - '0';
+        for (int i = 0; i < sizes[digit]; i++) {
+            int len = strlen(currentCombination);
+            currentCombination[len] = phoneMap[digit][i];
+            currentCombination[len + 1] = '\0';
+            backtrack(index + 1, currentCombination);
+            currentCombination[len] = '\0';
+        }
+    }
+    
+    char* currentCombination = (char*)malloc((strlen(digits) + 1) * sizeof(char));
+    currentCombination[0] = '\0';
+    backtrack(0, currentCombination);
+    free(currentCombination);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `using System;
+using System.Collections.Generic;
+
+class Solution {
+    private Dictionary<char, string> phoneMap = new Dictionary<char, string> {
+        {'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"},
+        {'6', "mno"}, {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}
+    };
+    
+    public IList<string> LetterCombinations(string digits) {
+        var result = new List<string>();
+        if (string.IsNullOrEmpty(digits)) return result;
+        
+        Backtrack(0, "", digits, result);
+        return result;
+    }
+    
+    private void Backtrack(int index, string currentCombination, string digits, List<string> result) {
+        if (index == digits.Length) {
+            result.Add(currentCombination);
+            return;
+        }
+        
+        string possibleLetters = phoneMap[digits[index]];
+        foreach (char letter in possibleLetters) {
+            Backtrack(index + 1, currentCombination + letter, digits, result);
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function letterCombinations(digits: string): string[] {
+    if (!digits || digits.length === 0) return [];
+    
+    const phoneMap: { [key: string]: string } = {
+        '2': 'abc', '3': 'def', '4': 'ghi', '5': 'jkl',
+        '6': 'mno', '7': 'pqrs', '8': 'tuv', '9': 'wxyz'
+    };
+    
+    const result: string[] = [];
+    
+    function backtrack(index: number, currentCombination: string): void {
+        if (index === digits.length) {
+            result.push(currentCombination);
+            return;
+        }
+        
+        const possibleLetters = phoneMap[digits[index]];
+        for (const letter of possibleLetters) {
+            backtrack(index + 1, currentCombination + letter);
+        }
+    }
+    
+    backtrack(0, "");
+    return result;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func letterCombinations(_ digits: String) -> [String] {
+        if digits.isEmpty { return [] }
+        
+        let phoneMap: [Character: String] = [
+            "2": "abc", "3": "def", "4": "ghi", "5": "jkl",
+            "6": "mno", "7": "pqrs", "8": "tuv", "9": "wxyz"
+        ]
+        
+        var result: [String] = []
+        
+        func backtrack(_ index: Int, _ currentCombination: String) {
+            if index == digits.count {
+                result.append(currentCombination)
+                return
+            }
+            
+            let digit = digits[digits.index(digits.startIndex, offsetBy: index)]
+            let possibleLetters = phoneMap[digit]!
+            for letter in possibleLetters {
+                backtrack(index + 1, currentCombination + String(letter))
+            }
+        }
+        
+        backtrack(0, "")
+        return result
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(3^N * 4^M) where N and M are as defined in the brute force approach. The time complexity is still exponential because we generate all possible combinations. Each string concatenation operation could take O(K) time where K is the length of the string, but this is typically considered a constant factor in this context.
+- Space: O(3^N * 4^M) for storing the output combinations. The recursion stack contributes O(N+M) space. The difference from the first approach is that string concatenation might create temporary strings, but the overall space complexity in terms of the final output is the same.
+- Notes: This optimized recursive approach simplifies the code by not explicitly managing a path list. String concatenation is used to build combinations, and the call stack naturally handles the backtracking of string state. While the string concatenation `currentCombination + letter` creates a new string object in languages with immutable strings (like Python, Java, JavaScript, C#), this is a common idiom in recursive string-building problems. The time and space complexities are equivalent to the standard recursive backtracking approach, but the constant factors might be slightly different due to string handling. This is often more readable but might be slightly less efficient for very long strings due to repeated string allocations.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Letter Combinations of a Phone Number Solutions","datePublished":"2025-09-09T18:03:43.599Z","description":"Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order....","keywords":"LeetCode, Letter Combinations of a Phone Number, Medium, Hash Table, String, Backtracking, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force - Recursive Backtracking complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(3^N * 4^M) where N is the number of digits that map to 3 letters (2,3,4,5,6,8) and M is the number of digits that map to 4 letters (7,9). This is because for each digit, we might have 3 or 4 choices. The worst case is when all digits are 7 or 9. The 3^N * 4^M term accounts for all possible combinations, and we generate each combination exactly once.; Space: O(3^N * 4^M) to store all the combinations in the output. The recursion depth can go up to N+M, which contributes to the call stack space, but this is typically dominated by the output space. For the recursion stack, it's O(N+M).. This is a classic backtracking algorithm. The time complexity is exponential because we're generating all possible combinations. Each recursive call explores a possible letter from the current digit, and we make choices for each digit in sequence. The space complexity is primarily driven by the need to store all valid combinations. The auxiliary space for recursion is linear with respect to the input length."}},{"@type":"Question","name":"Iterative with Queue complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(3^N * 4^M) where N and M are as defined in the brute force approach. The time complexity is the same because we're still generating all possible combinations. Each combination is built incrementally, and every valid combination is generated once.; Space: O(3^N * 4^M) for the space required to store all combinations. The queue can also grow to hold a number of intermediate strings proportional to the final output size, but this is also bounded by the output size.. This approach is iterative and avoids recursion. It's essentially a breadth-first search on the implicit tree of combinations. The queue holds partial combinations, and for each digit, we process all current combinations in the queue. The space for the queue can peak at a significant fraction of the final output size, making it less efficient in terms of auxiliary space than the recursive approach. However, it avoids potential stack overflow issues with deep recursion. The time complexity is the same as the recursive approach since the same amount of work is performed."}},{"@type":"Question","name":"Optimized Recursive Backtracking (String Building) complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(3^N * 4^M) where N and M are as defined in the brute force approach. The time complexity is still exponential because we generate all possible combinations. Each string concatenation operation could take O(K) time where K is the length of the string, but this is typically considered a constant factor in this context.; Space: O(3^N * 4^M) for storing the output combinations. The recursion stack contributes O(N+M) space. The difference from the first approach is that string concatenation might create temporary strings, but the overall space complexity in terms of the final output is the same.. This optimized recursive approach simplifies the code by not explicitly managing a path list. String concatenation is used to build combinations, and the call stack naturally handles the backtracking of string state. While the string concatenation `currentCombination + letter` creates a new string object in languages with immutable strings (like Python, Java, JavaScript, C#), this is a common idiom in recursive string-building problems. The time and space complexities are equivalent to the standard recursive backtracking approach, but the constant factors might be slightly different due to string handling. This is often more readable but might be slightly less efficient for very long strings due to repeated string allocations."}}]}).replace(/</g,'\\u003c')}
+</script>
