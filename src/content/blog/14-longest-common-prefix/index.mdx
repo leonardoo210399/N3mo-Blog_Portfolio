@@ -1,0 +1,626 @@
+---
+title: "Longest Common Prefix"
+summary: "Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string ""."
+date: "Sep 09, 2025"
+tags:
+  - Array
+  - String
+  - Trie
+draft: false
+difficulty: "Easy"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Easy | **Acceptance:** 46.02% | **Paid:** No
+
+> **Topics:** Array, String, Trie
+
+- Examples
+- Constraints
+- [Brute Force - Vertical Scanning](#brute-force-vertical-scanning)
+- [Optimal - Horizontal Scanning](#optimal-horizontal-scanning)
+- [Divide and Conquer](#divide-and-conquer)
+
+## Examples
+
+**Input**
+
+```text
+strs = ["flower","flow","flight"]
+```
+
+**Output**
+
+```text
+"fl"
+```
+
+**Input**
+
+```text
+strs = ["dog","racecar","car"]
+```
+
+**Output**
+
+```text
+""
+```
+
+**Explanation**
+
+There is no common prefix among the input strings.
+
+## Constraints
+
+```text
+- 1 <= strs.length <= 200
+- 0 <= strs[i].length <= 200
+- strs[i] consists of only lowercase English letters.
+```
+---
+
+## Brute Force - Vertical Scanning
+
+**Intuition**
+
+We can scan the strings vertically, character by character, checking if all strings have the same character at each position until a mismatch is found.
+
+**Steps**
+
+- Iterate through the characters of the first string.
+- For each character index, compare it with the character at the same index in all other strings.
+- If a mismatch is found or if we reach the end of any string, return the prefix up to that point.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def longestCommonPrefix(strs):
+    if not strs:
+        return ""
+    prefix = ""
+    for i in range(len(strs[0])):
+        char = strs[0][i]
+        for j in range(1, len(strs)):
+            if i >= len(strs[j]) or strs[j][i] != char:
+                return prefix
+        prefix += char
+    return prefix` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if (strs == null || strs.length == 0) return "";
+        String prefix = "";
+        for (int i = 0; i < strs[0].length(); i++) {
+            char c = strs[0].charAt(i);
+            for (int j = 1; j < strs.length; j++) {
+                if (i >= strs[j].length() || strs[j].charAt(i) != c) {
+                    return prefix;
+                }
+            }
+            prefix += c;
+        }
+        return prefix;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var longestCommonPrefix = function(strs) {
+    if (strs.length === 0) return "";
+    let prefix = "";
+    for (let i = 0; i < strs[0].length; i++) {
+        let char = strs[0][i];
+        for (let j = 1; j < strs.length; j++) {
+            if (i >= strs[j].length || strs[j][i] !== char) {
+                return prefix;
+            }
+        }
+        prefix += char;
+    }
+    return prefix;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+using namespace std;
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (strs.empty()) return "";
+        string prefix = "";
+        for (int i = 0; i < strs[0].length(); i++) {
+            char c = strs[0][i];
+            for (int j = 1; j < strs.size(); j++) {
+                if (i >= strs[j].length() || strs[j][i] != c) {
+                    return prefix;
+                }
+            }
+            prefix += c;
+        }
+        return prefix;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if not strs:
+            return ""
+        prefix = ""
+        for i in range(len(strs[0])):
+            char = strs[0][i]
+            for j in range(1, len(strs)):
+                if i >= len(strs[j]) or strs[j][i] != char:
+                    return prefix
+            prefix += char
+        return prefix` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strsSize == 0) return "";
+    char* prefix = malloc(201 * sizeof(char));
+    int prefix_len = 0;
+    for (int i = 0; i < strlen(strs[0]); i++) {
+        char c = strs[0][i];
+        for (int j = 1; j < strsSize; j++) {
+            if (i >= strlen(strs[j]) || strs[j][i] != c) {
+                prefix[prefix_len] = '\0';
+                return prefix;
+            }
+        }
+        prefix[prefix_len++] = c;
+    }
+    prefix[prefix_len] = '\0';
+    return prefix;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string LongestCommonPrefix(string[] strs) {
+        if (strs == null || strs.Length == 0) return "";
+        string prefix = "";
+        for (int i = 0; i < strs[0].Length; i++) {
+            char c = strs[0][i];
+            for (int j = 1; j < strs.Length; j++) {
+                if (i >= strs[j].Length || strs[j][i] != c) {
+                    return prefix;
+                }
+            }
+            prefix += c;
+        }
+        return prefix;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function longestCommonPrefix(strs: string[]): string {
+    if (strs.length === 0) return "";
+    let prefix = "";
+    for (let i = 0; i < strs[0].length; i++) {
+        let char = strs[0][i];
+        for (let j = 1; j < strs.length; j++) {
+            if (i >= strs[j].length || strs[j][i] !== char) {
+                return prefix;
+            }
+        }
+        prefix += char;
+    }
+    return prefix;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func longestCommonPrefix(_ strs: [String]) -> String {
+        if strs.isEmpty { return "" }
+        var prefix = ""
+        let firstStr = strs[0]
+        for (i, char) in firstStr.enumerated() {
+            for j in 1..<strs.count {
+                let str = strs[j]
+                if i >= str.count || str[str.index(str.startIndex, offsetBy: i)] != char {
+                    return prefix
+                }
+            }
+            prefix.append(char)
+        }
+        return prefix
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(S) where S is the sum of all characters in all strings.
+- Space: O(1) as we only use a constant amount of extra space.
+
+---
+
+## Optimal - Horizontal Scanning
+
+**Intuition**
+
+Compare the prefix of the first two strings, then compare that prefix with the next string, and so on, reducing the prefix length at each step.
+
+**Steps**
+
+- Initialize the prefix as the first string.
+- Iterate through the rest of the strings.
+- For each string, find the common prefix between the current prefix and the string.
+- Update the prefix accordingly. If at any point the prefix becomes empty, return it immediately.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def longestCommonPrefix(strs):
+    if not strs:
+        return ""
+    prefix = strs[0]
+    for i in range(1, len(strs)):
+        while not strs[i].startswith(prefix):
+            prefix = prefix[:-1]
+            if not prefix:
+                return ""
+    return prefix` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if (strs == null || strs.length == 0) return "";
+        String prefix = strs[0];
+        for (int i = 1; i < strs.length; i++) {
+            while (!strs[i].startsWith(prefix)) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                if (prefix.isEmpty()) return "";
+            }
+        }
+        return prefix;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var longestCommonPrefix = function(strs) {
+    if (strs.length === 0) return "";
+    let prefix = strs[0];
+    for (let i = 1; i < strs.length; i++) {
+        while (!strs[i].startsWith(prefix)) {
+            prefix = prefix.slice(0, -1);
+            if (prefix === "") return "";
+        }
+    }
+    return prefix;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+using namespace std;
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (strs.empty()) return "";
+        string prefix = strs[0];
+        for (int i = 1; i < strs.size(); i++) {
+            while (strs[i].find(prefix) != 0) {
+                prefix = prefix.substr(0, prefix.length() - 1);
+                if (prefix.empty()) return "";
+            }
+        }
+        return prefix;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if not strs:
+            return ""
+        prefix = strs[0]
+        for i in range(1, len(strs)):
+            while not strs[i].startswith(prefix):
+                prefix = prefix[:-1]
+                if not prefix:
+                    return ""
+        return prefix` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strsSize == 0) return "";
+    char* prefix = malloc(201 * sizeof(char));
+    strcpy(prefix, strs[0]);
+    int prefix_len = strlen(prefix);
+    for (int i = 1; i < strsSize; i++) {
+        while (strncmp(strs[i], prefix, prefix_len) != 0) {
+            prefix_len--;
+            prefix[prefix_len] = '\0';
+            if (prefix_len == 0) return "";
+        }
+    }
+    return prefix;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string LongestCommonPrefix(string[] strs) {
+        if (strs == null || strs.Length == 0) return "";
+        string prefix = strs[0];
+        for (int i = 1; i < strs.Length; i++) {
+            while (!strs[i].StartsWith(prefix)) {
+                prefix = prefix.Substring(0, prefix.Length - 1);
+                if (string.IsNullOrEmpty(prefix)) return "";
+            }
+        }
+        return prefix;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function longestCommonPrefix(strs: string[]): string {
+    if (strs.length === 0) return "";
+    let prefix = strs[0];
+    for (let i = 1; i < strs.length; i++) {
+        while (!strs[i].startsWith(prefix)) {
+            prefix = prefix.slice(0, -1);
+            if (prefix === "") return "";
+        }
+    }
+    return prefix;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func longestCommonPrefix(_ strs: [String]) -> String {
+        if strs.isEmpty { return "" }
+        var prefix = strs[0]
+        for i in 1..<strs.count {
+            while !strs[i].hasPrefix(prefix) {
+                prefix = String(prefix.dropLast())
+                if prefix.isEmpty { return "" }
+            }
+        }
+        return prefix
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(S) where S is the sum of all characters in all strings.
+- Space: O(1) as we only use a constant amount of extra space.
+
+---
+
+## Divide and Conquer
+
+**Intuition**
+
+Recursively divide the array of strings into two halves, find the common prefix for each half, and then find the common prefix of the two prefixes.
+
+**Steps**
+
+- If the array contains only one string, return that string as the prefix.
+- Divide the array into two halves.
+- Recursively find the common prefix for each half.
+- Find the common prefix of the two prefixes obtained from the previous step.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def longestCommonPrefix(strs):
+    if not strs:
+        return ""
+    return longestCommonPrefixHelper(strs, 0, len(strs) - 1)
+
+def longestCommonPrefixHelper(strs, left, right):
+    if left == right:
+        return strs[left]
+    mid = (left + right) // 2
+    lcp_left = longestCommonPrefixHelper(strs, left, mid)
+    lcp_right = longestCommonPrefixHelper(strs, mid + 1, right)
+    return commonPrefix(lcp_left, lcp_right)
+
+def commonPrefix(str1, str2):
+    min_len = min(len(str1), len(str2))
+    for i in range(min_len):
+        if str1[i] != str2[i]:
+            return str1[:i]
+    return str1[:min_len]` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public String longestCommonPrefix(String[] strs) {
+        if (strs == null || strs.length == 0) return "";
+        return longestCommonPrefixHelper(strs, 0, strs.length - 1);
+    }
+    
+    private String longestCommonPrefixHelper(String[] strs, int left, int right) {
+        if (left == right) {
+            return strs[left];
+        }
+        int mid = (left + right) / 2;
+        String lcpLeft = longestCommonPrefixHelper(strs, left, mid);
+        String lcpRight = longestCommonPrefixHelper(strs, mid + 1, right);
+        return commonPrefix(lcpLeft, lcpRight);
+    }
+    
+    private String commonPrefix(String str1, String str2) {
+        int minLen = Math.min(str1.length(), str2.length());
+        for (int i = 0; i < minLen; i++) {
+            if (str1.charAt(i) != str2.charAt(i)) {
+                return str1.substring(0, i);
+            }
+        }
+        return str1.substring(0, minLen);
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var longestCommonPrefix = function(strs) {
+    if (strs.length === 0) return "";
+    return longestCommonPrefixHelper(strs, 0, strs.length - 1);
+};
+
+function longestCommonPrefixHelper(strs, left, right) {
+    if (left === right) {
+        return strs[left];
+    }
+    let mid = Math.floor((left + right) / 2);
+    let lcpLeft = longestCommonPrefixHelper(strs, left, mid);
+    let lcpRight = longestCommonPrefixHelper(strs, mid + 1, right);
+    return commonPrefix(lcpLeft, lcpRight);
+}
+
+function commonPrefix(str1, str2) {
+    let minLen = Math.min(str1.length, str2.length);
+    for (let i = 0; i < minLen; i++) {
+        if (str1[i] !== str2[i]) {
+            return str1.substring(0, i);
+        }
+    }
+    return str1.substring(0, minLen);
+}` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <string>
+using namespace std;
+
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if (strs.empty()) return "";
+        return longestCommonPrefixHelper(strs, 0, strs.size() - 1);
+    }
+    
+private:
+    string longestCommonPrefixHelper(vector<string>& strs, int left, int right) {
+        if (left == right) {
+            return strs[left];
+        }
+        int mid = (left + right) / 2;
+        string lcpLeft = longestCommonPrefixHelper(strs, left, mid);
+        string lcpRight = longestCommonPrefixHelper(strs, mid + 1, right);
+        return commonPrefix(lcpLeft, lcpRight);
+    }
+    
+    string commonPrefix(string str1, string str2) {
+        int minLen = min(str1.length(), str2.length());
+        for (int i = 0; i < minLen; i++) {
+            if (str1[i] != str2[i]) {
+                return str1.substr(0, i);
+            }
+        }
+        return str1.substr(0, minLen);
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if not strs:
+            return ""
+        return self.longestCommonPrefixHelper(strs, 0, len(strs) - 1)
+    
+    def longestCommonPrefixHelper(self, strs: List[str], left: int, right: int) -> str:
+        if left == right:
+            return strs[left]
+        mid = (left + right) // 2
+        lcp_left = self.longestCommonPrefixHelper(strs, left, mid)
+        lcp_right = self.longestCommonPrefixHelper(strs, mid + 1, right)
+        return self.commonPrefix(lcp_left, lcp_right)
+    
+    def commonPrefix(self, str1: str, str2: str) -> str:
+        min_len = min(len(str1), len(str2))
+        for i in range(min_len):
+            if str1[i] != str2[i]:
+                return str1[:i]
+        return str1[:min_len]` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* commonPrefix(char* str1, char* str2);
+char* longestCommonPrefixHelper(char** strs, int left, int right);
+
+char* longestCommonPrefix(char** strs, int strsSize) {
+    if (strsSize == 0) return "";
+    return longestCommonPrefixHelper(strs, 0, strsSize - 1);
+}
+
+char* longestCommonPrefixHelper(char** strs, int left, int right) {
+    if (left == right) {
+        return strs[left];
+    }
+    int mid = (left + right) / 2;
+    char* lcpLeft = longestCommonPrefixHelper(strs, left, mid);
+    char* lcpRight = longestCommonPrefixHelper(strs, mid + 1, right);
+    return commonPrefix(lcpLeft, lcpRight);
+}
+
+char* commonPrefix(char* str1, char* str2) {
+    int minLen = strlen(str1) < strlen(str2) ? strlen(str1) : strlen(str2);
+    int i;
+    for (i = 0; i < minLen; i++) {
+        if (str1[i] != str2[i]) {
+            break;
+        }
+    }
+    char* result = malloc((i + 1) * sizeof(char));
+    strncpy(result, str1, i);
+    result[i] = '\0';
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public string LongestCommonPrefix(string[] strs) {
+        if (strs == null || strs.Length == 0) return "";
+        return LongestCommonPrefixHelper(strs, 0, strs.Length - 1);
+    }
+    
+    private string LongestCommonPrefixHelper(string[] strs, int left, int right) {
+        if (left == right) {
+            return strs[left];
+        }
+        int mid = (left + right) / 2;
+        string lcpLeft = LongestCommonPrefixHelper(strs, left, mid);
+        string lcpRight = LongestCommonPrefixHelper(strs, mid + 1, right);
+        return CommonPrefix(lcpLeft, lcpRight);
+    }
+    
+    private string CommonPrefix(string str1, string str2) {
+        int minLen = Math.Min(str1.Length, str2.Length);
+        for (int i = 0; i < minLen; i++) {
+            if (str1[i] != str2[i]) {
+                return str1.Substring(0, i);
+            }
+        }
+        return str1.Substring(0, minLen);
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function longestCommonPrefix(strs: string[]): string {
+    if (strs.length === 0) return "";
+    return longestCommonPrefixHelper(strs, 0, strs.length - 1);
+}
+
+function longestCommonPrefixHelper(strs: string[], left: number, right: number): string {
+    if (left === right) {
+        return strs[left];
+    }
+    let mid = Math.floor((left + right) / 2);
+    let lcpLeft = longestCommonPrefixHelper(strs, left, mid);
+    let lcpRight = longestCommonPrefixHelper(strs, mid + 1, right);
+    return commonPrefix(lcpLeft, lcpRight);
+}
+
+function commonPrefix(str1: string, str2: string): string {
+    let minLen = Math.min(str1.length, str2.length);
+    for (let i = 0; i < minLen; i++) {
+        if (str1[i] !== str2[i]) {
+            return str1.substring(0, i);
+        }
+    }
+    return str1.substring(0, minLen);
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func longestCommonPrefix(_ strs: [String]) -> String {
+        if strs.isEmpty { return "" }
+        return longestCommonPrefixHelper(strs, 0, strs.count - 1)
+    }
+    
+    private func longestCommonPrefixHelper(_ strs: [String], _ left: Int, _ right: Int) -> String {
+        if left == right {
+            return strs[left]
+        }
+        let mid = (left + right) / 2
+        let lcpLeft = longestCommonPrefixHelper(strs, left, mid)
+        let lcpRight = longestCommonPrefixHelper(strs, mid + 1, right)
+        return commonPrefix(lcpLeft, lcpRight)
+    }
+    
+    private func commonPrefix(_ str1: String, _ str2: String) -> String {
+        let minLen = min(str1.count, str2.count)
+        var prefix = ""
+        let str1Array = Array(str1)
+        let str2Array = Array(str2)
+        for i in 0..<minLen {
+            if str1Array[i] != str2Array[i] {
+                return prefix
+            }
+            prefix.append(str1Array[i])
+        }
+        return prefix
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(S) where S is the sum of all characters in all strings.
+- Space: O(m * log n) where m is the length of the longest string and n is the number of strings. This accounts for the recursion stack.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Longest Common Prefix Solutions","datePublished":"2025-09-09T00:02:19.054Z","description":"Write a function to find the longest common prefix string amongst an array of strings. If there is no common prefix, return an empty string \"\".","keywords":"LeetCode, Longest Common Prefix, Easy, Array, String, Trie, Two Pointers, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force - Vertical Scanning complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(S) where S is the sum of all characters in all strings.; Space: O(1) as we only use a constant amount of extra space.. "}},{"@type":"Question","name":"Optimal - Horizontal Scanning complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(S) where S is the sum of all characters in all strings.; Space: O(1) as we only use a constant amount of extra space.. "}},{"@type":"Question","name":"Divide and Conquer complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(S) where S is the sum of all characters in all strings.; Space: O(m * log n) where m is the length of the longest string and n is the number of strings. This accounts for the recursion stack.. "}}]}).replace(/</g,'\\u003c')}
+</script>
