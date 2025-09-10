@@ -1,0 +1,930 @@
+---
+title: "Merge Two Sorted Lists"
+summary: "You are given the heads of two sorted linked lists list1 and list2. Merge the two lists into one sorted list by splicing together the nodes of the first two lists. Return the head of the merged linked list."
+date: "Sep 10, 2025"
+tags:
+  - Linked List
+  - Recursion
+draft: false
+difficulty: "Easy"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Easy | **Acceptance:** 67.21% | **Paid:** No
+
+> **Topics:** Linked List, Recursion
+
+- Examples
+- Constraints
+- [Iterative Approach with Dummy Node](#iterative-approach-with-dummy-node)
+- [Recursive Approach](#recursive-approach)
+- [In-Place Iterative Approach](#in-place-iterative-approach)
+
+## Examples
+
+**Input**
+
+```text
+list1 = [1,2,4], list2 = [1,3,4]
+```
+
+**Output**
+
+```text
+[1,1,2,3,4,4]
+```
+
+**Input**
+
+```text
+list1 = [], list2 = []
+```
+
+**Output**
+
+```text
+[]
+```
+
+**Input**
+
+```text
+list1 = [], list2 = [0]
+```
+
+**Output**
+
+```text
+[0]
+```
+
+## Constraints
+
+```text
+- The number of nodes in both lists is in the range [0, 50].
+- -100 <= Node.val <= 100
+- Both list1 and list2 are sorted in non-decreasing order.
+```
+---
+
+## Iterative Approach with Dummy Node
+
+**Intuition**
+
+Create a new list by iterating through both lists, selecting the smaller node at each step and appending it to a merged list. A dummy node simplifies handling the head of the merged list.
+
+**Steps**
+
+- Use a dummy node to simplify edge cases and keep track of the head of the merged list.
+- Use a current pointer to build the merged list node by node.
+- Compare the values of the current nodes of both lists, and attach the smaller one to the merged list.
+- Move the pointer of the chosen list forward and the current pointer of the merged list.
+- Once one of the lists is exhausted, append the remaining nodes of the other list.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def mergeTwoLists(list1, list2):
+    dummy = ListNode(0)
+    current = dummy
+    
+    while list1 and list2:
+        if list1.val <= list2.val:
+            current.next = list1
+            list1 = list1.next
+        else:
+            current.next = list2
+            list2 = list2.next
+        current = current.next
+    
+    if list1:
+        current.next = list1
+    elif list2:
+        current.next = list2
+    
+    return dummy.next` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        
+        while (list1 != null && list2 != null) {
+            if (list1.val <= list2.val) {
+                current.next = list1;
+                list1 = list1.next;
+            } else {
+                current.next = list2;
+                list2 = list2.next;
+            }
+            current = current.next;
+        }
+        
+        if (list1 != null) {
+            current.next = list1;
+        } else if (list2 != null) {
+            current.next = list2;
+        }
+        
+        return dummy.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var mergeTwoLists = function(list1, list2) {
+    let dummy = new ListNode(0);
+    let current = dummy;
+    
+    while (list1 !== null && list2 !== null) {
+        if (list1.val <= list2.val) {
+            current.next = list1;
+            list1 = list1.next;
+        } else {
+            current.next = list2;
+            list2 = list2.next;
+        }
+        current = current.next;
+    }
+    
+    if (list1 !== null) {
+        current.next = list1;
+    } else if (list2 !== null) {
+        current.next = list2;
+    }
+    
+    return dummy.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode dummy(0);
+        ListNode* current = &dummy;
+        
+        while (list1 && list2) {
+            if (list1->val <= list2->val) {
+                current->next = list1;
+                list1 = list1->next;
+            } else {
+                current->next = list2;
+                list2 = list2->next;
+            }
+            current = current->next;
+        }
+        
+        if (list1) {
+            current->next = list1;
+        } else if (list2) {
+            current->next = list2;
+        }
+        
+        return dummy.next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def mergeTwoLists(self, list1: ListNode, list2: ListNode) -> ListNode:
+        dummy = ListNode(0)
+        current = dummy
+        
+        while list1 and list2:
+            if list1.val <= list2.val:
+                current.next = list1
+                list1 = list1.next
+            else:
+                current.next = list2
+                list2 = list2.next
+            current = current.next
+        
+        if list1:
+            current.next = list1
+        elif list2:
+            current.next = list2
+        
+        return dummy.next` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+    struct ListNode dummy;
+    struct ListNode* current = &dummy;
+    dummy.next = NULL;
+    
+    while (list1 != NULL && list2 != NULL) {
+        if (list1->val <= list2->val) {
+            current->next = list1;
+            list1 = list1->next;
+        } else {
+            current->next = list2;
+            list2 = list2->next;
+        }
+        current = current->next;
+    }
+    
+    if (list1 != NULL) {
+        current->next = list1;
+    } else if (list2 != NULL) {
+        current->next = list2;
+    }
+    
+    return dummy.next;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode MergeTwoLists(ListNode list1, ListNode list2) {
+        ListNode dummy = new ListNode(0);
+        ListNode current = dummy;
+        
+        while (list1 != null && list2 != null) {
+            if (list1.val <= list2.val) {
+                current.next = list1;
+                list1 = list1.next;
+            } else {
+                current.next = list2;
+                list2 = list2.next;
+            }
+            current = current.next;
+        }
+        
+        if (list1 != null) {
+            current.next = list1;
+        } else if (list2 != null) {
+            current.next = list2;
+        }
+        
+        return dummy.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
+    let dummy = new ListNode(0);
+    let current = dummy;
+    
+    while (list1 !== null && list2 !== null) {
+        if (list1.val <= list2.val) {
+            current.next = list1;
+            list1 = list1.next;
+        } else {
+            current.next = list2;
+            list2 = list2.next;
+        }
+        current = current.next;
+    }
+    
+    if (list1 !== null) {
+        current.next = list1;
+    } else if (list2 !== null) {
+        current.next = list2;
+    }
+    
+    return dummy.next;
+};` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func mergeTwoLists(_ list1: ListNode?, _ list2: ListNode?) -> ListNode? {
+        let dummy = ListNode(0)
+        var current: ListNode? = dummy
+        var l1 = list1
+        var l2 = list2
+        
+        while l1 != nil && l2 != nil {
+            if l1!.val <= l2!.val {
+                current?.next = l1
+                l1 = l1?.next
+            } else {
+                current?.next = l2
+                l2 = l2?.next
+            }
+            current = current?.next
+        }
+        
+        if l1 != nil {
+            current?.next = l1
+        } else if l2 != nil {
+            current?.next = l2
+        }
+        
+        return dummy.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(m + n), where m and n are the lengths of the two lists. Each node is visited at most once.
+- Space: O(1). Only a constant amount of extra space is used.
+
+---
+
+## Recursive Approach
+
+**Intuition**
+
+A recursive approach naturally handles the problem structure: at each step, we choose the smaller node and recursively merge the rest of the lists.
+
+**Steps**
+
+- Base cases: if one list is empty, return the other list.
+- Compare the first nodes of both lists.
+- Choose the smaller node as the current node of the merged list.
+- Recursively merge the remainder of the chosen list with the other list.
+- Return the chosen node, which becomes the head of the merged list.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def mergeTwoLists(list1, list2):
+    if not list1:
+        return list2
+    if not list2:
+        return list1
+    
+    if list1.val <= list2.val:
+        list1.next = mergeTwoLists(list1.next, list2)
+        return list1
+    else:
+        list2.next = mergeTwoLists(list1, list2.next)
+        return list2` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null) return list2;
+        if (list2 == null) return list1;
+        
+        if (list1.val <= list2.val) {
+            list1.next = mergeTwoLists(list1.next, list2);
+            return list1;
+        } else {
+            list2.next = mergeTwoLists(list1, list2.next);
+            return list2;
+        }
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var mergeTwoLists = function(list1, list2) {
+    if (list1 === null) return list2;
+    if (list2 === null) return list1;
+    
+    if (list1.val <= list2.val) {
+        list1.next = mergeTwoLists(list1.next, list2);
+        return list1;
+    } else {
+        list2.next = mergeTwoLists(list1, list2.next);
+        return list2;
+    }
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        if (!list1) return list2;
+        if (!list2) return list1;
+        
+        if (list1->val <= list2->val) {
+            list1->next = mergeTwoLists(list1->next, list2);
+            return list1;
+        } else {
+            list2->next = mergeTwoLists(list1, list2->next);
+            return list2;
+        }
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def mergeTwoLists(self, list1: ListNode, list2: ListNode) -> ListNode:
+        if not list1:
+            return list2
+        if not list2:
+            return list1
+        
+        if list1.val <= list2.val:
+            list1.next = self.mergeTwoLists(list1.next, list2)
+            return list1
+        else:
+            list2.next = self.mergeTwoLists(list1, list2.next)
+            return list2` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+    if (list1 == NULL) return list2;
+    if (list2 == NULL) return list1;
+    
+    if (list1->val <= list2->val) {
+        list1->next = mergeTwoLists(list1->next, list2);
+        return list1;
+    } else {
+        list2->next = mergeTwoLists(list1, list2->next);
+        return list2;
+    }
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode MergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null) return list2;
+        if (list2 == null) return list1;
+        
+        if (list1.val <= list2.val) {
+            list1.next = MergeTwoLists(list1.next, list2);
+            return list1;
+        } else {
+            list2.next = MergeTwoLists(list1, list2.next);
+            return list2;
+        }
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
+    if (list1 === null) return list2;
+    if (list2 === null) return list1;
+    
+    if (list1.val <= list2.val) {
+        list1.next = mergeTwoLists(list1.next, list2);
+        return list1;
+    } else {
+        list2.next = mergeTwoLists(list1, list2.next);
+        return list2;
+    }
+};` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func mergeTwoLists(_ list1: ListNode?, _ list2: ListNode?) -> ListNode? {
+        if list1 == nil { return list2 }
+        if list2 == nil { return list1 }
+        
+        if list1!.val <= list2!.val {
+            list1?.next = mergeTwoLists(list1?.next, list2)
+            return list1
+        } else {
+            list2?.next = mergeTwoLists(list1, list2?.next)
+            return list2
+        }
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(m + n), where m and n are the lengths of the two lists. Each node is visited at most once.
+- Space: O(m + n) due to the recursion stack. In the worst case, the recursion depth is equal to the sum of the lengths of the two lists.
+
+---
+
+## In-Place Iterative Approach
+
+**Intuition**
+
+We can merge the two lists without creating a dummy node by maintaining references to the head and current nodes directly from the input lists.
+
+**Steps**
+
+- Handle base cases where one of the lists is empty.
+- Choose the list with the smaller first node as the primary list (head of the result).
+- Iterate through the primary list, inserting nodes from the secondary list in the correct positions.
+- Maintain pointers to the current node in the primary list, the previous node, and the current node in the secondary list.
+- Insert nodes from the secondary list into the primary list when appropriate, and move pointers accordingly.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def mergeTwoLists(list1, list2):
+    if not list1: return list2
+    if not list2: return list1
+    
+    # Ensure list1 is the list with the smaller first node
+    if list1.val > list2.val:
+        list1, list2 = list2, list1
+    
+    head = list1
+    
+    while list1.next:
+        if list2 and list2.val < list1.next.val:
+            temp = list1.next
+            list1.next = list2
+            list2 = list2.next
+            list1.next.next = temp
+        list1 = list1.next
+    
+    if list2:
+        list1.next = list2
+    
+    return head` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null) return list2;
+        if (list2 == null) return list1;
+        
+        if (list1.val > list2.val) {
+            ListNode temp = list1;
+            list1 = list2;
+            list2 = temp;
+        }
+        
+        ListNode head = list1;
+        
+        while (list1.next != null) {
+            if (list2 != null && list2.val < list1.next.val) {
+                ListNode temp = list1.next;
+                list1.next = list2;
+                list2 = list2.next;
+                list1.next.next = temp;
+            }
+            list1 = list1.next;
+        }
+        
+        if (list2 != null) {
+            list1.next = list2;
+        }
+        
+        return head;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var mergeTwoLists = function(list1, list2) {
+    if (list1 === null) return list2;
+    if (list2 === null) return list1;
+    
+    if (list1.val > list2.val) {
+        let temp = list1;
+        list1 = list2;
+        list2 = temp;
+    }
+    
+    let head = list1;
+    
+    while (list1.next !== null) {
+        if (list2 !== null && list2.val < list1.next.val) {
+            let temp = list1.next;
+            list1.next = list2;
+            list2 = list2.next;
+            list1.next.next = temp;
+        }
+        list1 = list1.next;
+    }
+    
+    if (list2 !== null) {
+        list1.next = list2;
+    }
+    
+    return head;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        if (!list1) return list2;
+        if (!list2) return list1;
+        
+        if (list1->val > list2->val) swap(list1, list2);
+        
+        ListNode* head = list1;
+        
+        while (list1->next) {
+            if (list2 && list2->val < list1->next->val) {
+                ListNode* temp = list1->next;
+                list1->next = list2;
+                list2 = list2->next;
+                list1->next->next = temp;
+            }
+            list1 = list1->next;
+        }
+        
+        if (list2) {
+            list1->next = list2;
+        }
+        
+        return head;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def mergeTwoLists(self, list1: ListNode, list2: ListNode) -> ListNode:
+        if not list1: return list2
+        if not list2: return list1
+        
+        if list1.val > list2.val:
+            list1, list2 = list2, list1
+        
+        head = list1
+        
+        while list1.next:
+            if list2 and list2.val < list1.next.val:
+                temp = list1.next
+                list1.next = list2
+                list2 = list2.next
+                list1.next.next = temp
+            list1 = list1.next
+        
+        if list2:
+            list1.next = list2
+        
+        return head` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+    if (list1 == NULL) return list2;
+    if (list2 == NULL) return list1;
+    
+    if (list1->val > list2->val) {
+        struct ListNode* temp = list1;
+        list1 = list2;
+        list2 = temp;
+    }
+    
+    struct ListNode* head = list1;
+    
+    while (list1->next != NULL) {
+        if (list2 != NULL && list2->val < list1->next->val) {
+            struct ListNode* temp = list1->next;
+            list1->next = list2;
+            list2 = list2->next;
+            list1->next->next = temp;
+        }
+        list1 = list1->next;
+    }
+    
+    if (list2 != NULL) {
+        list1->next = list2;
+    }
+    
+    return head;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode MergeTwoLists(ListNode list1, ListNode list2) {
+        if (list1 == null) return list2;
+        if (list2 == null) return list1;
+        
+        if (list1.val > list2.val) {
+            ListNode temp = list1;
+            list1 = list2;
+            list2 = temp;
+        }
+        
+        ListNode head = list1;
+        
+        while (list1.next != null) {
+            if (list2 != null && list2.val < list1.next.val) {
+                ListNode temp = list1.next;
+                list1.next = list2;
+                list2 = list2.next;
+                list1.next.next = temp;
+            }
+            list1 = list1.next;
+        }
+        
+        if (list2 != null) {
+            list1.next = list2;
+        }
+        
+        return head;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function mergeTwoLists(list1: ListNode | null, list2: ListNode | null): ListNode | null {
+    if (list1 === null) return list2;
+    if (list2 === null) return list1;
+    
+    if (list1.val > list2.val) {
+        let temp = list1;
+        list1 = list2;
+        list2 = temp;
+    }
+    
+    let head = list1;
+    
+    while (list1.next !== null) {
+        if (list2 !== null && list2.val < list1.next.val) {
+            let temp = list1.next;
+            list1.next = list2;
+            list2 = list2.next;
+            list1.next.next = temp;
+        }
+        list1 = list1.next;
+    }
+    
+    if (list2 !== null) {
+        list1.next = list2;
+    }
+    
+    return head;
+};` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func mergeTwoLists(_ list1: ListNode?, _ list2: ListNode?) -> ListNode? {
+        if list1 == nil { return list2 }
+        if list2 == nil { return list1 }
+        
+        var l1 = list1
+        var l2 = list2
+        
+        if l1!.val > l2!.val {
+            let temp = l1
+            l1 = l2
+            l2 = temp
+        }
+        
+        let head = l1
+        
+        while l1?.next != nil {
+            if l2 != nil && l2!.val < l1!.next!.val {
+                let temp = l1?.next
+                l1?.next = l2
+                l2 = l2?.next
+                l1?.next?.next = temp
+            }
+            l1 = l1?.next
+        }
+        
+        if l2 != nil {
+            l1?.next = l2
+        }
+        
+        return head
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(m + n), where m and n are the lengths of the two lists. Each node is visited at most once.
+- Space: O(1). Only a constant amount of extra space is used.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Merge Two Sorted Lists Solutions","datePublished":"2025-09-10T23:03:32.483Z","description":"You are given the heads of two sorted linked lists list1 and list2. Merge the two lists into one sorted list by splicing together the nodes of the first two ...","keywords":"LeetCode, Merge Two Sorted Lists, Easy, Linked List, Recursion, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Iterative Approach with Dummy Node complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(m + n), where m and n are the lengths of the two lists. Each node is visited at most once.; Space: O(1). Only a constant amount of extra space is used.. "}},{"@type":"Question","name":"Recursive Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(m + n), where m and n are the lengths of the two lists. Each node is visited at most once.; Space: O(m + n) due to the recursion stack. In the worst case, the recursion depth is equal to the sum of the lengths of the two lists.. "}},{"@type":"Question","name":"In-Place Iterative Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(m + n), where m and n are the lengths of the two lists. Each node is visited at most once.; Space: O(1). Only a constant amount of extra space is used.. "}}]}).replace(/</g,'\\u003c')}
+</script>
