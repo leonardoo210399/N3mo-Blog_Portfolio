@@ -1,0 +1,879 @@
+---
+title: "Remove Nth Node From End of List"
+summary: "Given the head of a linked list, remove the nth node from the end of the list and return its head."
+date: "Sep 10, 2025"
+tags:
+  - Linked List
+  - Two Pointers
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 49.67% | **Paid:** No
+
+> **Topics:** Linked List, Two Pointers
+
+- Examples
+- Constraints
+- [Two-Pass Counting](#two-pass-counting)
+- [Two-Pointer Technique](#two-pointer-technique)
+- [Recursive Approach](#recursive-approach)
+
+## Examples
+
+**Input**
+
+```text
+head = [1,2,3,4,5], n = 2
+```
+
+**Output**
+
+```text
+[1,2,3,5]
+```
+
+**Input**
+
+```text
+head = [1], n = 1
+```
+
+**Output**
+
+```text
+[]
+```
+
+**Input**
+
+```text
+head = [1,2], n = 1
+```
+
+**Output**
+
+```text
+[1]
+```
+
+## Constraints
+
+```text
+- The number of nodes in the list is sz.
+- 1 <= sz <= 30
+- 0 <= Node.val <= 100
+- 1 <= n <= sz
+```
+---
+
+## Two-Pass Counting
+
+**Intuition**
+
+We could count the total number of nodes in the first pass and then use that to find the nth node from the end and remove it.
+
+**Steps**
+
+- First, iterate through the entire list to count the total number of nodes.
+- Calculate the position of the node to be removed from the start of the list using the formula: position = total_nodes - n + 1.
+- Then, iterate again from the start to this position, keeping track of the previous node.
+- When we reach the target node, adjust the pointers to remove it from the list.
+- Handle edge cases like removing the head node by using a dummy node or special checks.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def removeNthFromEnd(head: ListNode, n: int) -> ListNode:
+    dummy = ListNode(0)
+    dummy.next = head
+    current = head
+    count = 0
+    while current:
+        count += 1
+        current = current.next
+    
+    pos = count - n
+    current = dummy
+    for _ in range(pos):
+        current = current.next
+    
+    current.next = current.next.next
+    return dummy.next` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode current = head;
+        int count = 0;
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+        
+        int pos = count - n;
+        current = dummy;
+        for (int i = 0; i < pos; i++) {
+            current = current.next;
+        }
+        
+        current.next = current.next.next;
+        return dummy.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var removeNthFromEnd = function(head, n) {
+    let dummy = new ListNode(0);
+    dummy.next = head;
+    let current = head;
+    let count = 0;
+    while (current) {
+        count++;
+        current = current.next;
+    }
+    
+    let pos = count - n;
+    current = dummy;
+    for (let i = 0; i < pos; i++) {
+        current = current.next;
+    }
+    
+    current.next = current.next.next;
+    return dummy.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* current = head;
+        int count = 0;
+        while (current != nullptr) {
+            count++;
+            current = current->next;
+        }
+        
+        int pos = count - n;
+        current = dummy;
+        for (int i = 0; i < pos; i++) {
+            current = current->next;
+        }
+        
+        ListNode* toDelete = current->next;
+        current->next = current->next->next;
+        delete toDelete;
+        return dummy->next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        current = head
+        count = 0
+        while current:
+            count += 1
+            current = current.next
+        
+        pos = count - n
+        current = dummy
+        for _ in range(pos):
+            current = current.next
+        
+        current.next = current.next.next
+        return dummy.next` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummy->next = head;
+    struct ListNode* current = head;
+    int count = 0;
+    
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    
+    int pos = count - n;
+    current = dummy;
+    for (int i = 0; i < pos; i++) {
+        current = current->next;
+    }
+    
+    struct ListNode* toDelete = current->next;
+    current->next = current->next->next;
+    free(toDelete);
+    struct ListNode* result = dummy->next;
+    free(dummy);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode RemoveNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode current = head;
+        int count = 0;
+        while (current != null) {
+            count++;
+            current = current.next;
+        }
+        
+        int pos = count - n;
+        current = dummy;
+        for (int i = 0; i < pos; i++) {
+            current = current.next;
+        }
+        
+        current.next = current.next.next;
+        return dummy.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
+    const dummy = new ListNode(0);
+    dummy.next = head;
+    let current: ListNode | null = head;
+    let count = 0;
+    while (current) {
+        count++;
+        current = current.next;
+    }
+    
+    const pos = count - n;
+    current = dummy;
+    for (let i = 0; i < pos; i++) {
+        current = current.next;
+    }
+    
+    if(current && current.next) {
+        current.next = current.next.next;
+    }
+    return dummy.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func removeNthFromEnd(_ head: ListNode?, _ n: Int) -> ListNode? {
+        let dummy: ListNode = ListNode(0)
+        dummy.next = head
+        var current = head
+        var count = 0
+        while current != nil {
+            count += 1
+            current = current?.next
+        }
+        
+        let pos = count - n
+        current = dummy
+        for _ in 0 ..< pos {
+            current = current?.next
+        }
+        
+        current?.next = current?.next?.next
+        return dummy.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(L), where L is the length of the list. We make two passes.
+- Space: O(1) for the dummy node approach. No extra space is used.
+- Notes: This approach is straightforward but requires two passes over the list.
+
+---
+
+## Two-Pointer Technique
+
+**Intuition**
+
+We can use two pointers, where one is ahead of the other by n nodes. When the front pointer reaches the end, the rear pointer will be just before the node to remove.
+
+**Steps**
+
+- Initialize two pointers, 'first' and 'second', both pointing to a dummy node whose next points to head.
+- Advance the 'first' pointer by n + 1 steps to create a gap of n nodes between the two pointers.
+- Move both pointers at the same pace until 'first' reaches the end of the list.
+- At this point, 'second' will be pointing to the node just before the one we need to remove.
+- Adjust the pointers to remove the node from the list.
+- Return the next node of the dummy node as the new head of the list.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def removeNthFromEnd(head: ListNode, n: int) -> ListNode:
+    dummy = ListNode(0)
+    dummy.next = head
+    first = dummy
+    second = dummy
+    
+    for _ in range(n + 1):
+        first = first.next
+    
+    while first:
+        first = first.next
+        second = second.next
+    
+    second.next = second.next.next
+    return dummy.next` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode first = dummy;
+        ListNode second = dummy;
+        
+        for (int i = 0; i < n + 1; i++) {
+            first = first.next;
+        }
+        
+        while (first != null) {
+            first = first.next;
+            second = second.next;
+        }
+        
+        second.next = second.next.next;
+        return dummy.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var removeNthFromEnd = function(head, n) {
+    let dummy = new ListNode(0);
+    dummy.next = head;
+    let first = dummy;
+    let second = dummy;
+    
+    for (let i = 0; i < n + 1; i++) {
+        first = first.next;
+    }
+    
+    while (first !== null) {
+        first = first.next;
+        second = second.next;
+    }
+    
+    second.next = second.next.next;
+    return dummy.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* first = dummy;
+        ListNode* second = dummy;
+        
+        for (int i = 0; i < n + 1; i++) {
+            first = first->next;
+        }
+        
+        while (first != nullptr) {
+            first = first->next;
+            second = second->next;
+        }
+        
+        ListNode* toDelete = second->next;
+        second->next = second->next->next;
+        delete toDelete;
+        return dummy->next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        first = dummy
+        second = dummy
+        
+        for _ in range(n + 1):
+            first = first.next
+        
+        while first:
+            first = first.next
+            second = second.next
+        
+        second.next = second.next.next
+        return dummy.next` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummy->next = head;
+    struct ListNode* first = dummy;
+    struct ListNode* second = dummy;
+    
+    for (int i = 0; i < n + 1; i++) {
+        first = first->next;
+    }
+    
+    while (first != NULL) {
+        first = first->next;
+        second = second->next;
+    }
+    
+    struct ListNode* toDelete = second->next;
+    second->next = second->next->next;
+    free(toDelete);
+    struct ListNode* result = dummy->next;
+    free(dummy);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode RemoveNthFromEnd(ListNode head, int n) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode first = dummy;
+        ListNode second = dummy;
+        
+        for (int i = 0; i < n + 1; i++) {
+            first = first.next;
+        }
+        
+        while (first != null) {
+            first = first.next;
+            second = second.next;
+        }
+        
+        second.next = second.next.next;
+        return dummy.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
+    const dummy = new ListNode(0);
+    dummy.next = head;
+    let first: ListNode | null = dummy;
+    let second: ListNode | null = dummy;
+    
+    for (let i = 0; i < n + 1; i++) {
+        if (first) first = first.next;
+    }
+    
+    while (first !== null) {
+        first = first.next;
+        if(second) second = second.next;
+    }
+    
+    if (second && second.next) {
+        second.next = second.next.next;
+    }
+    return dummy.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func removeNthFromEnd(_ head: ListNode?, _ n: Int) -> ListNode? {
+        let dummy: ListNode = ListNode(0)
+        dummy.next = head
+        var first: ListNode? = dummy
+        var second: ListNode? = dummy
+        
+        for _ in 0 ... n {
+            first = first?.next
+        }
+        
+        while first != nil {
+            first = first?.next
+            second = second?.next
+        }
+        
+        second?.next = second?.next?.next
+        return dummy.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(L), where L is the length of the list. We make one pass.
+- Space: O(1) for the dummy node approach. No extra space is used.
+- Notes: This approach is optimal as it only requires a single pass over the list and uses constant extra space.
+
+---
+
+## Recursive Approach
+
+**Intuition**
+
+We can solve this problem by using a recursive traversal to the end of the list.
+
+**Steps**
+
+- Define a recursive helper function that traverses to the end of the list.
+- As we return from the recursion, count the nodes from the end.
+- When the count matches n, we know that the next node is the one to be removed.
+- Adjust the pointers accordingly in the recursive call path.
+- Handle the special case where the head node itself is to be removed by passing a reference to the head or using a dummy node.
+- This is a clever but less common approach due to its space complexity.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        def helper(node: ListNode) -> int:
+            if not node:
+                return 0
+            count = helper(node.next)
+            if count == n:
+                node.next = node.next.next
+            return count + 1
+        
+        dummy = ListNode(0)
+        dummy.next = head
+        helper(dummy)
+        return dummy.next` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    private int n;
+    public ListNode removeNthFromEnd(ListNode head, int n) {
+        this.n = n;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        helper(dummy);
+        return dummy.next;
+    }
+    
+    private int helper(ListNode node) {
+        if (node == null) return 0;
+        int count = helper(node.next);
+        if (count == this.n) {
+            node.next = node.next.next;
+        }
+        return count + 1;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var removeNthFromEnd = function(head, n) {
+    function helper(node) {
+        if (!node) return 0;
+        const count = helper(node.next);
+        if (count === n) {
+            node.next = node.next.next;
+        }
+        return count + 1;
+    }
+    
+    const dummy = new ListNode(0);
+    dummy.next = head;
+    helper(dummy);
+    return dummy.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    int n_val;
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        n_val = n;
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        helper(dummy);
+        return dummy->next;
+    }
+    
+    int helper(ListNode* node) {
+        if (node == nullptr) return 0;
+        int count = helper(node->next);
+        if (count == n_val) {
+            ListNode* toDelete = node->next;
+            node->next = node->next->next;
+            delete toDelete;
+        }
+        return count + 1;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        def helper(node: ListNode) -> int:
+            if not node:
+                return 0
+            count = helper(node.next)
+            if count == n:
+                node.next = node.next.next
+            return count + 1
+        
+        dummy = ListNode(0)
+        dummy.next = head
+        helper(dummy)
+        return dummy.next` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct HelperResult {
+    int count;
+};
+
+struct HelperResult helper(struct ListNode* node, int n) {
+    struct HelperResult result;
+    if (node == NULL) {
+        result.count = 0;
+        return result;
+    }
+    result = helper(node->next, n);
+    if (result.count == n) {
+        struct ListNode* toDelete = node->next;
+        node->next = node->next->next;
+        free(toDelete);
+    }
+    result.count++;
+    return result;
+}
+
+struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+    struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    dummy->next = head;
+    helper(dummy, n);
+    struct ListNode* result = dummy->next;
+    free(dummy);
+    return result;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    private int n_global;
+    public ListNode RemoveNthFromEnd(ListNode head, int n) {
+        n_global = n;
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        Helper(dummy);
+        return dummy.next;
+    }
+    
+    private int Helper(ListNode node) {
+        if (node == null) return 0;
+        int count = Helper(node.next);
+        if (count == n_global) {
+            node.next = node.next.next;
+        }
+        return count + 1;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function removeNthFromEnd(head: ListNode | null, n: number): ListNode | null {
+    function helper(node: ListNode | null): number {
+        if (!node) return 0;
+        const count = helper(node.next);
+        if (count === n && node.next) {
+            node.next = node.next.next;
+        }
+        return count + 1;
+    }
+    
+    const dummy = new ListNode(0);
+    dummy.next = head;
+    helper(dummy);
+    return dummy.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func removeNthFromEnd(_ head: ListNode?, _ n: Int) -> ListNode? {
+        func helper(_ node: ListNode?) -> Int {
+            guard let node = node else { return 0 }
+            let count = helper(node.next)
+            if count == n {
+                node.next = node.next?.next
+            }
+            return count + 1
+        }
+        
+        let dummy: ListNode = ListNode(0)
+        dummy.next = head
+        _ = helper(dummy)
+        return dummy.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(L), where L is the length of the list.
+- Space: O(L) due to the recursion stack.
+- Notes: While this approach works, it's less efficient in terms of space and is not generally preferred in an interview setting where optimal space complexity is often desired.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Remove Nth Node From End of List Solutions","datePublished":"2025-09-10T02:02:47.492Z","description":"Given the head of a linked list, remove the nth node from the end of the list and return its head.","keywords":"LeetCode, Remove Nth Node From End of List, Medium, Linked List, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Two-Pass Counting complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(L), where L is the length of the list. We make two passes.; Space: O(1) for the dummy node approach. No extra space is used.. This approach is straightforward but requires two passes over the list."}},{"@type":"Question","name":"Two-Pointer Technique complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(L), where L is the length of the list. We make one pass.; Space: O(1) for the dummy node approach. No extra space is used.. This approach is optimal as it only requires a single pass over the list and uses constant extra space."}},{"@type":"Question","name":"Recursive Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(L), where L is the length of the list.; Space: O(L) due to the recursion stack.. While this approach works, it's less efficient in terms of space and is not generally preferred in an interview setting where optimal space complexity is often desired."}}]}).replace(/</g,'\\u003c')}
+</script>
