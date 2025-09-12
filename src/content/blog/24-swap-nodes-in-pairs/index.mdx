@@ -1,0 +1,848 @@
+---
+title: "Swap Nodes in Pairs"
+summary: "Given a linked list, swap every two adjacent nodes and return its head. You must solve the problem without modifying the values in the list's nodes (i.e., only nodes themselves may be changed.)"
+date: "Sep 12, 2025"
+tags:
+  - Linked List
+  - Recursion
+draft: false
+difficulty: "Medium"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Medium | **Acceptance:** 67.77% | **Paid:** No
+
+> **Topics:** Linked List, Recursion
+
+- Examples
+- Constraints
+- [Brute Force - Array-based Swapping](#brute-force-array-based-swapping)
+- [Recursive Approach](#recursive-approach)
+- [Iterative Approach with Dummy Node](#iterative-approach-with-dummy-node)
+
+## Examples
+
+**Input**
+
+```text
+head = [1,2,3,4]
+```
+
+**Output**
+
+```text
+[2,1,4,3]
+```
+
+**Input**
+
+```text
+head = []
+```
+
+**Output**
+
+```text
+[]
+```
+
+**Input**
+
+```text
+head = [1]
+```
+
+**Output**
+
+```text
+[1]
+```
+
+## Constraints
+
+```text
+- The number of nodes in the list is in the range [0, 100].
+- 0 <= Node.val <= 100
+```
+---
+
+## Brute Force - Array-based Swapping
+
+**Intuition**
+
+Convert the linked list into an array, perform swaps on the array, and reconstruct the linked list.
+
+**Steps**
+
+- Traverse the linked list and store all node values in an array.
+- Iterate through the array and swap every pair of adjacent elements.
+- Reconstruct the linked list from the modified array.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def swapPairs(head):
+    if not head or not head.next:
+        return head
+    
+    values = []
+    current = head
+    while current:
+        values.append(current.val)
+        current = current.next
+    
+    for i in range(0, len(values) - 1, 2):
+        values[i], values[i+1] = values[i+1], values[i]
+    
+    dummy = ListNode(0)
+    current = dummy
+    for val in values:
+        current.next = ListNode(val)
+        current = current.next
+    
+    return dummy.next` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) return head;
+        
+        java.util.List<Integer> values = new java.util.ArrayList<>();
+        ListNode current = head;
+        while (current != null) {
+            values.add(current.val);
+            current = current.next;
+        }
+        
+        for (int i = 0; i < values.size() - 1; i += 2) {
+            int temp = values.get(i);
+            values.set(i, values.get(i + 1));
+            values.set(i + 1, temp);
+        }
+        
+        ListNode dummy = new ListNode(0);
+        current = dummy;
+        for (int val : values) {
+            current.next = new ListNode(val);
+            current = current.next;
+        }
+        
+        return dummy.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var swapPairs = function(head) {
+    if (!head || !head.next) return head;
+    
+    const values = [];
+    let current = head;
+    while (current) {
+        values.push(current.val);
+        current = current.next;
+    }
+    
+    for (let i = 0; i < values.length - 1; i += 2) {
+        [values[i], values[i + 1]] = [values[i + 1], values[i]];
+    }
+    
+    const dummy = new ListNode(0);
+    current = dummy;
+    for (const val of values) {
+        current.next = new ListNode(val);
+        current = current.next;
+    }
+    
+    return dummy.next;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if (!head || !head->next) return head;
+        
+        vector<int> values;
+        ListNode* current = head;
+        while (current) {
+            values.push_back(current->val);
+            current = current->next;
+        }
+        
+        for (int i = 0; i < values.size() - 1; i += 2) {
+            swap(values[i], values[i + 1]);
+        }
+        
+        ListNode* dummy = new ListNode(0);
+        current = dummy;
+        for (int val : values) {
+            current->next = new ListNode(val);
+            current = current->next;
+        }
+        
+        return dummy->next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        
+        values = []
+        current = head
+        while current:
+            values.append(current.val)
+            current = current.next
+        
+        for i in range(0, len(values) - 1, 2):
+            values[i], values[i+1] = values[i+1], values[i]
+        
+        dummy = ListNode(0)
+        current = dummy
+        for val in values:
+            current.next = ListNode(val)
+            current = current.next
+        
+        return dummy.next` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* createNode(int val) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+struct ListNode* swapPairs(struct ListNode* head) {
+    if (!head || !head->next) return head;
+    
+    int values[100];
+    int size = 0;
+    struct ListNode* current = head;
+    while (current) {
+        values[size++] = current->val;
+        current = current->next;
+    }
+    
+    for (int i = 0; i < size - 1; i += 2) {
+        int temp = values[i];
+        values[i] = values[i + 1];
+        values[i + 1] = temp;
+    }
+    
+    struct ListNode* dummy = createNode(0);
+    current = dummy;
+    for (int i = 0; i < size; i++) {
+        current->next = createNode(values[i]);
+        current = current->next;
+    }
+    
+    return dummy->next;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode SwapPairs(ListNode head) {
+        if (head == null || head.next == null) return head;
+        
+        var values = new System.Collections.Generic.List<int>();
+        var current = head;
+        while (current != null) {
+            values.Add(current.val);
+            current = current.next;
+        }
+        
+        for (int i = 0; i < values.Count - 1; i += 2) {
+            int temp = values[i];
+            values[i] = values[i + 1];
+            values[i + 1] = temp;
+        }
+        
+        var dummy = new ListNode(0);
+        current = dummy;
+        foreach (int val in values) {
+            current.next = new ListNode(val);
+            current = current.next;
+        }
+        
+        return dummy.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function swapPairs(head: ListNode | null): ListNode | null {
+    if (!head || !head.next) return head;
+    
+    const values: number[] = [];
+    let current: ListNode | null = head;
+    while (current) {
+        values.push(current.val);
+        current = current.next;
+    }
+    
+    for (let i = 0; i < values.length - 1; i += 2) {
+        [values[i], values[i + 1]] = [values[i + 1], values[i]];
+    }
+    
+    const dummy = new ListNode(0);
+    current = dummy;
+    for (const val of values) {
+        current.next = new ListNode(val);
+        current = current.next;
+    }
+    
+    return dummy.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func swapPairs(_ head: ListNode?) -> ListNode? {
+        if head == nil || head?.next == nil { return head }
+        
+        var values: [Int] = []
+        var current = head
+        while current != nil {
+            values.append(current!.val)
+            current = current?.next
+        }
+        
+        for i in stride(from: 0, to: values.count - 1, by: 2) {
+            values.swapAt(i, i + 1)
+        }
+        
+        let dummy = ListNode(0)
+        current = dummy
+        for val in values {
+            current?.next = ListNode(val)
+            current = current?.next
+        }
+        
+        return dummy.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the number of nodes in the linked list. We traverse the list twice: once to collect values and once to reconstruct it.
+- Space: O(n), required to store the values in an array and to create the new linked list.
+
+---
+
+## Recursive Approach
+
+**Intuition**
+
+Break down the problem into smaller subproblems by recursively swapping pairs and linking the results.
+
+**Steps**
+
+- Base case: If the list has fewer than two nodes, return the head as is.
+- For the first two nodes, swap them and recursively call the function on the remaining list.
+- Link the result of the recursive call to the second node (which becomes the new head after swapping).
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def swapPairs(head):
+    if not head or not head.next:
+        return head
+    
+    first = head
+    second = head.next
+    
+    first.next = swapPairs(second.next)
+    second.next = first
+    
+    return second` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        if (head == null || head.next == null) return head;
+        
+        ListNode first = head;
+        ListNode second = head.next;
+        
+        first.next = swapPairs(second.next);
+        second.next = first;
+        
+        return second;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var swapPairs = function(head) {
+    if (!head || !head.next) return head;
+    
+    const first = head;
+    const second = head.next;
+    
+    first.next = swapPairs(second.next);
+    second.next = first;
+    
+    return second;
+};` },
+{ name: "C++", lang: "cpp", code: `struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if (!head || !head->next) return head;
+        
+        ListNode* first = head;
+        ListNode* second = head->next;
+        
+        first->next = swapPairs(second->next);
+        second->next = first;
+        
+        return second;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        if not head or not head.next:
+            return head
+        
+        first = head
+        second = head.next
+        
+        first.next = self.swapPairs(second.next)
+        second.next = first
+        
+        return second` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* swapPairs(struct ListNode* head) {
+    if (!head || !head->next) return head;
+    
+    struct ListNode* first = head;
+    struct ListNode* second = head->next;
+    
+    first->next = swapPairs(second->next);
+    second->next = first;
+    
+    return second;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode SwapPairs(ListNode head) {
+        if (head == null || head.next == null) return head;
+        
+        ListNode first = head;
+        ListNode second = head.next;
+        
+        first.next = SwapPairs(second.next);
+        second.next = first;
+        
+        return second;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function swapPairs(head: ListNode | null): ListNode | null {
+    if (!head || !head.next) return head;
+    
+    const first = head;
+    const second = head.next;
+    
+    first.next = swapPairs(second.next);
+    second.next = first;
+    
+    return second;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func swapPairs(_ head: ListNode?) -> ListNode? {
+        if head == nil || head?.next == nil { return head }
+        
+        let first = head
+        let second = head?.next
+        
+        first?.next = swapPairs(second?.next)
+        second?.next = first
+        
+        return second
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the number of nodes in the linked list. Each node is visited once during the recursion.
+- Space: O(n), due to the recursion stack. In the worst case, the recursion depth is n/2 for a list with n nodes.
+
+---
+
+## Iterative Approach with Dummy Node
+
+**Intuition**
+
+Use a dummy node to simplify edge cases and iteratively swap pairs by adjusting pointers.
+
+**Steps**
+
+- Create a dummy node that points to the head of the list to handle the first pair uniformly.
+- Use a pointer to track the previous node before the current pair.
+- In each iteration, identify the two nodes to be swapped, adjust their pointers, and move the previous pointer forward.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def swapPairs(head):
+    dummy = ListNode(0)
+    dummy.next = head
+    prev = dummy
+    
+    while prev.next and prev.next.next:
+        first = prev.next
+        second = prev.next.next
+        
+        prev.next = second
+        first.next = second.next
+        second.next = first
+        
+        prev = first
+    
+    return dummy.next` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+
+class Solution {
+    public ListNode swapPairs(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        
+        while (prev.next != null && prev.next.next != null) {
+            ListNode first = prev.next;
+            ListNode second = prev.next.next;
+            
+            prev.next = second;
+            first.next = second.next;
+            second.next = first;
+            
+            prev = first;
+        }
+        
+        return dummy.next;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `class ListNode {
+    constructor(val, next) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+var swapPairs = function(head) {
+    const dummy = new ListNode(0);
+    dummy.next = head;
+    let prev = dummy;
+    
+    while (prev.next && prev.next.next) {
+        const first = prev.next;
+        const second = prev.next.next;
+        
+        prev.next = second;
+        first.next = second.next;
+        second.next = first;
+        
+        prev = first;
+    }
+    
+    return dummy.next;
+};` },
+{ name: "C++", lang: "cpp", code: `struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* prev = dummy;
+        
+        while (prev->next && prev->next->next) {
+            ListNode* first = prev->next;
+            ListNode* second = prev->next->next;
+            
+            prev->next = second;
+            first->next = second->next;
+            second->next = first;
+            
+            prev = first;
+        }
+        
+        return dummy->next;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        prev = dummy
+        
+        while prev.next and prev.next.next:
+            first = prev.next
+            second = prev.next.next
+            
+            prev.next = second
+            first.next = second.next
+            second.next = first
+            
+            prev = first
+        
+        return dummy.next` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode* createNode(int val) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+struct ListNode* swapPairs(struct ListNode* head) {
+    struct ListNode* dummy = createNode(0);
+    dummy->next = head;
+    struct ListNode* prev = dummy;
+    
+    while (prev->next && prev->next->next) {
+        struct ListNode* first = prev->next;
+        struct ListNode* second = prev->next->next;
+        
+        prev->next = second;
+        first->next = second->next;
+        second->next = first;
+        
+        prev = first;
+    }
+    
+    return dummy->next;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+
+public class Solution {
+    public ListNode SwapPairs(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prev = dummy;
+        
+        while (prev.next != null && prev.next.next != null) {
+            ListNode first = prev.next;
+            ListNode second = prev.next.next;
+            
+            prev.next = second;
+            first.next = second.next;
+            second.next = first;
+            
+            prev = first;
+        }
+        
+        return dummy.next;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+
+function swapPairs(head: ListNode | null): ListNode | null {
+    const dummy = new ListNode(0);
+    dummy.next = head;
+    let prev: ListNode | null = dummy;
+    
+    while (prev.next && prev.next.next) {
+        const first = prev.next;
+        const second = prev.next.next;
+        
+        prev.next = second;
+        first.next = second.next;
+        second.next = first;
+        
+        prev = first;
+    }
+    
+    return dummy.next;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+
+class Solution {
+    func swapPairs(_ head: ListNode?) -> ListNode? {
+        let dummy = ListNode(0)
+        dummy.next = head
+        var prev: ListNode? = dummy
+        
+        while prev?.next != nil && prev?.next?.next != nil {
+            let first = prev?.next
+            let second = prev?.next?.next
+            
+            prev?.next = second
+            first?.next = second?.next
+            second?.next = first
+            
+            prev = first
+        }
+        
+        return dummy.next
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the number of nodes in the linked list. We iterate through the list once.
+- Space: O(1), as we only use a constant amount of extra space for pointers.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Swap Nodes in Pairs Solutions","datePublished":"2025-09-12T12:02:41.316Z","description":"Given a linked list, swap every two adjacent nodes and return its head. You must solve the problem without modifying the values in the list's nodes (i.e., on...","keywords":"LeetCode, Swap Nodes in Pairs, Medium, Linked List, Recursion, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force - Array-based Swapping complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the number of nodes in the linked list. We traverse the list twice: once to collect values and once to reconstruct it.; Space: O(n), required to store the values in an array and to create the new linked list.. "}},{"@type":"Question","name":"Recursive Approach complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the number of nodes in the linked list. Each node is visited once during the recursion.; Space: O(n), due to the recursion stack. In the worst case, the recursion depth is n/2 for a list with n nodes.. "}},{"@type":"Question","name":"Iterative Approach with Dummy Node complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the number of nodes in the linked list. We iterate through the list once.; Space: O(1), as we only use a constant amount of extra space for pointers.. "}}]}).replace(/</g,'\\u003c')}
+</script>
