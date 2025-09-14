@@ -1,0 +1,1041 @@
+---
+title: "Reverse Nodes in k-Group"
+summary: "Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list. k is a positive integer and is less than or equal to the length of the list. If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is. You may not alter the values in the list's nodes, only nodes themselves may be changed."
+date: "Sep 14, 2025"
+tags:
+  - Linked List
+  - Recursion
+draft: false
+difficulty: "Hard"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Hard | **Acceptance:** 63.85% | **Paid:** No
+
+> **Topics:** Linked List, Recursion
+
+- Examples
+- Constraints
+- [Brute Force with Recursion](#brute-force-with-recursion)
+- [Iterative with Stack](#iterative-with-stack)
+- [Pointer Reversal](#pointer-reversal)
+
+## Examples
+
+**Input**
+
+```text
+head = [1,2,3,4,5], k = 2
+```
+
+**Output**
+
+```text
+[2,1,4,3,5]
+```
+
+**Input**
+
+```text
+head = [1,2,3,4,5], k = 3
+```
+
+**Output**
+
+```text
+[3,2,1,4,5]
+```
+
+## Constraints
+
+```text
+- The number of nodes in the list is n.
+- 1 <= k <= n <= 5000
+- 0 <= Node.val <= 1000
+```
+---
+
+## Brute Force with Recursion
+
+**Intuition**
+
+We can reverse the first k nodes and then recursively reverse the remaining list. If the remaining nodes are less than k, we will reverse them back.
+
+**Steps**
+
+- Count the total number of nodes in the list.
+- If the count is less than k, return the head as it is.
+- Otherwise, reverse the first k nodes of the list.
+- Recursively call the reverseKGroup function for the rest of the list and attach it to the end of the reversed part.
+- Ensure that the original order is preserved for any leftover nodes.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        count = 0
+        current = head
+        while current and count < k:
+            current = current.next
+            count += 1
+        if count < k:
+            return head
+        new_head = self.reverseFirstK(head, k)
+        head.next = self.reverseKGroup(current, k)
+        return new_head
+    def reverseFirstK(self, head, k):
+        prev = None
+        current = head
+        for _ in range(k):
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+        return prev` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        int count = 0;
+        ListNode current = head;
+        while (current != null && count < k) {
+            current = current.next;
+            count++;
+        }
+        if (count < k) return head;
+        ListNode newHead = reverseFirstK(head, k);
+        head.next = reverseKGroup(current, k);
+        return newHead;
+    }
+    private ListNode reverseFirstK(ListNode head, int k) {
+        ListNode prev = null;
+        ListNode current = head;
+        for (int i = 0; i < k; i++) {
+            ListNode next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+        return prev;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val);
+    this.next = (next===undefined ? null : next);
+}
+var reverseKGroup = function(head, k) {
+    let count = 0;
+    let current = head;
+    while (current && count < k) {
+        current = current.next;
+        count++;
+    }
+    if (count < k) return head;
+    let newHead = reverseFirstK(head, k);
+    head.next = reverseKGroup(current, k);
+    return newHead;
+};
+function reverseFirstK(head, k) {
+    let prev = null;
+    let current = head;
+    for (let i = 0; i < k; i++) {
+        let next = current.next;
+        current.next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        int count = 0;
+        ListNode* current = head;
+        while (current && count < k) {
+            current = current->next;
+            count++;
+        }
+        if (count < k) return head;
+        ListNode* newHead = reverseFirstK(head, k);
+        head->next = reverseKGroup(current, k);
+        return newHead;
+    }
+private:
+    ListNode* reverseFirstK(ListNode* head, int k) {
+        ListNode* prev = nullptr;
+        ListNode* current = head;
+        for (int i = 0; i < k; i++) {
+            ListNode* next = current->next;
+            current->next = prev;
+            prev = current;
+            current = next;
+        }
+        return prev;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        count = 0
+        current = head
+        while current and count < k:
+            current = current.next
+            count += 1
+        if count < k:
+            return head
+        new_head = self.reverseFirstK(head, k)
+        head.next = self.reverseKGroup(current, k)
+        return new_head
+    def reverseFirstK(self, head, k):
+        prev = None
+        current = head
+        for _ in range(k):
+            next_node = current.next
+            current.next = prev
+            prev = current
+            current = next_node
+        return prev` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+struct ListNode* reverseFirstK(struct ListNode* head, int k) {
+    struct ListNode* prev = NULL;
+    struct ListNode* current = head;
+    for (int i = 0; i < k; i++) {
+        struct ListNode* next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}
+struct ListNode* reverseKGroup(struct ListNode* head, int k) {
+    int count = 0;
+    struct ListNode* current = head;
+    while (current && count < k) {
+        current = current->next;
+        count++;
+    }
+    if (count < k) return head;
+    struct ListNode* newHead = reverseFirstK(head, k);
+    head->next = reverseKGroup(current, k);
+    return newHead;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+public class Solution {
+    public ListNode ReverseKGroup(ListNode head, int k) {
+        int count = 0;
+        ListNode current = head;
+        while (current != null && count < k) {
+            current = current.next;
+            count++;
+        }
+        if (count < k) return head;
+        ListNode newHead = ReverseFirstK(head, k);
+        head.next = ReverseKGroup(current, k);
+        return newHead;
+    }
+    private ListNode ReverseFirstK(ListNode head, int k) {
+        ListNode prev = null;
+        ListNode current = head;
+        for (int i = 0; i < k; i++) {
+            ListNode next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+        return prev;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+function reverseKGroup(head: ListNode | null, k: number): ListNode | null {
+    let count = 0;
+    let current = head;
+    while (current && count < k) {
+        current = current.next;
+        count++;
+    }
+    if (count < k) return head;
+    let newHead = reverseFirstK(head, k);
+    if (head) head.next = reverseKGroup(current, k);
+    return newHead;
+};
+function reverseFirstK(head: ListNode | null, k: number): ListNode | null {
+    let prev: ListNode | null = null;
+    let current = head;
+    for (let i = 0; i < k; i++) {
+        let next = current?.next || null;
+        if (current) current.next = prev;
+        prev = current;
+        current = next;
+    }
+    return prev;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+class Solution {
+    func reverseKGroup(_ head: ListNode?, _ k: Int) -> ListNode? {
+        var count = 0
+        var current = head
+        while current != nil && count < k {
+            current = current?.next
+            count += 1
+        }
+        if count < k { return head }
+        let newHead = reverseFirstK(head, k)
+        head?.next = reverseKGroup(current, k)
+        return newHead
+    }
+    private func reverseFirstK(_ head: ListNode?, _ k: Int) -> ListNode? {
+        var prev: ListNode? = nil
+        var current = head
+        for _ in 0..<k {
+            let next = current?.next
+            current?.next = prev
+            prev = current
+            current = next
+        }
+        return prev
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the number of nodes in the linked list.
+- Space: O(n/k) due to the recursion stack, where each recursive call processes k nodes.
+
+---
+
+## Iterative with Stack
+
+**Intuition**
+
+Use a stack to temporarily store k nodes, then pop them to reverse their order. This approach avoids recursion and handles reversal iteratively.
+
+**Steps**
+
+- Traverse the list in groups of k nodes.
+- For each group, push nodes onto a stack until k nodes are reached.
+- If k nodes are in the stack, pop them to reverse their order and connect them to the result list.
+- If fewer than k nodes remain, leave them in their original order.
+- Manage pointers carefully to ensure correct connections between reversed groups.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        prev_group_end = dummy
+        while True:
+            kth = self.getKth(prev_group_end, k)
+            if not kth:
+                break
+            next_group_start = kth.next
+            prev, curr = next_group_start, prev_group_end.next
+            while curr != next_group_start:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            tmp = prev_group_end.next
+            prev_group_end.next = kth
+            prev_group_end = tmp
+        return dummy.next
+    def getKth(self, curr, k):
+        while curr and k > 0:
+            curr = curr.next
+            k -= 1
+        return curr` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prevGroupEnd = dummy;
+        while (true) {
+            ListNode kth = getKth(prevGroupEnd, k);
+            if (kth == null) break;
+            ListNode nextGroupStart = kth.next;
+            ListNode prev = nextGroupStart;
+            ListNode curr = prevGroupEnd.next;
+            while (curr != nextGroupStart) {
+                ListNode tmp = curr.next;
+                curr.next = prev;
+                prev = curr;
+                curr = tmp;
+            }
+            ListNode tmp = prevGroupEnd.next;
+            prevGroupEnd.next = kth;
+            prevGroupEnd = tmp;
+        }
+        return dummy.next;
+    }
+    private ListNode getKth(ListNode curr, int k) {
+        while (curr != null && k > 0) {
+            curr = curr.next;
+            k--;
+        }
+        return curr;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val);
+    this.next = (next===undefined ? null : next);
+}
+var reverseKGroup = function(head, k) {
+    let dummy = new ListNode(0);
+    dummy.next = head;
+    let prevGroupEnd = dummy;
+    while (true) {
+        let kth = getKth(prevGroupEnd, k);
+        if (!kth) break;
+        let nextGroupStart = kth.next;
+        let prev = nextGroupStart;
+        let curr = prevGroupEnd.next;
+        while (curr !== nextGroupStart) {
+            let tmp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        let tmp = prevGroupEnd.next;
+        prevGroupEnd.next = kth;
+        prevGroupEnd = tmp;
+    }
+    return dummy.next;
+};
+function getKth(curr, k) {
+    while (curr && k > 0) {
+        curr = curr.next;
+        k--;
+    }
+    return curr;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* prevGroupEnd = dummy;
+        while (true) {
+            ListNode* kth = getKth(prevGroupEnd, k);
+            if (!kth) break;
+            ListNode* nextGroupStart = kth->next;
+            ListNode* prev = nextGroupStart;
+            ListNode* curr = prevGroupEnd->next;
+            while (curr != nextGroupStart) {
+                ListNode* tmp = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = tmp;
+            }
+            ListNode* tmp = prevGroupEnd->next;
+            prevGroupEnd->next = kth;
+            prevGroupEnd = tmp;
+        }
+        return dummy->next;
+    }
+private:
+    ListNode* getKth(ListNode* curr, int k) {
+        while (curr && k > 0) {
+            curr = curr->next;
+            k--;
+        }
+        return curr;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        prev_group_end = dummy
+        while True:
+            kth = self.getKth(prev_group_end, k)
+            if not kth:
+                break
+            next_group_start = kth.next
+            prev, curr = next_group_start, prev_group_end.next
+            while curr != next_group_start:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            tmp = prev_group_end.next
+            prev_group_end.next = kth
+            prev_group_end = tmp
+        return dummy.next
+    def getKth(self, curr, k):
+        while curr and k > 0:
+            curr = curr.next
+            k -= 1
+        return curr` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+struct ListNode* getKth(struct ListNode* curr, int k) {
+    while (curr && k > 0) {
+        curr = curr->next;
+        k--;
+    }
+    return curr;
+}
+struct ListNode* reverseKGroup(struct ListNode* head, int k) {
+    struct ListNode dummy;
+    dummy.next = head;
+    struct ListNode* prevGroupEnd = &dummy;
+    while (1) {
+        struct ListNode* kth = getKth(prevGroupEnd, k);
+        if (!kth) break;
+        struct ListNode* nextGroupStart = kth->next;
+        struct ListNode* prev = nextGroupStart;
+        struct ListNode* curr = prevGroupEnd->next;
+        while (curr != nextGroupStart) {
+            struct ListNode* tmp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        struct ListNode* tmp = prevGroupEnd->next;
+        prevGroupEnd->next = kth;
+        prevGroupEnd = tmp;
+    }
+    return dummy.next;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+public class Solution {
+    public ListNode ReverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prevGroupEnd = dummy;
+        while (true) {
+            ListNode kth = GetKth(prevGroupEnd, k);
+            if (kth == null) break;
+            ListNode nextGroupStart = kth.next;
+            ListNode prev = nextGroupStart;
+            ListNode curr = prevGroupEnd.next;
+            while (curr != nextGroupStart) {
+                ListNode tmp = curr.next;
+                curr.next = prev;
+                prev = curr;
+                curr = tmp;
+            }
+            ListNode tmpNode = prevGroupEnd.next;
+            prevGroupEnd.next = kth;
+            prevGroupEnd = tmpNode;
+        }
+        return dummy.next;
+    }
+    private ListNode GetKth(ListNode curr, int k) {
+        while (curr != null && k > 0) {
+            curr = curr.next;
+            k--;
+        }
+        return curr;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+function reverseKGroup(head: ListNode | null, k: number): ListNode | null {
+    let dummy = new ListNode(0);
+    dummy.next = head;
+    let prevGroupEnd: ListNode | null = dummy;
+    while (true) {
+        let kth = getKth(prevGroupEnd, k);
+        if (!kth) break;
+        let nextGroupStart = kth.next;
+        let prev: ListNode | null = nextGroupStart;
+        let curr = prevGroupEnd?.next || null;
+        while (curr !== nextGroupStart) {
+            let tmp = curr?.next || null;
+            if (curr) curr.next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        let tmp = prevGroupEnd?.next || null;
+        if (prevGroupEnd) prevGroupEnd.next = kth;
+        prevGroupEnd = tmp;
+    }
+    return dummy.next;
+};
+function getKth(curr: ListNode | null, k: number): ListNode | null {
+    while (curr && k > 0) {
+        curr = curr.next;
+        k--;
+    }
+    return curr;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+class Solution {
+    func reverseKGroup(_ head: ListNode?, _ k: Int) -> ListNode? {
+        let dummy = ListNode(0)
+        dummy.next = head
+        var prevGroupEnd: ListNode? = dummy
+        while true {
+            let kth = getKth(prevGroupEnd, k)
+            if kth == nil { break }
+            let nextGroupStart = kth?.next
+            var prev: ListNode? = nextGroupStart
+            var curr = prevGroupEnd?.next
+            while curr !== nextGroupStart {
+                let tmp = curr?.next
+                curr?.next = prev
+                prev = curr
+                curr = tmp
+            }
+            let tmp = prevGroupEnd?.next
+            prevGroupEnd?.next = kth
+            prevGroupEnd = tmp
+        }
+        return dummy.next
+    }
+    private func getKth(_ curr: ListNode?, _ k: Int) -> ListNode? {
+        var curr = curr
+        var k = k
+        while curr != nil && k > 0 {
+            curr = curr?.next
+            k -= 1
+        }
+        return curr
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the number of nodes in the linked list.
+- Space: O(1), as we only use a constant amount of extra space.
+
+---
+
+## Pointer Reversal
+
+**Intuition**
+
+We can reverse the nodes in place by carefully manipulating pointers without additional data structures. This involves identifying groups, reversing them, and properly linking them back.
+
+**Steps**
+
+- Use a dummy node to simplify edge cases (like reversing from the head).
+- For each group of k nodes, identify the start and end of the group.
+- Reverse the nodes within the group by adjusting pointers.
+- Connect the reversed group with the previous part of the list.
+- Continue until all full groups of k nodes are processed.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        prev_group_end = dummy
+        while True:
+            kth = self.getKth(prev_group_end, k)
+            if not kth:
+                break
+            next_group_start = kth.next
+            prev, curr = next_group_start, prev_group_end.next
+            while curr != next_group_start:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            tmp = prev_group_end.next
+            prev_group_end.next = kth
+            prev_group_end = tmp
+        return dummy.next
+    def getKth(self, curr, k):
+        while curr and k > 0:
+            curr = curr.next
+            k -= 1
+        return curr` },
+{ name: "Java", lang: "java", code: `class ListNode {
+    int val;
+    ListNode next;
+    ListNode() {}
+    ListNode(int val) { this.val = val; }
+    ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+}
+class Solution {
+    public ListNode reverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prevGroupEnd = dummy;
+        while (true) {
+            ListNode kth = getKth(prevGroupEnd, k);
+            if (kth == null) break;
+            ListNode nextGroupStart = kth.next;
+            ListNode prev = nextGroupStart;
+            ListNode curr = prevGroupEnd.next;
+            while (curr != nextGroupStart) {
+                ListNode tmp = curr.next;
+                curr.next = prev;
+                prev = curr;
+                curr = tmp;
+            }
+            ListNode tmp = prevGroupEnd.next;
+            prevGroupEnd.next = kth;
+            prevGroupEnd = tmp;
+        }
+        return dummy.next;
+    }
+    private ListNode getKth(ListNode curr, int k) {
+        while (curr != null && k > 0) {
+            curr = curr.next;
+            k--;
+        }
+        return curr;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `function ListNode(val, next) {
+    this.val = (val===undefined ? 0 : val);
+    this.next = (next===undefined ? null : next);
+}
+var reverseKGroup = function(head, k) {
+    let dummy = new ListNode(0);
+    dummy.next = head;
+    let prevGroupEnd = dummy;
+    while (true) {
+        let kth = getKth(prevGroupEnd, k);
+        if (!kth) break;
+        let nextGroupStart = kth.next;
+        let prev = nextGroupStart;
+        let curr = prevGroupEnd.next;
+        while (curr !== nextGroupStart) {
+            let tmp = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        let tmp = prevGroupEnd.next;
+        prevGroupEnd.next = kth;
+        prevGroupEnd = tmp;
+    }
+    return dummy.next;
+};
+function getKth(curr, k) {
+    while (curr && k > 0) {
+        curr = curr.next;
+        k--;
+    }
+    return curr;
+}` },
+{ name: "C++", lang: "cpp", code: `#include <iostream>
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        ListNode* dummy = new ListNode(0);
+        dummy->next = head;
+        ListNode* prevGroupEnd = dummy;
+        while (true) {
+            ListNode* kth = getKth(prevGroupEnd, k);
+            if (!kth) break;
+            ListNode* nextGroupStart = kth->next;
+            ListNode* prev = nextGroupStart;
+            ListNode* curr = prevGroupEnd->next;
+            while (curr != nextGroupStart) {
+                ListNode* tmp = curr->next;
+                curr->next = prev;
+                prev = curr;
+                curr = tmp;
+            }
+            ListNode* tmp = prevGroupEnd->next;
+            prevGroupEnd->next = kth;
+            prevGroupEnd = tmp;
+        }
+        return dummy->next;
+    }
+private:
+    ListNode* getKth(ListNode* curr, int k) {
+        while (curr && k > 0) {
+            curr = curr->next;
+            k--;
+        }
+        return curr;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+class Solution:
+    def reverseKGroup(self, head: ListNode, k: int) -> ListNode:
+        dummy = ListNode(0)
+        dummy.next = head
+        prev_group_end = dummy
+        while True:
+            kth = self.getKth(prev_group_end, k)
+            if not kth:
+                break
+            next_group_start = kth.next
+            prev, curr = next_group_start, prev_group_end.next
+            while curr != next_group_start:
+                tmp = curr.next
+                curr.next = prev
+                prev = curr
+                curr = tmp
+            tmp = prev_group_end.next
+            prev_group_end.next = kth
+            prev_group_end = tmp
+        return dummy.next
+    def getKth(self, curr, k):
+        while curr and k > 0:
+            curr = curr.next
+            k -= 1
+        return curr` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+#include <stdlib.h>
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+struct ListNode* getKth(struct ListNode* curr, int k) {
+    while (curr && k > 0) {
+        curr = curr->next;
+        k--;
+    }
+    return curr;
+}
+struct ListNode* reverseKGroup(struct ListNode* head, int k) {
+    struct ListNode dummy;
+    dummy.next = head;
+    struct ListNode* prevGroupEnd = &dummy;
+    while (1) {
+        struct ListNode* kth = getKth(prevGroupEnd, k);
+        if (!kth) break;
+        struct ListNode* nextGroupStart = kth->next;
+        struct ListNode* prev = nextGroupStart;
+        struct ListNode* curr = prevGroupEnd->next;
+        while (curr != nextGroupStart) {
+            struct ListNode* tmp = curr->next;
+            curr->next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        struct ListNode* tmp = prevGroupEnd->next;
+        prevGroupEnd->next = kth;
+        prevGroupEnd = tmp;
+    }
+    return dummy.next;
+}` },
+{ name: "C#", lang: "csharp", code: `public class ListNode {
+    public int val;
+    public ListNode next;
+    public ListNode(int val=0, ListNode next=null) {
+        this.val = val;
+        this.next = next;
+    }
+}
+public class Solution {
+    public ListNode ReverseKGroup(ListNode head, int k) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
+        ListNode prevGroupEnd = dummy;
+        while (true) {
+            ListNode kth = GetKth(prevGroupEnd, k);
+            if (kth == null) break;
+            ListNode nextGroupStart = kth.next;
+            ListNode prev = nextGroupStart;
+            ListNode curr = prevGroupEnd.next;
+            while (curr != nextGroupStart) {
+                ListNode tmp = curr.next;
+                curr.next = prev;
+                prev = curr;
+                curr = tmp;
+            }
+            ListNode tmpNode = prevGroupEnd.next;
+            prevGroupEnd.next = kth;
+            prevGroupEnd = tmpNode;
+        }
+        return dummy.next;
+    }
+    private ListNode GetKth(ListNode curr, int k) {
+        while (curr != null && k > 0) {
+            curr = curr.next;
+            k--;
+        }
+        return curr;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `class ListNode {
+    val: number;
+    next: ListNode | null;
+    constructor(val?: number, next?: ListNode | null) {
+        this.val = (val === undefined ? 0 : val);
+        this.next = (next === undefined ? null : next);
+    }
+}
+function reverseKGroup(head: ListNode | null, k: number): ListNode | null {
+    let dummy = new ListNode(0);
+    dummy.next = head;
+    let prevGroupEnd: ListNode | null = dummy;
+    while (true) {
+        let kth = getKth(prevGroupEnd, k);
+        if (!kth) break;
+        let nextGroupStart = kth.next;
+        let prev: ListNode | null = nextGroupStart;
+        let curr = prevGroupEnd?.next || null;
+        while (curr !== nextGroupStart) {
+            let tmp = curr?.next || null;
+            if (curr) curr.next = prev;
+            prev = curr;
+            curr = tmp;
+        }
+        let tmp = prevGroupEnd?.next || null;
+        if (prevGroupEnd) prevGroupEnd.next = kth;
+        prevGroupEnd = tmp;
+    }
+    return dummy.next;
+};
+function getKth(curr: ListNode | null, k: number): ListNode | null {
+    while (curr && k > 0) {
+        curr = curr.next;
+        k--;
+    }
+    return curr;
+}` },
+{ name: "Swift", lang: "swift", code: `public class ListNode {
+    public var val: Int
+    public var next: ListNode?
+    public init() { self.val = 0; self.next = nil; }
+    public init(_ val: Int) { self.val = val; self.next = nil; }
+    public init(_ val: Int, _ next: ListNode?) { self.val = val; self.next = next; }
+}
+class Solution {
+    func reverseKGroup(_ head: ListNode?, _ k: Int) -> ListNode? {
+        let dummy = ListNode(0)
+        dummy.next = head
+        var prevGroupEnd: ListNode? = dummy
+        while true {
+            let kth = getKth(prevGroupEnd, k)
+            if kth == nil { break }
+            let nextGroupStart = kth?.next
+            var prev: ListNode? = nextGroupStart
+            var curr = prevGroupEnd?.next
+            while curr !== nextGroupStart {
+                let tmp = curr?.next
+                curr?.next = prev
+                prev = curr
+                curr = tmp
+            }
+            let tmp = prevGroupEnd?.next
+            prevGroupEnd?.next = kth
+            prevGroupEnd = tmp
+        }
+        return dummy.next
+    }
+    private func getKth(_ curr: ListNode?, _ k: Int) -> ListNode? {
+        var curr = curr
+        var k = k
+        while curr != nil && k > 0 {
+            curr = curr?.next
+            k -= 1
+        }
+        return curr
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the number of nodes in the linked list.
+- Space: O(1), as we only use a constant amount of extra space.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Reverse Nodes in k-Group Solutions","datePublished":"2025-09-14T22:03:20.714Z","description":"Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list. k is a positive integer and is less than or equal t...","keywords":"LeetCode, Reverse Nodes in k-Group, Hard, Linked List, Recursion, Two Pointers, Hash Map, Brute Force, Array"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force with Recursion complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the number of nodes in the linked list.; Space: O(n/k) due to the recursion stack, where each recursive call processes k nodes.. "}},{"@type":"Question","name":"Iterative with Stack complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the number of nodes in the linked list.; Space: O(1), as we only use a constant amount of extra space.. "}},{"@type":"Question","name":"Pointer Reversal complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the number of nodes in the linked list.; Space: O(1), as we only use a constant amount of extra space.. "}}]}).replace(/</g,'\\u003c')}
+</script>
