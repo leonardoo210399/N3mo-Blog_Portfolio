@@ -1,0 +1,587 @@
+---
+title: "Remove Duplicates from Sorted Array"
+summary: "Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same. Then return the number of unique elements in nums.
+
+Consider the number of unique elements of nums to be k, the array nums should be modified such that the first k elements contain the unique elements in the order they were originally present. The rest of the elements are irrelevant.
+
+Return k."
+date: "Sep 15, 2025"
+tags:
+  - Array
+  - Two Pointers
+draft: false
+difficulty: "Easy"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Easy | **Acceptance:** 61.00% | **Paid:** No
+
+> **Topics:** Array, Two Pointers
+
+- Examples
+- Constraints
+- [Brute Force with Extra Space](#brute-force-with-extra-space)
+- [Two Pointer Approach (Optimal)](#two-pointer-approach-optimal)
+- [Alternative Two Pointer with Explicit Comparison](#alternative-two-pointer-with-explicit-comparison)
+
+## Examples
+
+**Input**
+
+```text
+nums = [1,1,2]
+```
+
+**Output**
+
+```text
+2, nums = [1,2,_]
+```
+
+**Explanation**
+
+Your function should return k = 2, with the first two elements of nums being 1 and 2 respectively. The values after the first k elements don't matter.
+
+**Input**
+
+```text
+nums = [0,0,1,1,1,2,2,3,3,4]
+```
+
+**Output**
+
+```text
+5, nums = [0,1,2,3,4,_,_,_,_,_]
+```
+
+**Explanation**
+
+Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively. The values after the first k elements don't matter.
+
+## Constraints
+
+```text
+- 1 <= nums.length <= 3 * 10^4
+- -100 <= nums[i] <= 100
+- nums is sorted in non-decreasing order
+```
+---
+
+## Brute Force with Extra Space
+
+**Intuition**
+
+The straightforward approach would be to use a set or another data structure to collect unique elements. However, this uses extra space.
+
+**Steps**
+
+- Create a new list or array to store unique elements.
+- Iterate through the input array and add elements to the new structure if they are not already present.
+- Copy the unique elements back to the original array.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def removeDuplicates(nums):
+    # Use a set to store unique elements
+    unique_nums = list(set(nums))
+    unique_nums.sort()
+    
+    # Copy the unique elements back to the original array
+    for i in range(len(unique_nums)):
+        nums[i] = unique_nums[i]
+    
+    return len(unique_nums)` },
+{ name: "Java", lang: "java", code: `import java.util.*;
+
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        Set<Integer> uniqueSet = new LinkedHashSet<>();
+        
+        // Add elements to the set to maintain insertion order and uniqueness
+        for (int num : nums) {
+            uniqueSet.add(num);
+        }
+        
+        // Copy unique elements back to nums array
+        int index = 0;
+        for (int num : uniqueSet) {
+            nums[index++] = num;
+        }
+        
+        return uniqueSet.size();
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var removeDuplicates = function(nums) {
+    // Create a Set to store unique values
+    const uniqueSet = new Set(nums);
+    
+    // Convert Set back to array
+    const uniqueArray = Array.from(uniqueSet);
+    
+    // Copy values back to the original array
+    for (let i = 0; i < uniqueArray.length; i++) {
+        nums[i] = uniqueArray[i];
+    }
+    
+    return uniqueArray.length;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+#include <set>
+using namespace std;
+
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        set<int> uniqueSet(nums.begin(), nums.end());
+        
+        // Copy unique elements back to nums
+        int index = 0;
+        for (int num : uniqueSet) {
+            nums[index++] = num;
+        }
+        
+        return uniqueSet.size();
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        # Use a set to store unique elements
+        unique_nums = list(set(nums))
+        unique_nums.sort()
+        
+        # Copy the unique elements back to the original array
+        for i in range(len(unique_nums)):
+            nums[i] = unique_nums[i]
+        
+        return len(unique_nums)` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+
+int removeDuplicates(int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+    
+    // Use a boolean array to track seen elements
+    // This works because the constraints limit nums[i] to [-100, 100]
+    int seen[201] = {0}; // Indexes 0-200 cover values -100 to 100
+    int unique[numsSize];
+    int uniqueCount = 0;
+    
+    for (int i = 0; i < numsSize; i++) {
+        int value = nums[i] + 100; // Shift to index range [0, 200]
+        if (!seen[value]) {
+            seen[value] = 1;
+            unique[uniqueCount++] = nums[i];
+        }
+    }
+    
+    // Copy unique elements back to original array
+    for (int i = 0; i < uniqueCount; i++) {
+        nums[i] = unique[i];
+    }
+    
+    return uniqueCount;
+}` },
+{ name: "C#", lang: "csharp", code: `using System.Collections.Generic;
+
+class Solution {
+    public int RemoveDuplicates(int[] nums) {
+        HashSet<int> uniqueSet = new HashSet<int>(nums);
+        List<int> uniqueList = new List<int>(uniqueSet);
+        uniqueList.Sort();
+        
+        // Copy unique elements back to nums array
+        for (int i = 0; i < uniqueList.Count; i++) {
+            nums[i] = uniqueList[i];
+        }
+        
+        return uniqueList.Count;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function removeDuplicates(nums: number[]): number {
+    // Create a Set to store unique values
+    const uniqueSet = new Set<number>(nums);
+    
+    // Convert Set back to array
+    const uniqueArray: number[] = Array.from(uniqueSet);
+    
+    // Copy values back to the original array
+    for (let i = 0; i < uniqueArray.length; i++) {
+        nums[i] = uniqueArray[i];
+    }
+    
+    return uniqueArray.length;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func removeDuplicates(_ nums: inout [Int]) -> Int {
+        // Use a Set to store unique values
+        let uniqueSet = Set(nums)
+        let uniqueArray = Array(uniqueSet).sorted()
+        
+        // Copy values back to the original array
+        for i in 0..<uniqueArray.count {
+            nums[i] = uniqueArray[i]
+        }
+        
+        return uniqueArray.count
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n log n) due to sorting in most implementations, or O(n) if we use a hash-based approach but still need to sort the unique elements
+- Space: O(n) for the extra data structures to store unique elements
+- Notes: This approach does not satisfy the 'in-place' requirement of the problem. It also has suboptimal time complexity due to sorting.
+
+---
+
+## Two Pointer Approach (Optimal)
+
+**Intuition**
+
+Since the array is already sorted, duplicates will be adjacent to each other. We can use two pointers to traverse the array and overwrite duplicates in place.
+
+**Steps**
+
+- Initialize two pointers: one (i) to track the position of the last unique element, and another (j) to scan through the array.
+- Start both pointers at index 1 since the first element is always unique.
+- If nums[j] is different from nums[i-1], it means we found a new unique element. Copy it to position i and increment i.
+- Continue until j reaches the end of the array. Return i as the count of unique elements.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def removeDuplicates(nums):
+    if not nums:
+        return 0
+    
+    # i points to the position where the next unique element should be placed
+    i = 1
+    
+    # j scans through the array starting from index 1
+    for j in range(1, len(nums)):
+        # If current element is different from the previous unique element
+        if nums[j] != nums[i - 1]:
+            nums[i] = nums[j]
+            i += 1
+    
+    return i` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) return 0;
+        
+        int i = 1; // Position for next unique element
+        
+        for (int j = 1; j < nums.length; j++) {
+            // If current element is different from the last unique element
+            if (nums[j] != nums[i - 1]) {
+                nums[i] = nums[j];
+                i++;
+            }
+        }
+        
+        return i;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var removeDuplicates = function(nums) {
+    if (nums.length === 0) return 0;
+    
+    let i = 1; // Position for next unique element
+    
+    for (let j = 1; j < nums.length; j++) {
+        // If current element is different from the last unique element
+        if (nums[j] !== nums[i - 1]) {
+            nums[i] = nums[j];
+            i++;
+        }
+    }
+    
+    return i;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.empty()) return 0;
+        
+        int i = 1; // Position for next unique element
+        
+        for (int j = 1; j < nums.size(); j++) {
+            // If current element is different from the last unique element
+            if (nums[j] != nums[i - 1]) {
+                nums[i] = nums[j];
+                i++;
+            }
+        }
+        
+        return i;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        # i points to the position where the next unique element should be placed
+        i = 1
+        
+        # j scans through the array starting from index 1
+        for j in range(1, len(nums)):
+            # If current element is different from the previous unique element
+            if nums[j] != nums[i - 1]:
+                nums[i] = nums[j]
+                i += 1
+        
+        return i` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+
+int removeDuplicates(int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+    
+    int i = 1; // Position for next unique element
+    
+    for (int j = 1; j < numsSize; j++) {
+        // If current element is different from the last unique element
+        if (nums[j] != nums[i - 1]) {
+            nums[i] = nums[j];
+            i++;
+        }
+    }
+    
+    return i;
+}` },
+{ name: "C#", lang: "csharp", code: `class Solution {
+    public int RemoveDuplicates(int[] nums) {
+        if (nums.Length == 0) return 0;
+        
+        int i = 1; // Position for next unique element
+        
+        for (int j = 1; j < nums.Length; j++) {
+            // If current element is different from the last unique element
+            if (nums[j] != nums[i - 1]) {
+                nums[i] = nums[j];
+                i++;
+            }
+        }
+        
+        return i;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function removeDuplicates(nums: number[]): number {
+    if (nums.length === 0) return 0;
+    
+    let i = 1; // Position for next unique element
+    
+    for (let j = 1; j < nums.length; j++) {
+        // If current element is different from the last unique element
+        if (nums[j] !== nums[i - 1]) {
+            nums[i] = nums[j];
+            i++;
+        }
+    }
+    
+    return i;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func removeDuplicates(_ nums: inout [Int]) -> Int {
+        if nums.isEmpty { return 0 }
+        
+        var i = 1 // Position for next unique element
+        
+        for j in 1..<nums.count {
+            // If current element is different from the last unique element
+            if nums[j] != nums[i - 1] {
+                nums[i] = nums[j]
+                i += 1
+            }
+        }
+        
+        return i
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n) where n is the length of the array. We iterate through the array once.
+- Space: O(1) as we only use a constant amount of extra space for the pointers.
+- Notes: This is the optimal solution that satisfies the problem's in-place requirement and achieves linear time complexity.
+
+---
+
+## Alternative Two Pointer with Explicit Comparison
+
+**Intuition**
+
+We can also compare adjacent elements directly since the array is sorted. This is a slight variation of the main two-pointer approach.
+
+**Steps**
+
+- Initialize a pointer i at index 0 to track the position of unique elements.
+- Use another pointer j starting at index 1 to scan the array.
+- When we find nums[j] != nums[i], we've found a new unique element.
+- Increment i and copy nums[j] to nums[i].
+- Continue until j reaches the end and return i + 1 as the count.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def removeDuplicates(nums):
+    if not nums:
+        return 0
+    
+    i = 0  # Position of last unique element
+    
+    for j in range(1, len(nums)):
+        # If current element is different from the last unique element
+        if nums[j] != nums[i]:
+            i += 1
+            nums[i] = nums[j]
+    
+    return i + 1` },
+{ name: "Java", lang: "java", code: `class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (nums.length == 0) return 0;
+        
+        int i = 0; // Position of last unique element
+        
+        for (int j = 1; j < nums.length; j++) {
+            // If current element is different from the last unique element
+            if (nums[j] != nums[i]) {
+                i++;
+                nums[i] = nums[j];
+            }
+        }
+        
+        return i + 1;
+    }
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var removeDuplicates = function(nums) {
+    if (nums.length === 0) return 0;
+    
+    let i = 0; // Position of last unique element
+    
+    for (let j = 1; j < nums.length; j++) {
+        // If current element is different from the last unique element
+        if (nums[j] !== nums[i]) {
+            i++;
+            nums[i] = nums[j];
+        }
+    }
+    
+    return i + 1;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if (nums.empty()) return 0;
+        
+        int i = 0; // Position of last unique element
+        
+        for (int j = 1; j < nums.size(); j++) {
+            // If current element is different from the last unique element
+            if (nums[j] != nums[i]) {
+                i++;
+                nums[i] = nums[j];
+            }
+        }
+        
+        return i + 1;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `from typing import List
+
+class Solution:
+    def removeDuplicates(self, nums: List[int]) -> int:
+        if not nums:
+            return 0
+        
+        i = 0  # Position of last unique element
+        
+        for j in range(1, len(nums)):
+            # If current element is different from the last unique element
+            if nums[j] != nums[i]:
+                i += 1
+                nums[i] = nums[j]
+        
+        return i + 1` },
+{ name: "C", lang: "c", code: `#include <stdio.h>
+
+int removeDuplicates(int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+    
+    int i = 0; // Position of last unique element
+    
+    for (int j = 1; j < numsSize; j++) {
+        // If current element is different from the last unique element
+        if (nums[j] != nums[i]) {
+            i++;
+            nums[i] = nums[j];
+        }
+    }
+    
+    return i + 1;
+}` },
+{ name: "C#", lang: "csharp", code: `class Solution {
+    public int RemoveDuplicates(int[] nums) {
+        if (nums.Length == 0) return 0;
+        
+        int i = 0; // Position of last unique element
+        
+        for (int j = 1; j < nums.Length; j++) {
+            // If current element is different from the last unique element
+            if (nums[j] != nums[i]) {
+                i++;
+                nums[i] = nums[j];
+            }
+        }
+        
+        return i + 1;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function removeDuplicates(nums: number[]): number {
+    if (nums.length === 0) return 0;
+    
+    let i = 0; // Position of last unique element
+    
+    for (let j = 1; j < nums.length; j++) {
+        // If current element is different from the last unique element
+        if (nums[j] !== nums[i]) {
+            i++;
+            nums[i] = nums[j];
+        }
+    }
+    
+    return i + 1;
+}` },
+{ name: "Swift", lang: "swift", code: `class Solution {
+    func removeDuplicates(_ nums: inout [Int]) -> Int {
+        if nums.isEmpty { return 0 }
+        
+        var i = 0 // Position of last unique element
+        
+        for j in 1..<nums.count {
+            // If current element is different from the last unique element
+            if nums[j] != nums[i] {
+                i += 1
+                nums[i] = nums[j]
+            }
+        }
+        
+        return i + 1
+    }
+}` }]} />
+
+**Complexity**
+
+- Time: O(n) where n is the length of the array. We iterate through the array once.
+- Space: O(1) as we only use a constant amount of extra space for the pointers.
+- Notes: This approach is essentially equivalent to the main two-pointer solution but uses a slightly different pointer management strategy.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Remove Duplicates from Sorted Array Solutions","datePublished":"2025-09-15T22:07:30.613Z","description":"Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative orde...","keywords":"LeetCode, Remove Duplicates from Sorted Array, Easy, Array, Two Pointers, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force with Extra Space complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n log n) due to sorting in most implementations, or O(n) if we use a hash-based approach but still need to sort the unique elements; Space: O(n) for the extra data structures to store unique elements. This approach does not satisfy the 'in-place' requirement of the problem. It also has suboptimal time complexity due to sorting."}},{"@type":"Question","name":"Two Pointer Approach (Optimal) complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n) where n is the length of the array. We iterate through the array once.; Space: O(1) as we only use a constant amount of extra space for the pointers.. This is the optimal solution that satisfies the problem's in-place requirement and achieves linear time complexity."}},{"@type":"Question","name":"Alternative Two Pointer with Explicit Comparison complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n) where n is the length of the array. We iterate through the array once.; Space: O(1) as we only use a constant amount of extra space for the pointers.. This approach is essentially equivalent to the main two-pointer solution but uses a slightly different pointer management strategy."}}]}).replace(/</g,'\\u003c')}
+</script>
