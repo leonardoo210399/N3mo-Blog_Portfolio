@@ -1,0 +1,453 @@
+---
+title: "Remove Element"
+summary: "Given an integer array nums and an integer val, remove all occurrences of val in nums in-place. The order of the elements may be changed. Then return the number of elements in nums which are not equal to val.
+
+Consider the number of elements in nums which are not equal to val be k, to get accepted, you need to do the following things:
+
+- Change the array nums such that the first k elements of nums contain the elements which are not equal to val. The remaining elements of nums are not important as well as the size of nums.
+- Return k."
+date: "Sep 16, 2025"
+tags:
+  - Array
+  - Two Pointers
+draft: false
+difficulty: "Easy"
+---
+
+import CodeTabs from "@components/CodeTabs"
+
+> **Difficulty:** Easy | **Acceptance:** 60.45% | **Paid:** No
+
+> **Topics:** Array, Two Pointers
+
+- Examples
+- Constraints
+- [Brute Force](#brute-force)
+- [Two Pointers - Write Index](#two-pointers-write-index)
+- [Two Pointers - Swap to End](#two-pointers-swap-to-end)
+
+## Examples
+
+**Input**
+
+```text
+nums = [3,2,2,3], val = 3
+```
+
+**Output**
+
+```text
+2, nums = [2,2,_,_]
+```
+
+**Input**
+
+```text
+nums = [0,1,2,2,3,0,4,2], val = 2
+```
+
+**Output**
+
+```text
+5, nums = [0,1,4,0,3,_,_,_]
+```
+
+## Constraints
+
+```text
+- 0 <= nums.length <= 100
+- 0 <= nums[i] <= 50
+- 0 <= val <= 100
+```
+---
+
+## Brute Force
+
+**Intuition**
+
+The most straightforward approach is to create a new array to store elements that are not equal to val. This is essentially building the result from scratch and returning its size.
+
+**Steps**
+
+- Initialize a new empty array to store the result.
+- Iterate through the given array.
+- For each element, if it's not equal to the value we want to remove, add it to the result array.
+- After iteration, copy the elements of the result array back to the original array.
+- Return the size of the result array.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def removeElement(nums, val):
+    result = []
+    for num in nums:
+        if num != val:
+            result.append(num)
+    for i in range(len(result)):
+        nums[i] = result[i]
+    return len(result)` },
+{ name: "Java", lang: "java", code: `public int removeElement(int[] nums, int val) {
+    java.util.List<Integer> result = new java.util.ArrayList<>();
+    for (int num : nums) {
+        if (num != val) {
+            result.add(num);
+        }
+    }
+    for (int i = 0; i < result.size(); i++) {
+        nums[i] = result.get(i);
+    }
+    return result.size();
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var removeElement = function(nums, val) {
+    const result = [];
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== val) {
+            result.push(nums[i]);
+        }
+    }
+    for (let i = 0; i < result.length; i++) {
+        nums[i] = result[i];
+    }
+    return result.length;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        vector<int> result;
+        for (int num : nums) {
+            if (num != val) {
+                result.push_back(num);
+            }
+        }
+        for (int i = 0; i < result.size(); i++) {
+            nums[i] = result[i];
+        }
+        return result.size();
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def removeElement(self, nums: list[int], val: int) -> int:
+    result = []
+    for num in nums:
+        if num != val:
+            result.append(num)
+    for i in range(len(result)):
+        nums[i] = result[i]
+    return len(result)` },
+{ name: "C", lang: "c", code: `#include <stdlib.h>
+
+int removeElement(int* nums, int numsSize, int val) {
+    int* result = (int*)malloc(numsSize * sizeof(int));
+    int j = 0;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] != val) {
+            result[j++] = nums[i];
+        }
+    }
+    for (int i = 0; i < j; i++) {
+        nums[i] = result[i];
+    }
+    free(result);
+    return j;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int RemoveElement(int[] nums, int val) {
+        var result = new System.Collections.Generic.List<int>();
+        foreach (int num in nums) {
+            if (num != val) {
+                result.Add(num);
+            }
+        }
+        for (int i = 0; i < result.Count; i++) {
+            nums[i] = result[i];
+        }
+        return result.Count;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function removeElement(nums: number[], val: number): number {
+    const result: number[] = [];
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== val) {
+            result.push(nums[i]);
+        }
+    }
+    for (let i = 0; i < result.length; i++) {
+        nums[i] = result[i];
+    }
+    return result.length;
+}` },
+{ name: "Swift", lang: "swift", code: `func removeElement(_ nums: inout [Int], _ val: Int) -> Int {
+    var result: [Int] = []
+    for num in nums {
+        if num != val {
+            result.append(num)
+        }
+    }
+    for i in 0..<result.count {
+        nums[i] = result[i]
+    }
+    return result.count
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the array. We iterate through the array twice, once to build the result and once to copy it back.
+- Space: O(n), because we use extra space to store the result array.
+
+---
+
+## Two Pointers - Write Index
+
+**Intuition**
+
+We can solve this in-place by keeping track of where to write the next valid element. This way, we only need one pass through the array.
+
+**Steps**
+
+- Initialize a variable writeIndex to 0, which will keep track of the position where the next valid element should be written.
+- Iterate through the array with a read pointer (the loop index).
+- For each element, if it's not equal to val, write it to the position indicated by writeIndex and increment writeIndex.
+- After processing all elements, writeIndex will contain the count of elements that are not equal to val.
+- Return writeIndex.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def removeElement(nums, val):
+    writeIndex = 0
+    for i in range(len(nums)):
+        if nums[i] != val:
+            nums[writeIndex] = nums[i]
+            writeIndex += 1
+    return writeIndex` },
+{ name: "Java", lang: "java", code: `public int removeElement(int[] nums, int val) {
+    int writeIndex = 0;
+    for (int i = 0; i < nums.length; i++) {
+        if (nums[i] != val) {
+            nums[writeIndex++] = nums[i];
+        }
+    }
+    return writeIndex;
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var removeElement = function(nums, val) {
+    let writeIndex = 0;
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== val) {
+            nums[writeIndex++] = nums[i];
+        }
+    }
+    return writeIndex;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        int writeIndex = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            if (nums[i] != val) {
+                nums[writeIndex++] = nums[i];
+            }
+        }
+        return writeIndex;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def removeElement(self, nums: list[int], val: int) -> int:
+    writeIndex = 0
+    for i in range(len(nums)):
+        if nums[i] != val:
+            nums[writeIndex] = nums[i]
+            writeIndex += 1
+    return writeIndex` },
+{ name: "C", lang: "c", code: `int removeElement(int* nums, int numsSize, int val) {
+    int writeIndex = 0;
+    for (int i = 0; i < numsSize; i++) {
+        if (nums[i] != val) {
+            nums[writeIndex++] = nums[i];
+        }
+    }
+    return writeIndex;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int RemoveElement(int[] nums, int val) {
+        int writeIndex = 0;
+        for (int i = 0; i < nums.Length; i++) {
+            if (nums[i] != val) {
+                nums[writeIndex++] = nums[i];
+            }
+        }
+        return writeIndex;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function removeElement(nums: number[], val: number): number {
+    let writeIndex = 0;
+    for (let i = 0; i < nums.length; i++) {
+        if (nums[i] !== val) {
+            nums[writeIndex++] = nums[i];
+        }
+    }
+    return writeIndex;
+}` },
+{ name: "Swift", lang: "swift", code: `func removeElement(_ nums: inout [Int], _ val: Int) -> Int {
+    var writeIndex = 0
+    for i in 0..<nums.count {
+        if nums[i] != val {
+            nums[writeIndex] = nums[i]
+            writeIndex += 1
+        }
+    }
+    return writeIndex
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the array. We iterate through the array once.
+- Space: O(1), because we only use a constant amount of extra space.
+
+---
+
+## Two Pointers - Swap to End
+
+**Intuition**
+
+Another in-place approach involves moving elements that should be removed to the end of the array by swapping. This approach can reduce the number of assignments when the number of elements to remove is small.
+
+**Steps**
+
+- Initialize two pointers: left at the beginning (0) and right at the end (length - 1) of the array.
+- While left is less than or equal to right, do the following:
+- If the element at left is equal to val, swap it with the element at right and decrement right (since the element at right has now been moved to a position we will not scan again).
+- If the element at left is not equal to val, increment left.
+- Continue until left surpasses right.
+- The new length of the array without val is right + 1.
+
+<CodeTabs client:load tabs={[{ name: "Python", lang: "python", code: `def removeElement(nums, val):
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        if nums[left] == val:
+            nums[left], nums[right] = nums[right], nums[left]
+            right -= 1
+        else:
+            left += 1
+    return right + 1` },
+{ name: "Java", lang: "java", code: `public int removeElement(int[] nums, int val) {
+    int left = 0, right = nums.length - 1;
+    while (left <= right) {
+        if (nums[left] == val) {
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            right--;
+        } else {
+            left++;
+        }
+    }
+    return right + 1;
+}` },
+{ name: "JavaScript", lang: "javascript", code: `var removeElement = function(nums, val) {
+    let left = 0, right = nums.length - 1;
+    while (left <= right) {
+        if (nums[left] === val) {
+            [nums[left], nums[right]] = [nums[right], nums[left]];
+            right--;
+        } else {
+            left++;
+        }
+    }
+    return right + 1;
+};` },
+{ name: "C++", lang: "cpp", code: `#include <vector>
+using namespace std;
+
+class Solution {
+public:
+    int removeElement(vector<int>& nums, int val) {
+        int left = 0, right = nums.size() - 1;
+        while (left <= right) {
+            if (nums[left] == val) {
+                swap(nums[left], nums[right]);
+                right--;
+            } else {
+                left++;
+            }
+        }
+        return right + 1;
+    }
+};` },
+{ name: "Python3", lang: "python", code: `def removeElement(self, nums: list[int], val: int) -> int:
+    left, right = 0, len(nums) - 1
+    while left <= right:
+        if nums[left] == val:
+            nums[left], nums[right] = nums[right], nums[left]
+            right -= 1
+        else:
+            left += 1
+    return right + 1` },
+{ name: "C", lang: "c", code: `int removeElement(int* nums, int numsSize, int val) {
+    int left = 0, right = numsSize - 1;
+    while (left <= right) {
+        if (nums[left] == val) {
+            int temp = nums[left];
+            nums[left] = nums[right];
+            nums[right] = temp;
+            right--;
+        } else {
+            left++;
+        }
+    }
+    return right + 1;
+}` },
+{ name: "C#", lang: "csharp", code: `public class Solution {
+    public int RemoveElement(int[] nums, int val) {
+        int left = 0, right = nums.Length - 1;
+        while (left <= right) {
+            if (nums[left] == val) {
+                int temp = nums[left];
+                nums[left] = nums[right];
+                nums[right] = temp;
+                right--;
+            } else {
+                left++;
+            }
+        }
+        return right + 1;
+    }
+}` },
+{ name: "TypeScript", lang: "typescript", code: `function removeElement(nums: number[], val: number): number {
+    let left = 0, right = nums.length - 1;
+    while (left <= right) {
+        if (nums[left] === val) {
+            [nums[left], nums[right]] = [nums[right], nums[left]];
+            right--;
+        } else {
+            left++;
+        }
+    }
+    return right + 1;
+}` },
+{ name: "Swift", lang: "swift", code: `func removeElement(_ nums: inout [Int], _ val: Int) -> Int {
+    var left = 0
+    var right = nums.count - 1
+    
+    while left <= right {
+        if nums[left] == val {
+            nums.swapAt(left, right)
+            right -= 1
+        } else {
+            left += 1
+        }
+    }
+    
+    return right + 1
+}` }]} />
+
+**Complexity**
+
+- Time: O(n), where n is the length of the array. In the worst case, we might need to swap all elements to the end.
+- Space: O(1), as we only use a constant amount of extra space.
+
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"TechArticle","headline":"LeetCode Remove Element Solutions","datePublished":"2025-09-16T04:02:52.427Z","description":"Given an integer array nums and an integer val, remove all occurrences of val in nums in-place. The order of the elements may be changed. Then return the num...","keywords":"LeetCode, Remove Element, Easy, Array, Two Pointers, Hash Map, Brute Force"}).replace(/</g,'\\u003c')}
+</script>
+
+<script is:inline type="application/ld+json">
+{JSON.stringify({"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Brute Force complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the array. We iterate through the array twice, once to build the result and once to copy it back.; Space: O(n), because we use extra space to store the result array.. "}},{"@type":"Question","name":"Two Pointers - Write Index complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the array. We iterate through the array once.; Space: O(1), because we only use a constant amount of extra space.. "}},{"@type":"Question","name":"Two Pointers - Swap to End complexity?","acceptedAnswer":{"@type":"Answer","text":"Time: O(n), where n is the length of the array. In the worst case, we might need to swap all elements to the end.; Space: O(1), as we only use a constant amount of extra space.. "}}]}).replace(/</g,'\\u003c')}
+</script>
